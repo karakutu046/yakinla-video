@@ -13,10 +13,10 @@ dışarıdan alınmış bir ses dosyası yok.
 
 | Zaman | Sahne | Ekranda | Hareket ve ses |
 |---|---|---|---|
-| 0–4 sn | **Kanca** | `23:12` · cips paketi · **Atıştırmalıklar mı bitti?** → **Eksik bir şey mi var?** | Saat haneleri slot makinesi gibi dönerek yerine oturur. Cips paketi düşer, ters döner, içinden sadece birkaç kırıntı dökülür. Ekmek, yumurta, çay ve süt "?" rozetleriyle belirir. Mavi daire siler, kelimeler vuruşa çakılır. |
+| 0–4 sn | **Kanca** | `21:47` · cips paketi · **Atıştırmalıklar mı bitti?** → **Eksik bir şey mi var?** | Saat haneleri slot makinesi gibi dönerek yerine oturur. Cips paketi düşer, ters döner, içinden sadece birkaç kırıntı dökülür. Ekmek, yumurta, çay ve süt "?" rozetleriyle belirir. Mavi daire siler, kelimeler vuruşa çakılır. |
 | 4–8 sn | **Sipariş** | **Yakınla'yı aç. → Sepetini doldur. → Onayla, gelsin!** | Soru işaretinin noktası kopar, zıplar ve telefona dönüşür. Atıştırmalık kategorisi açık gelir. Cips, süt, yumurta ve çay sepete uçar, rozet 1-2-3-4 sayar, ✓ belirir ve kamera ✓'nin içine dalar. |
 | 8–12 sn | **Teslimat** | **Afşin'deki depomuzdan** · **Kuryeni canlı takip et** · **AFŞİN** | 3B gece haritası: sokak lambaları, ışıklı pencereler. Rota depodan eve çizilir, kurye ilerledikçe parlar. Kamera yatar, dağların arkasından AFŞİN yükselir, kapı zili çalar. |
-| 12–16 sn | **Vaat** | **ortalama 60 dakikada kapında.** · **Komşun kadar yakın.** + 3 kart | Sayaç 0'dan 60'a çıkar (her artışta tık sesi), dakika halkası dolar. Ekran yana kayar, kartlar gelir: 08:00–01:00 · 3D Secure · atıştırmalıktan temizliğe. |
+| 12–16 sn | **Vaat** | **ortalama 60 dakikada kapında.** · **Komşun kadar yakın.** + 3 kart | Sayaç 0'dan 60'a çıkar (her artışta tık sesi), dakika halkası dolar. Ekran yana kayar, kartlar gelir: 09:00–23:00 arası açığız · 3D Secure · atıştırmalıktan temizliğe. |
 | 16–20 sn | **Kapanış** | Logo · **Yakınla** · **Afşin'in marketi, cebinde.** · App Store · Google Play · yakinla.com | Kartlar tek noktaya çöker, pin uçtan büyür, halka çizilir, ibreler dönüp yerine oturur. Ses logosu G5–B5–D6 çalar ("Ya-kın-la"), konfeti patlar. |
 
 **Ses:** 120 BPM. Akorlar Em → Em C G D → C D → G. Sahne geçişleri ölçü başlarına (4, 8, 12, 16. sn) denk gelir
@@ -27,7 +27,8 @@ duyulur. Kuryenin motor sesi bile ekrandaki konumuna göre sağ-sol kayar. Miks 
 ## Marka kuralları
 
 - Sadece sitedeki güvenli ifadeler kullanıldı: "ortalama 60 dakikada kapında", "Afşin'deki depomuzdan",
-  "kuryeni canlı takip et", "3D Secure ile güvenli ödeme", "08:00 – 01:00 arası", "App Store / Google Play".
+  "kuryeni canlı takip et", "3D Secure ile güvenli ödeme", "App Store / Google Play". Çalışma saatleri **09:00 – 23:00**;
+  kancadaki saat (21:47) bu yüzden kapanıştan önce, ortalama teslimat da 23:00'ten önce biter.
   "Ortalama" niteleyicisi, sarı bir rozet içinde ayrıca vurgulanır.
 - Karşılaştırmalı iddia, fiyat ya da kampanya yok. Elbistan geçmez.
 - Renkler marka paletinden: #1F73F0 ve #3B8BFF → #0E5FE0 gradyanı, yanında kontrast için amber.

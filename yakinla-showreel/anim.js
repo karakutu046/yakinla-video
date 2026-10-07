@@ -7,7 +7,7 @@
  * gerçek hareket bulanıklığı.
  *
  * Akış (120 BPM, 1 vuruş = 0.5 sn, 1 ölçü = 2 sn):
- *   0–4   Kanca     23:12, süt bitti, "Eksik bir şey mi var?"
+ *   0–4   Kanca     21:47, atıştırmalıklar bitti, "Eksik bir şey mi var?"
  *   4–8   Sipariş   soru işaretinin noktası telefona dönüşür, sepet dolar
  *   8–12  Teslimat  3B gece haritası: depodan eve canlı kurye rotası, AFŞİN
  *   12–16 Vaat      ortalama 60 dakikada kapında + 3 özellik kartı
@@ -464,12 +464,12 @@ function scene1(g, t) {
   glow(g, SPR.amber, 850, 300, 230, 0.35 * ma);
   sprite(g, SPR.moon, 850, 300, lerp(0.7, 1, ma), -0.3, ma);
 
-  // saat: 23:12
+  // saat: 21:47 (çalışma saatleri 09:00–23:00; sipariş ve teslimat kapanıştan önce biter)
   const mv = E.inOutCubic(prog(t, 0.85, 1.25));
   const cy = lerp(840, 470, mv), cs = lerp(1, 0.58, mv);
   g.save(); g.translate(540, cy); g.scale(cs, cs);
   glow(g, SPR.blue, 0, 0, 560, 0.5);
-  odometer(g, '23:12', 0, 0, 300, t, 0.0);
+  odometer(g, '21:47', 0, 0, 300, t, 0.0);
   g.restore();
 
   // cips paketi düşer, ters döner: içinden üç kırıntı dökülür, o kadar
@@ -619,7 +619,7 @@ function drawPhoneScreen(g, t) {
   g.save(); g.translate(0, -(1 - hd) * 270);
   const hg = g.createLinearGradient(0, 0, 0, 262); hg.addColorStop(0, '#3B8BFF'); hg.addColorStop(1, '#1F73F0');
   g.fillStyle = hg; g.fillRect(0, 0, SW, 262);
-  text(g, '23:14', 44, 50, { f: 'Txt', w: 600, s: 24, a: 'left' });
+  text(g, '21:49', 44, 50, { f: 'Txt', w: 600, s: 24, a: 'left' });
   g.fillStyle = '#fff'; g.beginPath(); g.roundRect(SW - 84, 34, 38, 18, 5); g.fill(); g.fillRect(SW - 44, 39, 4, 8);
   for (let i = 0; i < 4; i++) { g.fillRect(SW - 140 + i * 9, 50 - 5 - i * 4, 6, 6 + i * 4); }
   text(g, 'Teslimat adresi', 40, 104, { f: 'Txt', w: 500, s: 22, a: 'left', c: 'rgba(255,255,255,0.78)' });
@@ -1252,7 +1252,7 @@ function scene4(g, t) {
 
   // B) özellik kartları (14.0 – 16.0)
   const cards = [
-    { t: 14.0, y: 700, ic: 'clock', a: '08:00 – 01:00', b: 'arası sipariş ver' },
+    { t: 14.0, y: 700, ic: 'clock', a: '09:00 – 23:00', b: 'arası açığız' },
     { t: 14.5, y: 960, ic: 'shield', a: '3D Secure', b: 'ile güvenli ödeme' },
     { t: 15.0, y: 1220, ic: 'bag', a: 'Atıştırmalıktan', b: 'temizliğe kadar' },
   ];
