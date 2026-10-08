@@ -3,11 +3,16 @@
 [yakinla.com](https://yakinla.com) için dikey (9:16, 1080×1920, 30 fps) sesli tanıtım filmi.
 Instagram Reels, TikTok, YouTube Shorts ve WhatsApp durumu için hazır.
 
-**Çıktı:** [`out/yakinla_showreel_20sn.mp4`](out/yakinla_showreel_20sn.mp4) (12 MB, H.264 + AAC, -14 LUFS) · kapak görseli [`out/kapak.jpg`](out/kapak.jpg)
+**Çıktılar** (12 MB, H.264 + AAC, -14 LUFS):
+
+- [`out/yakinla_showreel_20sn.mp4`](out/yakinla_showreel_20sn.mp4): Türkçe dış sesli ana versiyon.
+- [`out/yakinla_showreel_20sn_muzik.mp4`](out/yakinla_showreel_20sn_muzik.mp4): dış sessiz, yalnız müzik ve efekt.
+- Kapak görseli: [`out/kapak.jpg`](out/kapak.jpg).
 
 Görüntüdeki her şey kodla çizilir: hazır footage, stok görsel ya da yapay zekâ üretimi görüntü yok.
 Logo, marka dosyasındaki SVG yolundan birebir çizilir. Müzik ve ses efektleri de sentezle üretilir,
-dışarıdan alınmış bir ses dosyası yok.
+dışarıdan alınmış bir ses dosyası yok. Dış ses açık kaynak Piper ses motoruyla yerelde üretilir.
+Hiçbir ücretli servis kullanılmaz.
 
 ## Akış
 
@@ -25,6 +30,33 @@ ve logo G majöre çözülen bir kadansla açılır. Kapanış sloganının her 
 (`build/cues.json`), bu yüzden her pop, tık ve whoosh ekrandaki hareketle aynı karede ve aynı yönde (pan)
 duyulur. Kuryenin motor sesi bile ekrandaki konumuna göre sağ-sol kayar. Miks -14 LUFS'tur.
 
+## Dış ses
+
+Dış ses, Piper `tr_TR-fahrettin-medium` modeliyle okunur. Model, CC0 lisanslı bir veri setiyle eğitilmiş derin ve canlı tonlu bir erkek sesidir.
+Her replik ekrandaki yazıyla aynı anda başlar. Konuşma sırasında müzik ~6 dB alçalır, dış ses müziğin ~9 dB üstünde durur.
+
+| Zaman | Replik | Ekranda |
+|---|---|---|
+| 2,45 sn | Eksik bir şey mi var? | Eksik / bir şey / mi var? |
+| 4,35 sn | Uygulamayı aç, | Yakınla'yı aç. |
+| 5,45 sn | sepetini doldur. | Sepetini doldur. |
+| 8,70 sn | Kurye yolda, canlı takip et. | Kuryeni canlı takip et |
+| 10,42 sn | Afşin ve köylerine, | AFŞİN · VE KÖYLERİ |
+| 12,05 sn | ortalama altmış dakikada kapında. | 60 · dakikada kapında. |
+| 13,95 sn | Dokuzdan yirmi üçe kadar buradayız. | 09:00 – 23:00 arası açığız |
+| 16,50 sn | Ne lazımsa, | Ne Lazımsa, (jingle ile hece hece) |
+| 17,48 sn | Yakınla! | Yakınla! (jingle ile hece hece) |
+| 18,50 sn | Hemen indir! | App Store · Google Play |
+
+Piper her okumada tonlamayı biraz farklı üretir. Bu yüzden `vo.py` her replik için 8 okuma alır ve hepsini Whisper ile
+yazıya döker. Metne en yakın okuma seçilir. Seçilen 10 okumanın 10'u da Whisper'da metinle birebir eşleşti (`vo/dis_ses.json`).
+Bitmiş miks, müzik altındayken de Whisper'da baştan sona doğru okunur.
+Denetimde net çıkmayan ifadeler değiştirildi:
+
+- "Kuryeni": Whisper "Kur'an'ı" diye duydu.
+- "Yakınla'yı aç": "Yakınlayaç" diye duyuldu.
+- "açığız": "açız" diye duyuldu.
+
 ## Marka kuralları
 
 - Slogan **"Ne Lazımsa, Yakınla!"**. Hizmet bölgesi **Afşin ve köyleri** ("Afşin ve köylerine sanal market hizmeti").
@@ -41,10 +73,23 @@ duyulur. Kuryenin motor sesi bile ekrandaki konumuna göre sağ-sol kayar. Miks 
 ## Yeniden üretmek
 
 ```bash
-./build.sh                         # → out/yakinla_showreel_20sn.mp4 (~4 dk)
+./build.sh                         # → out/yakinla_showreel_20sn.mp4 + _muzik.mp4 (~6 dk)
+SKIP_RENDER=1 ./build.sh           # sadece ses ve kodlama (kareler build/frames'te hazırsa, ~2 dk)
 ```
 
 Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy, ffmpeg.
+
+Dış ses `vo/dis_ses.wav` olarak repoda durur, `build.sh` onu doğrudan kullanır. Repliği değiştirmek için `vo.py`'deki
+`LINES` listesini düzenleyip sesi yeniden üretin:
+
+```bash
+pip install piper-tts sherpa-onnx
+curl -LO https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-tr_TR-fahrettin-medium.tar.bz2
+curl -LO https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-small.tar.bz2
+tar xjf vits-piper-tr_TR-fahrettin-medium.tar.bz2 && tar xjf sherpa-onnx-whisper-small.tar.bz2
+python3 vo.py vits-piper-tr_TR-fahrettin-medium/tr_TR-fahrettin-medium.onnx vo/dis_ses.wav \
+    --asr sherpa-onnx-whisper-small --takes 8   # ~2 dk
+```
 
 Önizleme için klasörü bir HTTP sunucusuyla açın (`npx serve .`):
 
@@ -57,7 +102,9 @@ Tek kare render almak için: `ONLY=0,120,300 STILLS=1 NODE_PATH="$(npm root -g)"
 |---|---|
 | `anim.js` | Animasyonun tamamı. `draw(g, t)` zamanın saf fonksiyonudur. Her kare 6 alt-örnekle (180° obtüratör) çizilir, böylece gerçek hareket bulanıklığı oluşur. |
 | `render.cjs` | Headless Chromium'da kareleri paralel olarak PNG'ye basar ve ses ipuçlarını yazar. |
-| `audio.py` | Müzik ve efekt sentezi, sidechain, yankı ve limit. |
-| `build.sh` | Uçtan uca üretim: kare render, ses, iki geçişli loudnorm, BT.709 x264. |
+| `audio.py` | Müzik ve efekt sentezi, sidechain, yankı ve limit. Dış ses verilirse onu ortaya koyar ve altındaki her şeyi alçaltır. |
+| `vo.py` | Türkçe dış ses: Piper ile sentez, Whisper ile en net okumayı seçme, yayın EQ'su ve kompresör, zamanlama. |
+| `vo/` | Hazır dış ses (`dis_ses.wav`, 48 kHz mono) ve seçilen okumaların raporu (`dis_ses.json`). |
+| `build.sh` | Uçtan uca üretim: kare render, ses (dış sesli ve dış sessiz), iki geçişli loudnorm, BT.709 x264. |
 | `fonts/` | Inter / Inter Display (SIL OFL 1.1, lisansı `fonts/LICENSE-Inter.txt`). |
 | `assets/` | Yakınla logo işareti (SVG). |

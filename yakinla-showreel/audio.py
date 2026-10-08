@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Yakınla showreel'inin müziği ve ses efektleri: tamamı sentez (numpy + scipy), dış örnek yok.
 
-Kullanım:  python3 audio.py build/cues.json build/audio.wav
+Kullanım:  python3 audio.py build/cues.json build/audio.wav [vo/dis_ses.wav]
 
 - Müzik 120 BPM, 4/4. Sahne geçişleri ölçü başlarına (0, 4, 8, 12, 16 sn) oturur.
   Akorlar: Em (giriş) → Em C G D (sipariş + teslimat) → C D (vaat, gerilim) → G (logo, çözülme).
@@ -9,6 +9,8 @@ Kullanım:  python3 audio.py build/cues.json build/audio.wav
   "Ya-kın-la!" G5 – B5 – D6 (ses logosu). Notalar anim.js'teki SLOGAN zamanlarıyla aynıdır.
 - Efektler, anim.js'in ürettiği cues.json'dan gelir; böylece her pop, tık ve whoosh
   ekrandaki hareketle aynı karede ve aynı yönde (pan) duyulur.
+- Dış ses (isteğe bağlı, vo.py üretir) ortaya yerleşir, müziğin ~9 dB üstünde durur. Konuştuğu
+  sürece müzik ve efektler ~6 dB alçalır (jingle sırasında daha az: zil notaları sloganla birlikte söyler).
 """
 import json
 import sys
@@ -514,8 +516,37 @@ def compose():
     return kicks
 
 
+def add_vo(L, R, path, irL, irR):
+    """Dış sesi ortaya koyar; konuştuğu yerde altındaki her şeyi alçaltır (ducking)."""
+    import wave
+    with wave.open(path) as w:
+        assert w.getframerate() == SR and w.getnchannels() == 1
+        v = np.frombuffer(w.readframes(w.getnframes()), np.int16) / 32768
+    vo = np.zeros(N); vo[:min(N, len(v))] = v[:N]
+    # zarf: 15 ms atak, 280 ms bırakma, 60 ms önden (alçalma konuşmadan hemen önce başlar)
+    a = np.abs(vo); env = np.empty(N); e = 0.0
+    ka, kr = np.exp(-1 / (0.015 * SR)), np.exp(-1 / (0.28 * SR))
+    for i in range(0, N, 32):  # 32 örneklik bloklar: yeterince hassas, hızlı
+        x = a[i:i + 32].max()
+        k = ka if x > e else kr
+        e = k * e + (1 - k) * x; env[i:i + 32] = e
+    env = np.roll(env, -ns(0.06)); env[-ns(0.06):] = 0
+    act = np.clip(env / (0.2 * env.max()), 0, 1)
+    t = tt(N)
+    depth = np.where((t > 16.4) & (t < 18.35), 0.28, 0.5)
+    bed_gain = 1 - depth * act
+    L, R = L * bed_gain, R * bed_gain
+    on = act > 0.5
+    bed = np.sqrt(np.mean(((L + R) / 2)[on] ** 2))
+    speech = np.sqrt(np.mean(vo[np.abs(vo) > 0.02 * np.abs(vo).max()] ** 2))
+    vo = vo * bed / speech * 10 ** (9 / 20)
+    room = 0.07 * signal.fftconvolve(vo, irL)[:N], 0.07 * signal.fftconvolve(vo, irR)[:N]
+    return L + vo + room[0], R + vo + room[1]
+
+
 def main():
     cues_path, out = sys.argv[1], sys.argv[2]
+    vo_path = sys.argv[3] if len(sys.argv) > 3 else None
     info = json.load(open(cues_path, encoding='utf-8'))
     cues = info['cues'] if isinstance(info, dict) else info
     kicks = compose()
@@ -548,6 +579,8 @@ def main():
 
     L = drums.L * 0.9 + (bass_bus.L * 0.85 + music.L) * duck + sfx.L * 0.9 + vL
     R = drums.R * 0.9 + (bass_bus.R * 0.85 + music.R) * duck + sfx.R * 0.9 + vR
+    if vo_path:
+        L, R = add_vo(L, R, vo_path, irL, irR)
     # alçak frekans temizliği + yumuşak limit
     L, R = hp(L, 28), hp(R, 28)
     peak = max(np.max(np.abs(L)), np.max(np.abs(R)))
