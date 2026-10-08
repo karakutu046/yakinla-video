@@ -15,17 +15,19 @@ dışarıdan alınmış bir ses dosyası yok.
 |---|---|---|---|
 | 0–4 sn | **Kanca** | `21:47` · cips paketi · **Atıştırmalıklar mı bitti?** → **Eksik bir şey mi var?** | Saat haneleri slot makinesi gibi dönerek yerine oturur. Cips paketi düşer, ters döner, içinden sadece birkaç kırıntı dökülür. Ekmek, yumurta, çay ve süt "?" rozetleriyle belirir. Mavi daire siler, kelimeler vuruşa çakılır. |
 | 4–8 sn | **Sipariş** | **Yakınla'yı aç. → Sepetini doldur. → Onayla, gelsin!** | Soru işaretinin noktası kopar, zıplar ve telefona dönüşür. Atıştırmalık kategorisi açık gelir. Cips, süt, yumurta ve çay sepete uçar, rozet 1-2-3-4 sayar, ✓ belirir ve kamera ✓'nin içine dalar. |
-| 8–12 sn | **Teslimat** | **Afşin'deki depomuzdan** · **Kuryeni canlı takip et** · **AFŞİN** | 3B gece haritası: sokak lambaları, ışıklı pencereler. Rota depodan eve çizilir, kurye ilerledikçe parlar. Kamera yatar, dağların arkasından AFŞİN yükselir, kapı zili çalar. |
-| 12–16 sn | **Vaat** | **ortalama 60 dakikada kapında.** · **Komşun kadar yakın.** + 3 kart | Sayaç 0'dan 60'a çıkar (her artışta tık sesi), dakika halkası dolar. Ekran yana kayar, kartlar gelir: 09:00–23:00 arası açığız · 3D Secure · atıştırmalıktan temizliğe. |
-| 16–20 sn | **Kapanış** | Logo · **Yakınla** · **Afşin'in marketi, cebinde.** · App Store · Google Play · yakinla.com | Kartlar tek noktaya çöker, pin uçtan büyür, halka çizilir, ibreler dönüp yerine oturur. Ses logosu G5–B5–D6 çalar ("Ya-kın-la"), konfeti patlar. |
+| 8–12 sn | **Teslimat** | **Afşin'deki depomuzdan** · **Kuryeni canlı takip et** · **AFŞİN ve KÖYLERİ** | 3B gece haritası: sokak lambaları, ışıklı pencereler. Rota depodan eve çizilir, kurye ilerledikçe parlar. Kamera yatar, dağların arkasından AFŞİN ve altında VE KÖYLERİ yükselir. Yamaçlardaki köyler tek tek yanar, her birinin üstünde bir teslimat pini belirir. Sonra kapı zili çalar. |
+| 12–16 sn | **Vaat** | **ortalama 60 dakikada kapında.** · **Komşun kadar yakın.** + 3 kart | Sayaç 0'dan 60'a çıkar (her artışta tık sesi), dakika halkası dolar. Ekran yana kayar, kartlar gelir: 09:00–23:00 arası açığız · Afşin ve köylerine sanal market hizmeti · 3D Secure ile güvenli ödeme. |
+| 16–20 sn | **Kapanış** | Logo · **Ne Lazımsa, Yakınla!** · Afşin ve köylerine sanal market · App Store · Google Play · www.yakinla.com | Kartlar tek noktaya çöker, pin uçtan büyür, halka çizilir, ibreler dönüp yerine oturur. Slogan jingle'la hece hece gelir: "Ne La-zım-sa," zıplar (B4–D5–E5–D5), "Ya-kın-la!" çakılır (G5–B5–D6 ses logosu). Son hecede konfeti patlar, ardından indirme hapları ve site adresi gelir. |
 
 **Ses:** 120 BPM. Akorlar Em → Em C G D → C D → G. Sahne geçişleri ölçü başlarına (4, 8, 12, 16. sn) denk gelir
-ve logo G majöre çözülen bir kadansla açılır. 130'dan fazla efekt ipucu doğrudan `anim.js`'ten üretilir
+ve logo G majöre çözülen bir kadansla açılır. Kapanış sloganının her hecesi bir notaya denk gelir (`anim.js` içindeki `SLOGAN` ile
+`audio.py` içindeki `jingle` aynı zamanları kullanır), böylece yazı ve melodi birlikte "Ne Lazımsa, Yakınla!" der. 130'dan fazla efekt ipucu doğrudan `anim.js`'ten üretilir
 (`build/cues.json`), bu yüzden her pop, tık ve whoosh ekrandaki hareketle aynı karede ve aynı yönde (pan)
 duyulur. Kuryenin motor sesi bile ekrandaki konumuna göre sağ-sol kayar. Miks -14 LUFS'tur.
 
 ## Marka kuralları
 
+- Slogan **"Ne Lazımsa, Yakınla!"**. Hizmet bölgesi **Afşin ve köyleri** ("Afşin ve köylerine sanal market hizmeti").
 - Sadece sitedeki güvenli ifadeler kullanıldı: "ortalama 60 dakikada kapında", "Afşin'deki depomuzdan",
   "kuryeni canlı takip et", "3D Secure ile güvenli ödeme", "App Store / Google Play". Çalışma saatleri **09:00 – 23:00**;
   kancadaki saat (21:47) bu yüzden kapanıştan önce, ortalama teslimat da 23:00'ten önce biter.

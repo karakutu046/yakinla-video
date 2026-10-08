@@ -5,7 +5,8 @@ Kullanım:  python3 audio.py build/cues.json build/audio.wav
 
 - Müzik 120 BPM, 4/4. Sahne geçişleri ölçü başlarına (0, 4, 8, 12, 16 sn) oturur.
   Akorlar: Em (giriş) → Em C G D (sipariş + teslimat) → C D (vaat, gerilim) → G (logo, çözülme).
-- Ses logosu: logonun ibreleri otururken çalan üç nota, G5 – B5 – D6 ("Ya-kın-la").
+- Jingle: kapanış sloganı hece hece çalınır. "Ne La-zım-sa," B4 – D5 – E5 – D5,
+  "Ya-kın-la!" G5 – B5 – D6 (ses logosu). Notalar anim.js'teki SLOGAN zamanlarıyla aynıdır.
 - Efektler, anim.js'in ürettiği cues.json'dan gelir; böylece her pop, tık ve whoosh
   ekrandaki hareketle aynı karede ve aynı yönde (pan) duyulur.
 """
@@ -484,24 +485,32 @@ def compose():
     riser = sine(300 + 900 * tr ** 2, n) * tr ** 2 * 0.18 + sweep_bp(noise(n), 400, 9000, 1.6, 0.8) * tr ** 2 * 0.5
     send(sfx, riser, 15.0, 0.6)
 
-    # Kapanış (16–20): G majör, ses logosu, son vuruş
+    # Kapanış (16–20): G majör. Jingle "Ne La-zım-sa, Ya-kın-la!" hece hece, 18.0'da çözülür
     K(16.0, 1.1)
     send(music, pad(f(*CH['G']) + [NOTE['D5']], 3.6, cut=3200, att=0.02, rel=1.2), 16.0, 1.15)
     send(bass_bus, bass_note(NOTE['G2'], 0.9, 500), 16.0, 0.6)
-    for t, nm in ((16.5, 'G5'), (16.75, 'B5'), (17.0, 'D6')):
-        send(music, bell(NOTE[nm], 2.8, 3.5, 2.2, 1.4), t, 0.36, 0, rev=0.5)
-        send(music, pluck(NOTE[nm] / 2, 0.5, 1.2), t, 0.16, 0, rev=0.3)
-    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), 17.0, 0.12, 0.3, rev=0.6)
+    jingle = [(16.5, 'B4', 0.26), (16.75, 'D5', 0.3), (17.0, 'E5', 0.3), (17.25, 'D5', 0.26),
+              (17.5, 'G5', 0.34), (17.75, 'B5', 0.36), (18.0, 'D6', 0.4)]
+    for t, nm, v in jingle:
+        last = t == 18.0
+        send(music, bell(NOTE[nm], 3.0 if last else 1.6, 3.5, 2.2, 1.2 if last else 2.2), t, v, 0, rev=0.5)
+        send(music, pluck(NOTE[nm] / 2, 0.8 if last else 0.4, 1.2), t, 0.16, 0, rev=0.3)
+    send(music, pad(f('G4', 'B4', 'D5'), 1.0, cut=2400, att=0.2, rel=0.4), 17.0, 0.35)
     K(17.0, 0.7)
-    send(bass_bus, bass_note(NOTE['G2'], 0.6, 500), 17.0, 0.4)
-    for i in range(16):
+    send(bass_bus, bass_note(NOTE['E2'], 0.45, 500), 17.0, 0.35)
+    send(bass_bus, bass_note(NOTE['D2'], 0.45, 500), 17.5, 0.4)
+    for i in range(8):
         t = 17.0 + i * 0.125
         send(drums, hat(), t, 0.08 if i % 2 else 0.05, 0.3 if i % 2 else -0.3)
-    K(18.0, 0.8)
+    K(18.0, 0.9)
+    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), 18.0, 0.12, 0.3, rev=0.6)
     for nm in ('G4', 'B4', 'D5', 'G5'):
-        send(music, pluck(NOTE[nm], 1.2, 1.0), 18.0, 0.18, 0, rev=0.5)
-    send(music, bell(NOTE['G5'], 2.4, 3.5, 1.6, 1.6), 18.0, 0.16, 0, rev=0.5)
-    send(bass_bus, bass_note(NOTE['G2'], 1.0, 400), 18.0, 0.5)
+        send(music, pluck(NOTE[nm], 1.4, 1.0), 18.0, 0.18, 0, rev=0.5)
+    send(music, pad(f(*CH['G']) + [NOTE['G4'], NOTE['D5']], 2.0, cut=3600, att=0.01, rel=0.8), 18.0, 0.9)
+    send(bass_bus, bass_note(NOTE['G2'], 1.2, 400), 18.0, 0.55)
+    for i in range(8):
+        t = 18.0 + i * 0.125
+        send(drums, hat(), t, 0.07 if i % 2 else 0.045, 0.3 if i % 2 else -0.3)
     return kicks
 
 
