@@ -1,0 +1,92 @@
+[
+ {
+  "t0": 2.45,
+  "t1": 3.537,
+  "text": "Eksik bir şey mi var?",
+  "length_scale": 1.0,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Eksik bir şey mi var?"
+ },
+ {
+  "t0": 4.35,
+  "t1": 5.188,
+  "text": "Uygulamayı aç,",
+  "length_scale": 1.0,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Uygulamayı aç."
+ },
+ {
+  "t0": 5.45,
+  "t1": 6.371,
+  "text": "sepetini doldur.",
+  "length_scale": 1.0,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "sepetini doldur."
+ },
+ {
+  "t0": 8.7,
+  "t1": 10.375,
+  "text": "Kurye yolda, canlı takip et.",
+  "length_scale": 0.95,
+  "take": "2/8",
+  "score": 1.0,
+  "whisper": "Kurye Yolda canlı takip et."
+ },
+ {
+  "t0": 10.42,
+  "t1": 11.521,
+  "text": "Afşin ve köylerine,",
+  "length_scale": 1.0,
+  "take": "2/8",
+  "score": 1.0,
+  "whisper": "Afşin ve köylerine."
+ },
+ {
+  "t0": 12.05,
+  "t1": 13.775,
+  "text": "ortalama altmış dakikada kapında.",
+  "length_scale": 1.0,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Ortalama 60 dakikada kapında."
+ },
+ {
+  "t0": 13.95,
+  "t1": 15.849,
+  "text": "Dokuzdan yirmi üçe kadar buradayız.",
+  "length_scale": 0.95,
+  "take": "5/8",
+  "score": 1.0,
+  "whisper": "9'dan 23'e kadar buradayız."
+ },
+ {
+  "t0": 16.5,
+  "t1": 17.268,
+  "text": "Ne lazımsa,",
+  "length_scale": 1.15,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Ne lazımsa."
+ },
+ {
+  "t0": 17.48,
+  "t1": 18.186,
+  "text": "Yakınla!",
+  "length_scale": 1.3,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Yakınla."
+ },
+ {
+  "t0": 18.5,
+  "t1": 19.182,
+  "text": "Hemen indir!",
+  "length_scale": 1.0,
+  "take": "1/8",
+  "score": 1.0,
+  "whisper": "Hemen indir."
+ }
+]
