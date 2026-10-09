@@ -3,7 +3,7 @@
 # Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy, ffmpeg.
 set -euo pipefail
 cd "$(dirname "$0")"
-OUT=${1:-out/qrpersonel_showreel_15sn.mp4}
+OUT=${1:-out/qrpersonel_showreel_30sn.mp4}
 mkdir -p build/frames "$(dirname "$OUT")"
 
 [ -n "${SKIP_RENDER:-}" ] || NODE_PATH="${NODE_PATH:-$(npm root -g)}" node render.cjs build/frames
@@ -21,6 +21,6 @@ ffmpeg -y -hide_banner -loglevel warning \
   -af "$LN,aresample=48000" \
   -c:v libx264 -preset slow -crf 17 -tune animation -x264-params aq-mode=3 -profile:v high -level 4.2 -pix_fmt yuv420p \
   -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv \
-  -c:a aac -b:a 256k -ar 48000 -movflags +faststart -t 15 "$OUT"
+  -c:a aac -b:a 256k -ar 48000 -movflags +faststart -t 30 "$OUT"
 
 ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height,r_frame_rate -of compact "$OUT"

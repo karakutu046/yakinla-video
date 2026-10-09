@@ -3,9 +3,9 @@
 
 Kullanım:  python3 audio.py build/cues.json build/audio.wav
 
-- 128 BPM, 4/4, 8 ölçü = tam 15 sn. Sahne geçişleri ölçü başlarına oturur.
-  Akorlar: Am (saat) → Am (pikseller) → F (tarama, filtreli) → Am (DROP) → F → G
-  → Dm/G (kırılma, logo inşası) → C (kapanış, çözülme).
+- 128 BPM, 4/4, 16 ölçü = tam 30 sn. Sahne geçişleri ölçü başlarına oturur.
+  Akorlar: Am Am (saat) → Am F (pikseller) → F G (tarama, boğuk) → Am F (DROP, giriş)
+  → C G (zaman atlaması, çıkış) → Am F G (veri) → Dm/G (kırılma, logo) → C (kapanış) → F/C (son).
 - Ses logosu: logo oturduğunda G5 → C6 → E6 → G6 yükselen çan arpeji.
 - Efektler, anim.js'in ürettiği cues.json'dan gelir; her tık, whoosh ve bip ekrandaki
   hareketle aynı karede ve aynı yönde (pan) duyulur.
@@ -18,7 +18,7 @@ import numpy as np
 from scipy import signal
 
 SR = 48000
-DUR = 15.0
+DUR = 30.0
 N = int(SR * (DUR + 2.5))
 BEAT = 60 / 128
 BAR = 4 * BEAT
@@ -396,7 +396,7 @@ NOTE = {'A1': 55.0, 'F1': 43.65, 'G1': 49.0, 'C2': 65.41, 'D2': 73.42, 'A2': 110
         'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.0, 'A3': 220.0, 'B3': 246.94,
         'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.0, 'A4': 440.0, 'B4': 493.88,
         'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.0, 'B5': 987.77,
-        'C6': 1046.5, 'E6': 1318.5, 'G6': 1568.0}
+        'C6': 1046.5, 'D6': 1174.66, 'E6': 1318.5, 'G6': 1568.0}
 CH = {'Am': ['A3', 'C4', 'E4', 'A4'], 'F': ['F3', 'A3', 'C4', 'F4'], 'G': ['G3', 'B3', 'D4', 'G4'],
       'Dm': ['D3', 'F3', 'A3', 'D4'], 'C': ['C4', 'E4', 'G4', 'C5']}
 ROOT = {'Am': 'A1', 'F': 'F1', 'G': 'G1', 'Dm': 'D2', 'C': 'C2'}
@@ -412,94 +412,143 @@ def compose():
         kicks.append(t)
         send(bus or drums, kick(), t, 0.95 * v)
 
-    # 0. ölçü — saat: karanlık Am pad'i, alt drone, yarım zamanlı nabız
-    send(music, pad(f(*CH['Am']), BAR, cut=700, att=0.6, rel=0.3), 0.0, 0.85)
-    send(bass_bus, bass_note(NOTE['A1'], BAR, 220) * 0.6, 0.0, 0.5)
-    for b in (0, 2):
-        send(drums, kick(110, 45, 0.35, 0.3), at(0, b), 0.4)
-
-    # 1. ölçü — pikseller: darbe, parlak Am, kare dalga arpeji (uçan pikseller)
-    K(at(1), 1.05)
-    send(music, pad(f(*CH['Am']), BAR, cut=2600, att=0.02, rel=0.3), at(1), 0.9)
-    send(bass_bus, bass_note(NOTE['A1'], 0.8, 380), at(1), 0.75)
-    K(at(1, 2), 0.7)
-    for i in range(12):  # 16'lıklar, 2.344'ten 3.75'e
-        t = at(1, 1) + i * BEAT / 4
-        nm = ARP['Am'][[0, 1, 2, 3, 2, 3, 1, 2, 0, 2, 3, 1][i]]
-        send(music, sq_pluck(NOTE[nm], 0.16, 1500 + 400 * i), t, 0.16, -0.35 if i % 2 else 0.35, rev=0.25)
-    for i in range(6):
-        send(drums, hat(), at(1, 1) + i * BEAT / 2, 0.14, 0.3)
-
-    # 2. ölçü — tarama: F, boğuk dört vuruş (drop'a gerilim), arpej, rulo
-    send(music, pad(f(*CH['F']), BAR, cut=1500, att=0.05, rel=0.2), at(2), 0.85)
-    for b in range(3):
-        K(at(2, b), 0.85, muffled)
-        send(bass_bus, bass_note(NOTE['F1'], 0.2, 300), at(2, b + 0.5), 0.55)
-    for i in range(12):
-        t = at(2) + i * BEAT / 4
-        nm = ARP['F'][[0, 1, 2, 3][i % 4]]
-        send(music, sq_pluck(NOTE[nm], 0.14, 1200 + 150 * i), t, 0.12, -0.3 if i % 2 else 0.3, rev=0.2)
-    for i in range(10):
-        send(drums, hat(), at(2) + i * BEAT / 4 + BEAT / 8, 0.07, -0.2)
-    roll = [at(2, 3) + i * BEAT / 8 for i in range(8)]
-    for j, t in enumerate(roll):
-        send(drums, snare(0.25 + 0.75 * j / len(roll)), t, 0.38, 0, rev=0.2)
-
-    # 3–5. ölçüler — DROP ve groove: Am → F → G
-    for bar, ch in ((3, 'Am'), (4, 'F'), (5, 'G')):
-        send(music, pad(f(*CH[ch]), BAR, cut=3000, att=0.02, rel=0.25), at(bar), 0.85)
+    def groove(bar, ch, skip_last=False, clap_v=0.55, hats=True):
+        """Tam ölçü: dört vuruş kick, 2 ve 4'te clap, offbeat bas, akor darbeleri, 16'lık hi-hat."""
         root = NOTE[ROOT[ch]]
         for b in range(4):
-            if bar == 5 and b == 3:
-                continue  # 10.78–11.25: marka geçişi için nefes
+            if skip_last and b == 3:
+                continue
             t = at(bar, b)
             K(t)
             if b % 2 == 1:
-                send(drums, clap(), t, 0.55, 0, rev=0.25)
+                send(drums, clap(), t, clap_v, 0, rev=0.25)
             send(bass_bus, bass_note(root * 2, 0.2, 650), t + BEAT / 2, 0.75)
             send(bass_bus, bass_note(root, 0.16, 400), t + BEAT * 0.75, 0.4)
-        # offbeat akor darbeleri
-        for b in range(4):
-            if bar == 5 and b == 3:
-                continue
             for nm in CH[ch][1:]:
                 send(music, pluck(NOTE[nm] * 2, 0.22, 1.3), at(bar, b + 0.5), 0.1, 0, rev=0.25)
-        for i in range(16):
-            if bar == 5 and i >= 12:
-                break
-            send(drums, hat(i % 4 == 2), at(bar) + i * BEAT / 4, 0.2 if i % 2 else 0.1, 0.3 if i % 2 else -0.3)
-    # drop'ta kanca: yükselen piksel motifi
-    for i, nm in enumerate(['E5', 'A5', 'C6', 'A5', 'E5', 'C5', 'E5', 'A5']):
-        send(music, sq_pluck(NOTE[nm], 0.2, 4000), at(3) + i * BEAT / 2, 0.14, 0, rev=0.3)
+        if hats:
+            for i in range(12 if skip_last else 16):
+                send(drums, hat(i % 4 == 2), at(bar) + i * BEAT / 4, 0.2 if i % 2 else 0.1, 0.3 if i % 2 else -0.3)
 
-    # 6. ölçü — kırılma: Dm → G, gözler oturdukça çanlar, sonra trampet rulosu
-    send(music, pad(f(*CH['Dm']), BAR / 2, cut=1900, att=0.03, rel=0.3), at(6), 0.9)
-    send(music, pad(f(*CH['G']), BAR / 2, cut=2400, att=0.03, rel=0.3), at(6, 2), 0.9)
-    send(bass_bus, bass_note(NOTE['D2'], BAR / 2 - 0.05, 300), at(6), 0.5)
-    send(bass_bus, bass_note(NOTE['G1'], BAR / 2, 300), at(6, 2), 0.5)
-    for t, nm in ((at(6, 1), 'D5'), (at(6, 1.5), 'F5'), (at(6, 2), 'A5'), (at(6, 2.5), 'B5')):
+    def hook(bar, notes, gain=0.14):
+        for i, nm in enumerate(notes):
+            send(music, sq_pluck(NOTE[nm], 0.2, 4000), at(bar) + i * BEAT / 2, gain, 0, rev=0.3)
+
+    def sq_arp(bar, ch, pattern, gain, cut0, cut_step, start_beat=0.0, n=16):
+        for i in range(n):
+            t = at(bar, start_beat) + i * BEAT / 4
+            nm = ARP[ch][pattern[i % len(pattern)]]
+            send(music, sq_pluck(NOTE[nm], 0.16, cut0 + cut_step * i), t, gain, -0.35 if i % 2 else 0.35, rev=0.25)
+
+    # 0–1. ölçü — saat: karanlık Am, alt drone, yarım zamanlı nabız; ekip geldikçe açılır
+    send(music, pad(f(*CH['Am']), BAR, cut=600, att=0.6, rel=0.3), at(0), 0.85)
+    send(music, pad(f(*CH['Am']), BAR, cut=1100, att=0.1, rel=0.3), at(1), 0.85)
+    send(bass_bus, bass_note(NOTE['A1'], 2 * BAR, 220) * 0.6, at(0), 0.5)
+    for bar in (0, 1):
+        for b in (0, 2):
+            send(drums, kick(110, 45, 0.35, 0.3), at(bar, b), 0.4)
+    for i in range(8):
+        send(drums, hat(), at(1) + i * BEAT / 2, 0.06 + 0.02 * i, 0.3 if i % 2 else -0.3)
+
+    # 2–3. ölçü — pikseller: darbe, parlak Am, uçan piksellere kare dalga arpeji, F'de gözler
+    K(at(2), 1.05)
+    send(music, pad(f(*CH['Am']), BAR, cut=2600, att=0.02, rel=0.3), at(2), 0.9)
+    send(bass_bus, bass_note(NOTE['A1'], 0.8, 380), at(2), 0.75)
+    K(at(2, 2), 0.7)
+    sq_arp(2, 'Am', [0, 1, 2, 3, 2, 3, 1, 2], 0.15, 1400, 120, start_beat=2, n=8)
+    send(music, pad(f(*CH['F']), BAR, cut=2200, att=0.05, rel=0.3), at(3), 0.85)
+    send(bass_bus, bass_note(NOTE['F1'], 0.9, 350), at(3), 0.6)
+    sq_arp(3, 'F', [0, 1, 2, 3, 2, 1], 0.14, 2400, 60, n=12)
+    K(at(3), 0.75); K(at(3, 2), 0.7)
+    for i in range(14):
+        send(drums, hat(), at(2, 2) + i * BEAT / 2, 0.12, 0.3)
+
+    # 4–5. ölçü — tarama: F → G, boğuk dört vuruş (drop'a gerilim), arpej, trampet rulosu
+    for bar, ch in ((4, 'F'), (5, 'G')):
+        send(music, pad(f(*CH[ch]), BAR, cut=1500, att=0.05, rel=0.2), at(bar), 0.85)
+        for b in range(4 if bar == 4 else 3):
+            K(at(bar, b), 0.85, muffled)
+            send(bass_bus, bass_note(NOTE[ROOT[ch]], 0.2, 300), at(bar, b + 0.5), 0.55)
+        sq_arp(bar, ch, [0, 1, 2, 3], 0.11, 1100, 60, n=16 if bar == 4 else 12)
+        for i in range(16 if bar == 4 else 12):
+            send(drums, hat(), at(bar) + i * BEAT / 4 + BEAT / 8, 0.07, -0.2)
+    roll = [at(5, 3) + i * BEAT / 8 for i in range(8)]
+    for j, t in enumerate(roll):
+        send(drums, snare(0.25 + 0.75 * j / len(roll)), t, 0.38, 0, rev=0.2)
+
+    # 6–7. ölçü — DROP (giriş): Am → F, piksel kancası
+    for bar, ch in ((6, 'Am'), (7, 'F')):
+        send(music, pad(f(*CH[ch]), BAR, cut=3000, att=0.02, rel=0.25), at(bar), 0.85)
+        groove(bar, ch)
+    hook(6, ['E5', 'A5', 'C6', 'A5', 'E5', 'C5', 'E5', 'A5'])
+    hook(7, ['F5', 'A5', 'C6', 'A5', 'F5', 'C5', 'F5', 'A5'])
+
+    # 8. ölçü — zaman atlaması: C, yarım zaman, iki oktav yükselen arpej (saatler akar)
+    send(music, pad(f(*CH['C']), BAR, cut=2400, att=0.05, rel=0.25), at(8), 0.85)
+    K(at(8)); K(at(8, 2), 0.8)
+    send(drums, clap(), at(8, 1), 0.4, 0, rev=0.3)
+    send(bass_bus, bass_note(NOTE['C2'], BAR * 0.7, 420), at(8), 0.6)
+    up = ['C4', 'E4', 'G4', 'C5', 'E5', 'G5', 'C6', 'E6']
+    for i in range(12):
+        nm = up[min(i, len(up) - 1)] if i < 8 else up[7 - (i - 8) % 2]
+        send(music, pluck(NOTE[nm], 0.25, 0.8 + i * 0.08), at(8) + i * BEAT / 4, 0.12, -0.4 if i % 2 else 0.4, rev=0.3)
+    for i in range(12):
+        send(drums, hat(), at(8) + i * BEAT / 4, 0.05 + 0.01 * i, 0.25)
+
+    # 9. ölçü — çıkış: G, groove geri gelir
+    send(music, pad(f(*CH['G']), BAR, cut=3000, att=0.02, rel=0.25), at(9), 0.85)
+    groove(9, 'G')
+    hook(9, ['G5', 'B5', 'D6', 'B5', 'G5', 'D5', 'G5', 'B5'], 0.11)
+
+    # 10–12. ölçü — veri: Am → F → G, son vuruşta marka geçişi için nefes
+    for bar, ch in ((10, 'Am'), (11, 'F'), (12, 'G')):
+        send(music, pad(f(*CH[ch]), BAR, cut=3200, att=0.02, rel=0.25), at(bar), 0.85)
+        groove(bar, ch, skip_last=(bar == 12))
+    for i in range(16):  # veri arpeji
+        nm = ARP['Am'][[0, 1, 2, 3, 2, 1, 2, 3][i % 8]]
+        send(music, pluck(NOTE[nm] * 2, 0.22, 1.1), at(10) + i * BEAT / 4, 0.09, -0.4 if i % 2 else 0.4, rev=0.3)
+    hook(11, ['F5', 'A5', 'C6', 'A5', 'F5', 'C5', 'F5', 'A5'], 0.12)
+    hook(12, ['G5', 'B5', 'D6', 'B5', 'G5', 'D5'], 0.12)
+
+    # 13. ölçü — kırılma: Dm → G, gözler oturdukça çanlar, trampet rulosu
+    send(music, pad(f(*CH['Dm']), BAR / 2, cut=1900, att=0.03, rel=0.3), at(13), 0.9)
+    send(music, pad(f(*CH['G']), BAR / 2, cut=2400, att=0.03, rel=0.3), at(13, 2), 0.9)
+    send(bass_bus, bass_note(NOTE['D2'], BAR / 2 - 0.05, 300), at(13), 0.5)
+    send(bass_bus, bass_note(NOTE['G1'], BAR / 2, 300), at(13, 2), 0.5)
+    for t, nm in ((at(13, 1), 'D5'), (at(13, 1.5), 'F5'), (at(13, 2), 'A5'), (at(13, 2.5), 'B5')):
         send(music, bell(NOTE[nm], 1.4, 3.5, 1.8, 2.4), t, 0.2, 0, rev=0.4)
-    roll = [at(6, 3) + i * BEAT / 4 for i in range(2)] + [at(6, 3.5) + i * BEAT / 8 for i in range(4)]
+    roll = [at(13, 3) + i * BEAT / 4 for i in range(2)] + [at(13, 3.5) + i * BEAT / 8 for i in range(4)]
     for j, t in enumerate(roll):
         send(drums, snare(0.3 + 0.7 * j / len(roll)), t, 0.42, 0, rev=0.25)
     n = ns(BEAT * 2); tr = tt(n) / (BEAT * 2)
     riser = sine(300 + 1200 * tr ** 2, n) * tr ** 2 * 0.16 + sweep_bp(noise(n), 400, 9000, 1.6, 0.8) * tr ** 2 * 0.45
-    send(sfx, riser, at(6, 2), 0.55)
+    send(sfx, riser, at(13, 2), 0.55)
 
-    # 7. ölçü — kapanış: C majör, ses logosu G5 → C6 → E6 → G6
-    K(at(7), 1.15)
-    send(music, pad(f(*CH['C']) + [NOTE['G5']], 1.4, cut=3400, att=0.02, rel=0.9), at(7), 1.15)
-    send(bass_bus, bass_note(NOTE['C2'], 1.1, 500), at(7), 0.65)
-    send(music, bell(NOTE['G5'], 2.0, 3.5, 2.0, 1.8), at(6, 3.5), 0.22, 0, rev=0.4)
+    # 14. ölçü — kapanış: C majör, ses logosu G5 → C6 → E6 → G6
+    K(at(14), 1.15)
+    send(music, pad(f(*CH['C']) + [NOTE['G5']], BAR, cut=3400, att=0.02, rel=0.6), at(14), 1.1)
+    send(bass_bus, bass_note(NOTE['C2'], 1.1, 500), at(14), 0.65)
+    send(music, bell(NOTE['G5'], 2.0, 3.5, 2.0, 1.8), at(13, 3.5), 0.22, 0, rev=0.4)
     for k, nm in enumerate(('C6', 'E6', 'G6')):
-        send(music, bell(NOTE[nm], 2.8, 3.5, 2.2, 1.5), at(7, k * 0.5), 0.34 - k * 0.05, (k - 1) * 0.25, rev=0.5)
-        send(music, pluck(NOTE[nm] / 2, 0.5, 1.2), at(7, k * 0.5), 0.14, 0, rev=0.3)
+        send(music, bell(NOTE[nm], 2.8, 3.5, 2.2, 1.5), at(14, k * 0.5), 0.34 - k * 0.05, (k - 1) * 0.25, rev=0.5)
+        send(music, pluck(NOTE[nm] / 2, 0.5, 1.2), at(14, k * 0.5), 0.14, 0, rev=0.3)
     for nm in ('C4', 'E4', 'G4', 'C5'):
-        send(music, pluck(NOTE[nm], 1.2, 1.0), at(7, 2), 0.14, 0, rev=0.5)
-    K(at(7, 2), 0.6)
-    send(bass_bus, bass_note(NOTE['C2'], 0.8, 400), at(7, 2), 0.45)
-    for i in range(12):
-        send(drums, hat(), at(7) + i * BEAT / 4, 0.07 if i % 2 else 0.04, 0.3 if i % 2 else -0.3)
+        send(music, pluck(NOTE[nm], 1.2, 1.0), at(14, 2), 0.14, 0, rev=0.5)
+    K(at(14, 2), 0.6)
+    send(bass_bus, bass_note(NOTE['C2'], 0.8, 400), at(14, 2), 0.45)
+    for i in range(16):
+        send(drums, hat(), at(14) + i * BEAT / 4, 0.07 if i % 2 else 0.04, 0.3 if i % 2 else -0.3)
+
+    # 15. ölçü — son: F → C (plagal "amin" kadansı), QR kartına çanlar, sakin kapanış
+    send(music, pad(f(*CH['F']) + [NOTE['G5']], BAR / 2, cut=2600, att=0.08, rel=0.4), at(15), 0.95)
+    send(music, pad(f(*CH['C']) + [NOTE['E5']], BAR / 2, cut=2800, att=0.08, rel=1.0), at(15, 2), 1.0)
+    send(bass_bus, bass_note(NOTE['F1'], BAR / 2 - 0.05, 350), at(15), 0.45)
+    send(bass_bus, bass_note(NOTE['C2'], BAR / 2, 350), at(15, 2), 0.45)
+    K(at(15), 0.55); K(at(15, 2), 0.45)
+    for i in range(8):
+        send(drums, hat(), at(15) + i * BEAT / 2, 0.05, 0.3 if i % 2 else -0.3)
+    for k, nm in enumerate(('E6', 'G6', 'C6')):
+        send(music, bell(NOTE[nm], 2.4, 3.5, 1.6, 1.8), at(15, 2 + k * 0.5), 0.16, (k - 1) * 0.3, rev=0.5)
     return kicks
 
 
@@ -538,7 +587,7 @@ def main():
     peak = max(np.max(np.abs(L)), np.max(np.abs(R)))
     L, R = L / peak * 1.25, R / peak * 1.25
     L, R = np.tanh(L) / np.tanh(1.25), np.tanh(R) / np.tanh(1.25)
-    # son: 14.3 sn'den itibaren yumuşak kapanış, tam 15.0 sn'de kes
+    # son: 29.3 sn'den itibaren yumuşak kapanış, tam 30.0 sn'de kes
     n = ns(DUR)
     L, R = L[:n], R[:n]
     fade = np.clip((DUR - tt(n)) / 0.7, 0, 1) ** 1.5

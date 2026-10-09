@@ -7,15 +7,17 @@
  * örnek sayısı otomatik artar.
  *
  * Müzik 128 BPM: 1 vuruş = 0,469 sn, 1 ölçü = 1,875 sn, 8 ölçü = tam 15 sn.
- *   0      01 ZAMAN   08:59:56, saniyeler vuruşla akar; elde zinciri 09:00:00'ı çakar
- *   1.875  02 PİKSEL  saatin pikselleri uçup gerçek, okutulabilir bir QR koda dönüşür
- *   3.75   03 OKUT    vizör kilitlenir, lazer tarar, modüller 3B döner, kimlik çözülür
- *   5.625  04 GİRİŞ   QR onay işaretine çöker; kamera geri çekilir, her şey bir telefonmuş
- *   7.5    05 VERİ    QR 3B bir şehre yükselir; küpler grafiğe dizilir, kamera ortografiğe iner
- *   11.25  06 MARKA   logo inşası, QR Personel, www.qrpersonel.com
+ * 16 ölçü = tam 30 sn. Her bölüm bir ölçü başında açılır:
+ *   0      01 ZAMAN   08:59:52, saniyeler vuruşla akar, ekip tek tek gelir; elde zinciri 09:00:00'ı çakar
+ *   3.75   02 PİKSEL  saatin pikselleri uçup gerçek, okutulabilir bir QR koda dönüşür
+ *   7.5    03 OKUT    vizör kilitlenir, lazer tarar, modüller 3B döner, kimlik çözülür
+ *   11.25  04 GİRİŞ   QR onay işaretine çöker; kamera geri çekilir, her şey bir telefonmuş
+ *   15     05 ÇIKIŞ   09:00 → 18:04 zaman atlaması, gün batımı, çıkışta okutma, çalışma süresi halkası
+ *   18.75  06 VERİ    QR 3B bir şehre yükselir; küpler grafiğe, sonra aylık puantaj takvimine dizilir
+ *   24.375 07 MARKA   logo inşası, QR Personel, www.qrpersonel.com, okutulabilir QR ile kapanış
  */
 
-const W = 1920, H = 1080, FPS = 60, DUR = 15;
+const W = 1920, H = 1080, FPS = 60, DUR = 30;
 const FRAMES = FPS * DUR;
 const SHUTTER = 0.5;
 const TAU = Math.PI * 2;
@@ -25,32 +27,38 @@ const at = (bar, beat = 0) => +(bar * BAR + beat * BEAT).toFixed(5);
 const C = {
   ink: '#070B16', navy: '#101934', glass: '#141F3F',
   blue: '#2F5BFF', blueL: '#5C80FF', blueD: '#1D3BD1', blueXL: '#B7C7FF',
-  cyan: '#3FD8FF', mint: '#19E3A1', mintD: '#0FB884', coral: '#FF5C6C',
+  cyan: '#3FD8FF', mint: '#19E3A1', mintD: '#0FB884', coral: '#FF5C6C', amber: '#FFB547',
   white: '#FFFFFF', paper: '#F3F6FF', slate: '#8C98BC', qink: '#0A1024', card: '#EEF2FB',
 };
 
 /* ───────────────────────── zaman çizelgesi (hepsi vuruşa oturur) ───────────────────────── */
 const T = {
-  tick: [0, at(0, 1), at(0, 2), at(0, 3)],
-  carry: [at(0, 3.5), at(0, 3.625), at(0, 3.75), at(0, 3.875), at(1)], // 1/32'lik elde zinciri
-  nine: at(1),
-  fly: at(1, 1),
-  eyes: [at(1, 2), at(1, 2.5), at(1, 3)],
-  card0: at(1, 3) + 0.04, card1: at(2) - 0.05,
-  scan: at(2),
-  laser0: at(2, 1), laser1: at(2, 3),
-  ok: at(2, 3),
-  drop: at(3),
-  okut: at(3, 1), basla: at(3, 2),
-  whip: at(4),
-  q: [at(4, 1), at(4, 2), at(4, 3)],
-  sort: at(5),
-  answer: at(5, 2),
-  wipe: at(6),
-  leyes: [at(6, 1), at(6, 1.5), at(6, 2)],
-  person: at(6, 2.5),
-  slide: at(6, 3),
-  final: at(7),
+  ticks: Array.from({ length: 8 }, (_, i) => at(0, i)),                    // 08:59:52 → :59
+  carry: [at(1, 3.5), at(1, 3.625), at(1, 3.75), at(1, 3.875), at(2)],    // 1/32'lik elde zinciri
+  nine: at(2),
+  fly: at(2, 2),
+  eyes: [at(3, 1), at(3, 1.5), at(3, 2)],
+  card0: at(3, 2.5), card1: at(4) - 0.05,
+  scan: at(4),
+  laser0: at(4, 2), laser1: at(5, 2),
+  ok: at(5, 3),
+  drop: at(6),
+  okut: at(6, 1), basla: at(6, 2),
+  count: at(7),
+  whip: at(8),
+  lapse0: at(8), lapse1: at(8, 3),
+  out: at(9), outOk: at(9, 1),
+  data: at(10),
+  q: [at(10, 1), at(10, 2), at(10, 3)],
+  sort: at(11),
+  answer: at(11, 2),
+  cal: at(12), calText: at(12, 1),
+  wipe: at(13),
+  leyes: [at(13, 1), at(13, 1.5), at(13, 2)],
+  person: at(13, 2.5),
+  slide: at(13, 3),
+  final: at(14),
+  cta: at(15),
 };
 
 /* ───────────────────────── yardımcılar ───────────────────────── */
@@ -215,21 +223,22 @@ Q2.card = (QN + 6) * Q2.s; // 3 modüllük sessiz bölge
 const qx = c => Q2.x + (c - QM) * Q2.s;
 const qy = r => Q2.y + (r - QM) * Q2.s;
 
-function mod(g, x, y, s, rot = 0, sy = 1) {
+function mod(g, x, y, s, rot = 0, sy = 1, rr = 0.24) {
   if (s <= 0.2) return;
   const h = s / 2;
   if (rot || sy !== 1) {
     g.save(); g.translate(x, y); if (rot) g.rotate(rot); g.scale(1, sy);
-    g.beginPath(); g.roundRect(-h, -h, s, s, s * 0.24); g.fill(); g.restore();
-  } else { g.beginPath(); g.roundRect(x - h, y - h, s, s, s * 0.24); g.fill(); }
+    g.beginPath(); g.roundRect(-h, -h, s, s, s * rr); g.fill(); g.restore();
+  } else { g.beginPath(); g.roundRect(x - h, y - h, s, s, s * rr); g.fill(); }
 }
 // QR "gözü" (konum deseni): u = modül adımı
 function eye(g, x, y, u, rot = 0, sc = 1, sy = 1) {
   if (sc <= 0.01) return;
   g.save(); g.translate(x, y); if (rot) g.rotate(rot); g.scale(sc, sc * sy);
   const R = 3.5 * u, r1 = 2.5 * u;
-  g.beginPath(); g.roundRect(-R, -R, 2 * R, 2 * R, u * 1.5); g.roundRect(-r1, -r1, 2 * r1, 2 * r1, u * 0.85); g.fill('evenodd');
-  g.beginPath(); g.roundRect(-1.5 * u, -1.5 * u, 3 * u, 3 * u, u * 0.7); g.fill();
+  // Köşeler bilerek ölçülü yuvarlatıldı: daha yuvarlak "göz"ler okuyucuları şaşırtıyor (OpenCV ile test edildi)
+  g.beginPath(); g.roundRect(-R, -R, 2 * R, 2 * R, u * 0.8); g.roundRect(-r1, -r1, 2 * r1, 2 * r1, u * 0.45); g.fill('evenodd');
+  g.beginPath(); g.roundRect(-1.5 * u, -1.5 * u, 3 * u, 3 * u, u * 0.4); g.fill();
   g.restore();
 }
 
@@ -277,15 +286,15 @@ function checkPath(g, x, y, s, p, lw, col) {
 }
 
 /* ───────────────────────── arka plan ───────────────────────── */
-const RIPPLES = [[T.nine, 960, 500, 1], [T.drop, 960, 540, 1], [T.final, 960, 450, 0.6]];
-function bgDark(g, t, ox = 0, glowA = 0.3) {
+const RIPPLES = [[T.nine, 960, 440, 1], [T.drop, 960, 540, 1], [T.lapse1, 960, 430, 0.6], [T.final, 960, 450, 0.6]];
+function bgDark(g, t, ox = 0, glowA = 0.3, oy = 0) {
   g.fillStyle = C.ink; g.fillRect(-80, -80, W + 160, H + 160);
   glow(g, SPR.blue, W / 2, H / 2, 1250, glowA, 900);
   // nokta ızgarası; darbelerde ızgaradan halka dalgası geçer
-  const step = 48, off = ((ox % step) + step) % step;
+  const step = 48, off = ((ox % step) + step) % step, offY = ((oy % step) + step) % step;
   g.fillStyle = '#A9BCFF';
   const act = RIPPLES.filter(([t0]) => t - t0 > 0 && t - t0 < 1.6);
-  for (let y = 18; y < H; y += step) {
+  for (let y = offY - step + 18; y < H + step; y += step) {
     for (let x = off - step + 18; x < W + step; x += step) {
       let a = 0.075, s = 2.6;
       for (const [t0, rx, ry, k] of act) {
@@ -303,6 +312,10 @@ function bgDark(g, t, ox = 0, glowA = 0.3) {
 /* ───────────────────────── 1. ZAMAN: piksel saat (0–1.875) ───────────────────────── */
 const GLYPH = {
   '0': ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+  '1': ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+  '2': ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
+  '3': ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
+  '4': ['00010', '00110', '01010', '10010', '11111', '00010', '00010'],
   '5': ['11111', '10000', '11110', '00001', '00001', '10001', '01110'],
   '6': ['00110', '01000', '10000', '11110', '10001', '10001', '01110'],
   '7': ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
@@ -310,12 +323,13 @@ const GLYPH = {
   '9': ['01110', '10001', '10001', '01111', '00001', '00010', '01100'],
   ':': ['0', '0', '1', '0', '1', '0', '0'],
 };
-const CK = { m: 30, cx: 960, cy: 500 };
+const CK = { m: 30, cx: 960, cy: 440 };
 const CK_W = [5, 5, 1, 5, 5, 1, 5, 5];
 const CK_COL = []; { let col = 0; for (const w of CK_W) { CK_COL.push(col); col += w + 1; } CK.cols = col - 1; }
 CK.x0 = CK.cx - CK.cols * CK.m / 2; CK.y0 = CK.cy - 7 * CK.m / 2;
 const ckPos = (k, r, c) => [CK.x0 + (CK_COL[k] + c + 0.5) * CK.m, CK.y0 + (r + 0.5) * CK.m];
-// Her hane için (zaman, karakter) olayları. Elde zinciri sağdan sola akar: 59→00, 59→00, 08→09.
+// Her hane için (zaman, karakter) olayları. Saniyeler her vuruşta artar (52→59),
+// ardından elde zinciri sağdan sola akar: 59→00, 59→00, 08→09.
 const CK_EV = [
   [[0, '0']],
   [[0, '8'], [T.carry[4], '9']],
@@ -324,7 +338,7 @@ const CK_EV = [
   [[0, '9'], [T.carry[2], '0']],
   [[0, ':']],
   [[0, '5'], [T.carry[1], '0']],
-  [[0, '6'], [T.tick[1], '7'], [T.tick[2], '8'], [T.tick[3], '9'], [T.carry[0], '0']],
+  [[0, '2'], ...T.ticks.slice(1).map((t, i) => [t, String(3 + i)]), [T.carry[0], '0']],
 ];
 function clockCells(t, cb) {
   for (let k = 0; k < 8; k++) {
@@ -351,7 +365,7 @@ function clockCells(t, cb) {
 }
 function clockScale(t) {
   const dt = t - T.nine;
-  if (dt < 0) return 1 - 0.05 * E.inOutSine(prog(t, T.tick[3], T.nine));
+  if (dt < 0) return lerp(0.9, 1, E.inOutSine(prog(t, 0, T.nine))) - 0.05 * E.inOutSine(prog(t, T.ticks[7], T.nine));
   return 1 + 0.09 * Math.exp(-dt * 8) * Math.cos(dt * TAU * 2.2);
 }
 function drawClock(g, t) {
@@ -380,7 +394,7 @@ function buildFly() {
     const s = src[Math.floor(i * src.length / tgt.length)];
     const dist = Math.hypot(m.x - Q2.x, m.y - Q2.y) / maxD;
     return {
-      ...m, sx: s[0], sy: s[1], d: T.fly + 0.02 + 0.24 * dist + 0.08 * R(), dur: 0.44 + 0.14 * R(),
+      ...m, sx: s[0], sy: s[1], d: T.fly + 0.02 + 0.42 * dist + 0.12 * R(), dur: 0.62 + 0.2 * R(),
       arc: (R() < .5 ? -1 : 1) * (50 + 170 * R()), spin: (R() < .5 ? -1 : 1) * Math.PI / 2 * (1 + Math.floor(R() * 2)),
       tf: laserAt(m.y), imp: 0.1 * R(),
     };
@@ -463,19 +477,59 @@ function drawQR2D(g, t) {
   paintItems(g, items, C.qink, C.blue);
 }
 
+// Ekip: her saniye tıkında biri gelir; son iki koltuk boş kalır (geç kalanlar)
+const TEAM = [
+  { ini: 'DA', col: '#F5A524' }, { ini: 'MK', col: '#7B61FF' }, { ini: 'ED', col: '#FF8A3D' }, { ini: 'CT', col: '#00B8D9' },
+  { ini: 'AY', col: C.blue }, { ini: 'SK', col: '#22C55E' }, { ini: 'ZA', late: true }, { ini: 'BŞ', late: true },
+];
+const TEAM_Y = 668, TEAM_SP = 96;
+const teamX = i => 960 + (i - (TEAM.length - 1) / 2) * TEAM_SP;
+function drawTeam(g, t) {
+  TEAM.forEach((p, i) => {
+    const x = teamX(i), ti = T.ticks[i] + 0.03;
+    const out = E.inCubic(prog(t, T.fly - 0.32 + i * 0.025, T.fly - 0.06 + i * 0.025));
+    if (out >= 1) return;
+    const hop = Math.sin(Math.PI * prog(t, T.nine + i * 0.03, T.nine + i * 0.03 + 0.34)) * 34;
+    if (p.late) {
+      // boş koltuk: kesik çizgili halka, 09:00'da mercan rengine döner ve "hayır" der gibi sallanır
+      const a = E.outCubic(prog(t, 0.3, 0.7)) * (1 - out), late = prog(t, T.nine, T.nine + 0.15);
+      if (a <= 0) return;
+      const wob = t > T.nine ? Math.sin((t - T.nine) * 38) * 7 * Math.exp(-(t - T.nine) * 4) : 0;
+      g.save(); g.globalAlpha = a; g.translate(x + wob, TEAM_Y);
+      g.setLineDash([6, 6]); g.lineDashOffset = -t * 30; g.lineWidth = 3;
+      g.strokeStyle = rgb(mix(RGB.slate, RGB.coral, late), 0.9);
+      g.beginPath(); g.arc(0, 0, 31, 0, TAU); g.stroke(); g.setLineDash([]);
+      text(g, '?', 0, 9, { f: 'Txt', w: 700, s: 24, c: rgb(mix(RGB.slate, RGB.coral, late)) });
+      g.restore();
+      return;
+    }
+    const sc = E.outBack(prog(t, ti, ti + 0.3)) * (1 - out) * (1 + 0.16 * kick(t - T.nine - i * 0.03, 7));
+    if (sc <= 0.01) return;
+    g.save(); g.translate(x, TEAM_Y - hop); g.scale(sc, sc);
+    g.fillStyle = p.col; g.beginPath(); g.arc(0, 0, 32, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,0.9)'; g.lineWidth = 3; g.stroke();
+    text(g, p.ini, 0, 7, { f: 'Txt', w: 700, s: 20, c: C.white });
+    g.restore();
+    // varış halkası
+    const rp = prog(t, ti, ti + 0.45);
+    if (rp > 0 && rp < 1) { g.save(); g.globalAlpha = 1 - rp; g.strokeStyle = C.mint; g.lineWidth = 3; g.beginPath(); g.arc(x, TEAM_Y, 32 + 30 * E.outCubic(rp), 0, TAU); g.stroke(); g.restore(); }
+  });
+}
 function sceneAB(g, t) {
   const imp = t - T.nine;
-  bgDark(g, t, 0, 0.26 + (imp > 0 ? 0.35 * Math.exp(-imp * 3) : 0.12 * prog(t, T.tick[3], T.nine)));
+  bgDark(g, t, 0, 0.26 + (imp > 0 ? 0.35 * Math.exp(-imp * 3) : 0.12 * prog(t, T.ticks[7], T.nine)));
   // gün etiketi
   const la = E.outCubic(prog(t, 0.12, 0.5)) * (1 - prog(t, T.fly - 0.2, T.fly));
   if (la > 0) text(g, 'PAZARTESİ', 960, CK.y0 - 74, { f: 'Txt', w: 600, s: 24, ls: 16, c: rgb(RGB.slate, la) });
   if (t < T.fly) drawClock(g, t); else drawQR2D(g, t);
+  drawTeam(g, t);
+  slotText(g, 'Ekip geliyor…', 960, 830, { s: 56, w: 800, c: C.blueXL }, prog(t, T.ticks[1], T.ticks[1] + 0.5), prog(t, T.ticks[7] + 0.2, T.carry[0]), 0.03);
   // darbe: şok dalgası + piksel patlaması
   shock(g, CK.cx, CK.cy, CK.cols * CK.m + 30, 7 * CK.m + 30, 260, t, T.nine, 0.55, C.mint, 5);
   shock(g, CK.cx, CK.cy, CK.cols * CK.m + 30, 7 * CK.m + 30, 520, t, T.nine + 0.05, 0.75, C.blueL, 3);
   drawBurst(g, SPR.burstNine, t);
   // alt yazı
-  slotText(g, 'Mesai başladı.', 960, CK.y0 + 7 * CK.m + 120, { s: 64, w: 800, cf: i => i === 13 ? C.mint : C.white },
+  slotText(g, 'Mesai başladı.', 960, 830, { s: 64, w: 800, cf: i => i === 13 ? C.mint : C.white },
     prog(t, T.nine + 0.04, T.nine + 0.5), prog(t, T.fly - 0.14, T.fly + 0.12), 0.035);
   // gözler yere çakılırken mini şok dalgaları
   for (let i = 0; i < 3; i++) shock(g, qx(EYE_C[i][1]), qy(EYE_C[i][0]), 7 * Q2.s, 7 * Q2.s, 120, t, T.eyes[i], 0.4, C.mint, 4);
@@ -521,9 +575,10 @@ function drawBrackets(g, t) {
 const DECODE = [
   { t: T.scan + 0.22, s: 'QR · 25×25 · M', c: C.slate },
   { t: T.laser0, s: '> OKUNUYOR', c: C.white },
-  { t: T.laser0 + 0.24, s: 'ID    PRS-0427' },
-  { t: T.laser0 + 0.4, s: 'AD    AYŞE YILMAZ' },
-  { t: T.laser0 + 0.56, s: 'ŞUBE  MERKEZ OFİS' },
+  { t: T.laser0 + 0.3, s: 'ID    PRS-0427' },
+  { t: T.laser0 + 0.65, s: 'AD    AYŞE YILMAZ' },
+  { t: T.laser0 + 1.0, s: 'ŞUBE  MERKEZ OFİS' },
+  { t: T.laser0 + 1.35, s: 'VARD. 09:00–18:00' },
   { t: T.ok, s: '  GİRİŞ 09:00:04', c: C.mint, check: true },
 ];
 function drawScanUI(g, t) {
@@ -552,10 +607,10 @@ function drawScanUI(g, t) {
     g.restore();
   }
   // sağ panel: kimlik çözümü
-  const px = 1452 + out * 120, py = 404;
+  const px = 1452 + out * 120, py = 380;
   g.save(); g.globalAlpha = 1 - out;
   const la = E.outCubic(prog(t, T.scan + 0.15, T.scan + 0.45));
-  if (la > 0) { g.fillStyle = `rgba(169,188,255,${0.28 * la})`; g.fillRect(px - 26, py - 34, 2, lerp(0, 6 * 48, la)); }
+  if (la > 0) { g.fillStyle = `rgba(169,188,255,${0.28 * la})`; g.fillRect(px - 26, py - 34, 2, lerp(0, 7 * 48, la)); }
   DECODE.forEach((d, i) => {
     const p = prog(t, d.t, d.t + 0.36);
     if (p <= 0) return;
@@ -599,16 +654,20 @@ function sceneC(g, t) {
   drawScanUI(g, t);
 }
 
-/* ───────────────────────── 4. GİRİŞ: telefon açılışı (5.625–7.5) ───────────────────────── */
+/* ───────────────────────── 4. GİRİŞ: telefon açılışı (11.25–15) ───────────────────────── */
 const PH = { x: 1290, y: 540, w: 380, h: 810, r: 60 };
 const KFULL = 110 / 64, CYF = 540 + 190 * KFULL; // tam ekranda onay dairesi tam merkezde
 const CHIPS = [
+  { ini: 'DA', name: 'Deniz Aydın', time: '08:57', col: '#F5A524' },
   { ini: 'MK', name: 'Mehmet Kaya', time: '08:58', col: '#7B61FF' },
   { ini: 'ED', name: 'Elif Demir', time: '08:59', col: '#FF8A3D' },
   { ini: 'CT', name: 'Can Tekin', time: '09:00', col: '#00B8D9' },
+  { ini: 'SK', name: 'Selin Koç', time: '09:00', col: '#22C55E' },
   { ini: 'ZA', name: 'Zeynep Arslan', time: '09:02', col: '#E5487D', late: true },
+  { ini: 'BŞ', name: 'Burak Şahin', time: '09:06', col: '#A855F7', late: true },
 ];
-const CHIP_T = [at(3, 1.5), at(3, 1.75), at(3, 2.0), at(3, 2.25)];
+const CHIP_T = [at(6, 1.5), at(6, 1.75), at(6, 2.0), at(6, 2.25), at(7, 1), at(7, 2), at(7, 3)];
+const CHIP_Y0 = 330, CHIP_DY = 102;
 function drawPhoneUI(g, t, pe) {
   const ui = t0 => E.outCubic(prog(t, t0, t0 + 0.34));
   const cy = -190, R = 64;
@@ -630,13 +689,13 @@ function drawPhoneUI(g, t, pe) {
     g.fillStyle = '#05070D'; g.beginPath(); g.roundRect(-56, -390, 112, 32, 16); g.fill();
     g.restore();
   }
-  let a = ui(6.06);
+  let a = ui(T.drop + 0.435);
   if (a > 0) { g.save(); g.globalAlpha = a; text(g, 'QR Personel', 0, -298 + (1 - a) * 20, { f: 'Txt', w: 700, s: 19, ls: 1, c: C.blue }); g.restore(); }
-  a = ui(6.1);
+  a = ui(T.drop + 0.475);
   if (a > 0) { g.save(); g.globalAlpha = a; text(g, 'Giriş yapıldı', 0, -62 + (1 - a) * 24, { w: 800, s: 38, c: C.qink }); g.restore(); }
-  a = ui(6.18);
-  if (a > 0) { g.save(); g.globalAlpha = a; mono(g, scramble('09:00:04', prog(t, 6.18, 6.48), t, 5), 0, 8 + (1 - a) * 24, { s: 52, w: 700, c: C.blue, a: 'center', cw: 0.64 }); g.restore(); }
-  a = ui(6.26);
+  a = ui(T.drop + 0.555);
+  if (a > 0) { g.save(); g.globalAlpha = a; mono(g, scramble('09:00:04', prog(t, T.drop + 0.555, T.drop + 0.855), t, 5), 0, 8 + (1 - a) * 24, { s: 52, w: 700, c: C.blue, a: 'center', cw: 0.64 }); g.restore(); }
+  a = ui(T.drop + 0.635);
   if (a > 0) {
     g.save(); g.globalAlpha = a; g.translate(0, (1 - a) * 30);
     g.fillStyle = C.card; g.beginPath(); g.roundRect(-160, 58, 320, 96, 24); g.fill();
@@ -647,15 +706,15 @@ function drawPhoneUI(g, t, pe) {
     g.fillStyle = C.mint; g.beginPath(); g.arc(128, 106, 7, 0, TAU); g.fill();
     g.restore();
   }
-  a = ui(6.34);
+  a = ui(T.drop + 0.715);
   if (a > 0) {
     g.save(); g.globalAlpha = a; g.translate(0, (1 - a) * 30);
     text(g, 'Mesai süresi', 0, 206, { f: 'Txt', w: 500, s: 18, c: '#6B7799' });
-    const s = Math.max(0, Math.floor(t - 6.34));
+    const s = Math.max(0, Math.floor(t - T.drop - 0.715));
     mono(g, `00:00:${pad2(s)}`, 0, 246, { s: 30, w: 700, c: C.qink, a: 'center', cw: 0.62 });
     g.restore();
   }
-  a = ui(6.42);
+  a = ui(T.drop + 0.795);
   if (a > 0) {
     g.save(); g.globalAlpha = a; g.translate(0, (1 - a) * 30);
     g.fillStyle = C.qink; g.beginPath(); g.roundRect(-150, 296, 300, 66, 33); g.fill();
@@ -676,6 +735,20 @@ function drawChip(g, ch, x, y, a) {
   mono(g, ch.time, w / 2 - 22, 9, { s: 24, w: 700, c: ch.late ? C.coral : C.mint, a: 'right', cw: 0.62 });
   g.restore();
 }
+// "İçeride 45 / 53" sayacı
+function drawCounter(g, t) {
+  const p = E.outBack(prog(t, T.count, T.count + 0.35));
+  if (p <= 0) return;
+  const n = Math.round(45 * E.outCubic(prog(t, T.count + 0.05, T.count + 0.85)));
+  g.save(); g.translate(1688, 222); g.scale(p, p);
+  g.fillStyle = 'rgba(25,227,161,0.14)'; g.beginPath(); g.roundRect(-168, -34, 336, 68, 34); g.fill();
+  g.strokeStyle = 'rgba(25,227,161,0.5)'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = C.mint; g.globalAlpha = 0.6 + 0.4 * Math.sin(t * 9); g.beginPath(); g.arc(-136, 0, 7, 0, TAU); g.fill(); g.globalAlpha = 1;
+  text(g, 'İçeride', -116, 8, { f: 'Txt', w: 600, s: 22, a: 'left', c: C.paper });
+  mono(g, pad2(n), 64, 12, { s: 36, w: 700, c: C.mint, a: 'right', cw: 0.62 });
+  text(g, '/ 53', 74, 9, { f: 'Txt', w: 600, s: 22, a: 'left', c: C.slate });
+  g.restore();
+}
 function sceneD(g, t) {
   const wp = E.inQuint(prog(t, T.whip - 0.38, T.whip)), dx = -2600 * wp;
   bgDark(g, t, dx * 0.5, 0.3);
@@ -690,25 +763,19 @@ function sceneD(g, t) {
   slotText(g, 'Okut.', 170, 520, { s: 200, w: 900, a: 'left', cf: i => i === 4 ? C.mint : C.white }, prog(t, T.okut, T.okut + 0.5), 0, 0.05);
   slotText(g, 'Mesaine başla.', 176, 640, { s: 84, w: 800, a: 'left', c: C.blueXL, cf: i => i === 13 ? C.mint : C.blueXL }, prog(t, T.basla, T.basla + 0.5), 0, 0.03);
   // telefonun arkasından kayan giriş bildirimleri
+  // liste dört satırı aşınca yukarı kayar
+  let scroll = 0;
+  for (let i = 4; i < CHIPS.length; i++) scroll += E.inOutCubic(prog(t, CHIP_T[i] - 0.05, CHIP_T[i] + 0.3)) * CHIP_DY;
   CHIPS.forEach((ch, i) => {
     const p = prog(t, CHIP_T[i], CHIP_T[i] + 0.42);
-    if (p > 0) drawChip(g, ch, lerp(PH.x, 1688, E.outBackSoft(p)), 330 + i * 102, Math.min(1, p * 3));
+    const y = CHIP_Y0 + i * CHIP_DY - scroll, fade = clamp((y - 222) / 90);
+    if (p > 0 && fade > 0) drawChip(g, ch, lerp(PH.x, 1688, E.outBackSoft(p)), y, Math.min(1, p * 3) * fade);
   });
+  drawCounter(g, t);
   // telefon grubu: hafif salınım
-  const sw = prog(t, 6.4, 6.9), rotP = 0.028 * Math.sin((t - 6.4) * 2.4) * sw, fy = 7 * Math.sin((t - 6.4) * 1.9) * sw;
+  const s0 = T.drop + 0.775, sw = prog(t, s0, s0 + 0.5), rotP = 0.028 * Math.sin((t - s0) * 2.4) * sw, fy = 7 * Math.sin((t - s0) * 1.9) * sw;
   g.save(); g.translate(PH.x, PH.y + fy); g.rotate(rotP); g.translate(-PH.x, -PH.y);
-  if (ex > 0.3) {
-    const a = prog(ex, 0.3, 0.8);
-    g.save(); g.globalAlpha = a;
-    glow(g, SPR.blue, (mx0 + mx1) / 2, (my0 + my1) / 2 + 40, (mx1 - mx0) * 1.3, 0.55, (my1 - my0) * 0.8);
-    g.fillStyle = '#0A1022'; g.beginPath(); g.roundRect(mx0 - 15, my0 - 15, mx1 - mx0 + 30, my1 - my0 + 30, mr + 15); g.fill();
-    g.strokeStyle = 'rgba(255,255,255,0.16)'; g.lineWidth = 2; g.stroke();
-    g.fillStyle = '#1B2547';
-    g.beginPath(); g.roundRect(mx1 + 13, my0 + 190, 5, 90, 2); g.fill();
-    g.beginPath(); g.roundRect(mx0 - 18, my0 + 150, 5, 60, 2); g.fill();
-    g.beginPath(); g.roundRect(mx0 - 18, my0 + 230, 5, 60, 2); g.fill();
-    g.restore();
-  }
+  if (ex > 0.3) drawBezel(g, mx0, my0, mx1, my1, mr, prog(ex, 0.3, 0.8));
   // beyaz taşma (önce daire, sonra telefon ekranı maskesi)
   g.fillStyle = C.white;
   if (t < T.drop + 0.29) {
@@ -729,7 +796,163 @@ function sceneD(g, t) {
   g.restore();
 }
 
-/* ───────────────────────── 5. VERİ: 3B QR şehri → grafik (7.5–11.25) ───────────────────────── */
+/* ───────────────────────── 5. ÇIKIŞ: zaman atlaması ve çıkışta okutma (15–18.75) ───────────────────────── */
+// Piksel yazıyla saat (HH:MM); m = modül adımı
+function drawPixelStr(g, str, cx, cy, m, color) {
+  const ws = [...str].map(ch => ch === ':' ? 1 : 5);
+  const cols = ws.reduce((a, b) => a + b, 0) + ws.length - 1;
+  const x0 = cx - cols * m / 2, y0 = cy - 3.5 * m;
+  g.fillStyle = color;
+  let cc = 0;
+  [...str].forEach((ch, k) => {
+    const gl = GLYPH[ch];
+    for (let r = 0; r < 7; r++) for (let c = 0; c < ws[k]; c++) if (gl[r][c] === '1') mod(g, x0 + (cc + c + 0.5) * m, y0 + (r + 0.5) * m, m * 0.86);
+    cc += ws[k] + 1;
+  });
+}
+const LAPSE = { x: 960, y: 430, m: 34, hx: 384, hy: 372, hs: 0.5 };
+const dayP = t => E.inOutSine(prog(t, T.lapse0 + 0.12, T.lapse1));
+const lapseMin = t => Math.round(lerp(540, 1084, dayP(t)));            // 09:00 → 18:04
+const hhmm = m => pad2(Math.floor(m / 60)) + ':' + pad2(m % 60);
+function drawBezel(g, x0, y0, x1, y1, r, a) {
+  g.save(); g.globalAlpha *= a;
+  glow(g, SPR.blue, (x0 + x1) / 2, (y0 + y1) / 2 + 40, (x1 - x0) * 1.3, 0.55, (y1 - y0) * 0.8);
+  g.fillStyle = '#0A1022'; g.beginPath(); g.roundRect(x0 - 15, y0 - 15, x1 - x0 + 30, y1 - y0 + 30, r + 15); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,0.16)'; g.lineWidth = 2; g.stroke();
+  g.fillStyle = '#1B2547';
+  g.beginPath(); g.roundRect(x1 + 13, y0 + 190, 5, 90, 2); g.fill();
+  g.beginPath(); g.roundRect(x0 - 18, y0 + 150, 5, 60, 2); g.fill();
+  g.beginPath(); g.roundRect(x0 - 18, y0 + 230, 5, 60, 2); g.fill();
+  g.restore();
+}
+function statusBar(g, col) {
+  text(g, '18:04', -132, -362, { f: 'Txt', w: 600, s: 20, c: col });
+  g.fillStyle = col;
+  for (let i = 0; i < 4; i++) g.fillRect(96 + i * 7, -368 - i * 3, 5, 6 + i * 3);
+  g.beginPath(); g.roundRect(130, -376, 30, 15, 4); g.fill();
+  g.fillStyle = '#05070D'; g.beginPath(); g.roundRect(-56, -390, 112, 32, 16); g.fill();
+}
+// Telefon ekranı: önce küçük vizör + QR, onaydan sonra çevrilip çalışma süresi özetine geçer
+function drawOutUI(g, t) {
+  const fl = prog(t, T.outOk + 0.02, T.outOk + 0.26), sx = Math.max(0.02, Math.abs(Math.cos(Math.PI * fl)));
+  g.fillStyle = fl < 0.5 ? '#0A1024' : C.white; g.fillRect(-200, -420, 400, 840); // çevrilirken ekran boş kalmasın
+  g.save(); g.scale(sx, 1);
+  if (fl < 0.5) {
+    g.fillStyle = '#0A1024'; g.fillRect(-200, -420, 400, 840);
+    statusBar(g, C.paper);
+    const cs = 250, u = cs / (QN + 6), cy = -10;
+    const l0 = T.out + 0.2, l1 = T.outOk - 0.03, top = cy - cs / 2 + 14, bot = cy + cs / 2 - 14;
+    const ly = lerp(top, bot, E.inOutSine(prog(t, l0, l1)));
+    g.fillStyle = C.white; g.beginPath(); g.roundRect(-cs / 2, cy - cs / 2, cs, cs, 18); g.fill();
+    for (const m of DARK) {
+      if (m.eye >= 0) continue;
+      const y = cy + (m.r - QM) * u, fp = prog(t, l0 + (y - top) / (bot - top) * (l1 - l0) - 0.03, l0 + (y - top) / (bot - top) * (l1 - l0) + 0.07);
+      g.fillStyle = fp >= 0.5 ? '#E8930C' : C.qink;
+      mod(g, (m.c - QM) * u, y, u * 0.92, 0, fp > 0 && fp < 1 ? Math.max(0.05, Math.abs(Math.cos(Math.PI * fp))) : 1);
+    }
+    EYE_C.forEach(([er, ec]) => { const y = cy + (er - QM) * u; g.fillStyle = ly > y + 2 * u ? '#E8930C' : C.qink; eye(g, (ec - QM) * u, y, u); });
+    const la = prog(t, l0 - 0.04, l0) * (1 - prog(t, l1, l1 + 0.08));
+    if (la > 0) { g.save(); g.globalAlpha = la; g.fillStyle = C.mint; g.fillRect(-cs / 2 - 14, ly - 2.5, cs + 28, 5); g.restore(); }
+    // köşe parantezleri
+    const bm = 34 - 20 * E.outBack(prog(t, T.out + 0.12, T.out + 0.32)), hw = cs / 2 + bm, L = 40;
+    g.save(); g.strokeStyle = C.mint; g.lineWidth = 7; g.lineCap = 'round'; g.lineJoin = 'round';
+    g.globalAlpha = prog(t, T.out + 0.05, T.out + 0.15);
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => { g.beginPath(); g.moveTo(a * hw, cy + b * hw - b * L); g.lineTo(a * hw, cy + b * hw); g.lineTo(a * hw - a * L, cy + b * hw); g.stroke(); });
+    g.restore();
+    g.fillStyle = 'rgba(255,255,255,0.12)'; g.beginPath(); g.roundRect(-118, -262, 236, 46, 23); g.fill();
+    text(g, 'Çıkış için okut', 0, -232, { f: 'Txt', w: 600, s: 19, c: C.white });
+  } else {
+    const ui = t0 => E.outCubic(prog(t, t0, t0 + 0.3));
+    g.fillStyle = C.white; g.fillRect(-200, -420, 400, 840);
+    statusBar(g, C.qink);
+    let a = ui(T.outOk + 0.18);
+    g.save(); g.globalAlpha = a;
+    text(g, 'QR Personel', 0, -298, { f: 'Txt', w: 700, s: 19, ls: 1, c: C.blue });
+    text(g, 'Çıkış yapıldı', 0, -238 + (1 - a) * 20, { w: 800, s: 38, c: C.qink });
+    g.restore();
+    // çalışma süresi halkası
+    const rp = E.inOutCubic(prog(t, T.outOk + 0.3, T.outOk + 0.95)), rcy = -62, R = 104;
+    a = ui(T.outOk + 0.22);
+    if (a > 0) {
+      g.save(); g.globalAlpha = a; g.lineCap = 'round';
+      g.strokeStyle = '#EEF2FB'; g.lineWidth = 22; g.beginPath(); g.arc(0, rcy, R, 0, TAU); g.stroke();
+      if (rp > 0.002) { g.strokeStyle = C.amber; g.beginPath(); g.arc(0, rcy, R, -Math.PI / 2, -Math.PI / 2 + TAU * rp * 0.999); g.stroke(); }
+      const mins = Math.round(544 * rp);
+      text(g, `${Math.floor(mins / 60)} sa ${pad2(mins % 60)} dk`, 0, rcy + 8, { w: 800, s: 36, c: C.qink });
+      text(g, 'Bugün', 0, rcy + 40, { f: 'Txt', w: 500, s: 18, c: '#6B7799' });
+      g.restore();
+    }
+    a = ui(T.outOk + 0.34);
+    if (a > 0) {
+      g.save(); g.globalAlpha = a; g.translate(0, (1 - a) * 26);
+      g.fillStyle = C.card; g.beginPath(); g.roundRect(-160, 92, 320, 112, 22); g.fill();
+      [['Giriş', '09:00', C.mint, 130], ['Çıkış', '18:04', C.amber, 176]].forEach(([l, v, c, y]) => {
+        g.fillStyle = c; g.beginPath(); g.arc(-130, y - 7, 7, 0, TAU); g.fill();
+        text(g, l, -112, y, { f: 'Txt', w: 600, s: 20, a: 'left', c: C.qink });
+        mono(g, v, 134, y + 1, { s: 22, w: 700, c: C.qink, a: 'right', cw: 0.62 });
+      });
+      g.restore();
+    }
+    a = ui(T.outOk + 0.46);
+    if (a > 0) { g.save(); g.globalAlpha = a; text(g, 'İyi akşamlar, Ayşe!', 0, 268 + (1 - a) * 20, { f: 'Txt', w: 600, s: 22, c: C.qink }); g.restore(); }
+    g.fillStyle = C.qink; g.beginPath(); g.roundRect(-64, 384, 128, 6, 3); g.fill();
+  }
+  g.restore();
+}
+function sceneOut(g, t) {
+  const dxIn = 2600 * (1 - E.outQuint(prog(t, T.whip, T.whip + 0.38)));
+  const dyOut = -1500 * E.inQuint(prog(t, T.data - 0.38, T.data));
+  const dp = dayP(t);
+  bgDark(g, t, dxIn * 0.5, 0.14, dyOut * 0.5);
+  // ufuk: sabah mavisinden akşam mercanına
+  g.save(); g.translate(0, dyOut * 0.5);
+  glow(g, SPR.blue, 960, 1180, 1500, 0.6 * (1 - dp), 640);
+  glow(g, SPR.amber, 960, 1180, 1200, 0.5 * Math.sin(Math.PI * dp) + 0.2 * dp, 520);
+  glow(g, SPR.coral, 960, 1180, 1500, 0.55 * dp, 640);
+  g.restore();
+  g.save(); g.translate(dxIn, dyOut);
+  // güneş yayı
+  const sx = lerp(230, 1690, dp), sy = 980 - 720 * Math.sin(Math.PI * dp), sa = prog(t, T.whip, T.whip + 0.3);
+  g.save(); g.globalAlpha = sa;
+  g.globalCompositeOperation = 'lighter'; glow(g, SPR.amber, sx, sy, 260, 0.7); g.globalCompositeOperation = 'source-over';
+  g.fillStyle = rgb(mix(hex2rgb('#FFD27A'), RGB.coral, dp)); g.beginPath(); g.arc(sx, sy, 38, 0, TAU); g.fill();
+  g.restore();
+  // saat: zaman atlaması, iniş, köşeye çekilme
+  const land = t - T.lapse1, mv = E.inOutCubic(prog(t, T.out, T.out + 0.45));
+  let sc = lerp(1, LAPSE.hs, mv);
+  if (land >= 0) sc *= 1 + 0.08 * Math.exp(-land * 8) * Math.cos(land * TAU * 2.2);
+  const col = rgb(mix(RGB.paper, RGB.amber, land >= 0 ? Math.exp(-land * 4) : 0));
+  drawPixelStr(g, hhmm(lapseMin(t)), lerp(LAPSE.x, LAPSE.hx, mv), lerp(LAPSE.y, LAPSE.hy, mv), LAPSE.m * sc, col);
+  shock(g, LAPSE.x, LAPSE.y, 25 * LAPSE.m + 30, 7 * LAPSE.m + 30, 260, t, T.lapse1, 0.55, C.amber, 5);
+  // ileri sarma işareti
+  const ff = prog(t, T.lapse0 + 0.1, T.lapse0 + 0.25) * (1 - prog(t, T.lapse1 - 0.05, T.lapse1 + 0.1));
+  if (ff > 0) {
+    g.save(); g.globalAlpha = ff * (0.55 + 0.45 * Math.sin(t * 24)); g.fillStyle = C.amber; g.translate(960, 236);
+    for (const o of [-14, 14]) { g.beginPath(); g.moveTo(o - 16, -16); g.lineTo(o + 12, 0); g.lineTo(o - 16, 16); g.closePath(); g.fill(); }
+    g.restore();
+  }
+  slotText(g, 'Gün bitti mi?', 960, 770, { s: 84, w: 800, cf: i => i === 12 ? C.amber : C.white }, prog(t, at(8, 1), at(8, 1) + 0.5), prog(t, T.out - 0.16, T.out + 0.12), 0.035);
+  slotText(g, 'Çıkışta da', 170, 612, { s: 92, w: 800, a: 'left', c: C.white }, prog(t, at(9, 0.5), at(9, 0.5) + 0.5), 0, 0.035);
+  slotText(g, 'okut.', 162, 800, { s: 200, w: 900, a: 'left', cf: i => i === 4 ? C.amber : C.white }, prog(t, T.outOk, T.outOk + 0.5), 0, 0.05);
+  // telefon aşağıdan yükselir
+  const pr = E.outCubic(prog(t, T.out + 0.02, T.out + 0.42));
+  if (pr > 0) {
+    const s0 = T.out + 0.5, sw = prog(t, s0, s0 + 0.5);
+    g.save(); g.translate(PH.x, PH.y + lerp(1100, 0, pr) + 7 * Math.sin((t - s0) * 1.9) * sw);
+    g.rotate(lerp(-0.14, 0, pr) + 0.026 * Math.sin((t - s0) * 2.4) * sw); g.translate(-PH.x, -PH.y);
+    const x0 = PH.x - PH.w / 2, y0 = PH.y - PH.h / 2, x1 = PH.x + PH.w / 2, y1 = PH.y + PH.h / 2;
+    drawBezel(g, x0, y0, x1, y1, PH.r, 1);
+    g.save(); g.beginPath(); g.roundRect(x0, y0, PH.w, PH.h, PH.r); g.clip();
+    g.translate(PH.x, PH.y); drawOutUI(g, t);
+    g.restore();
+    const ok = kick(t - T.outOk, 6);
+    if (ok > 0.01) { g.save(); g.globalAlpha = ok; g.strokeStyle = C.amber; g.lineWidth = 6; g.beginPath(); g.roundRect(x0 - 24 - 20 * (1 - ok), y0 - 24 - 20 * (1 - ok), PH.w + 48 + 40 * (1 - ok), PH.h + 48 + 40 * (1 - ok), PH.r + 24); g.stroke(); g.restore(); }
+    g.restore();
+  }
+  g.restore();
+}
+
+/* ───────────────────────── 6. VERİ: 3B QR şehri → grafik → puantaj takvimi (18.75–24.375) ───────────────────────── */
 function hField(m) {
   if (m.eye >= 0) {
     const [er, ec] = EYE_C[m.eye];
@@ -741,18 +964,37 @@ function hField(m) {
 const BAR_H = [3, 6, 10, 15, 11, 5, 3]; // giriş saatine göre kişi sayısı (toplam 53)
 const BAR_LBL = ['08:00', '08:15', '08:30', '08:45', '09:00', '09:15', '09:30'];
 const BAR_X = k => (k - 3) * 4;
+// Eylül 2026 puantajı: 5 hafta × 7 gün, her gün 3×3 küp. Pazartesi = 0.
+const CAL = (() => {
+  const off = (new Date(2026, 8, 1).getDay() + 6) % 7, cells = [];
+  for (let w = 0; w < 5; w++) for (let d = 0; d < 7; d++) { const day = w * 7 + d - off + 1; cells.push({ w, d, day: day >= 1 && day <= 30 ? day : 0 }); }
+  return { cells, work: cells.filter(c => c.day && c.d < 5).length };
+})();
+const CAL_LATE = new Set([3, 9, 15, 22, 28]); // örnek: geç girişli günler (hepsi hafta içi)
+const CAL_DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+const calX = d => (d - 3) * 4, calY = w => (4 - w) * 4;
 let COLS = [];
 function buildCols() {
   const slots = [];
   BAR_H.forEach((h, k) => { for (let sx = 0; sx < 3; sx++) for (let l = 0; l < h; l++) for (let sz = 0; sz < 2; sz++) slots.push({ k, x: BAR_X(k) + sx - 1, y: l, z: sz - 0.5 }); });
   slots.sort((a, b) => a.x - b.x || a.y - b.y || a.z - b.z);
   const cols = DARK.map(m => ({ ...m, x: m.c - QM, z: m.r - QM, h: hField(m) })).sort((a, b) => a.x - b.x || a.z - b.z);
+  // takvim küpleri: x'e göre sıralanır, grafikteki küplerle sırayla eşleşir
+  const calc = [];
+  CAL.cells.forEach(cl => { for (let sx = 0; sx < 3; sx++) for (let sy = 0; sy < 3; sy++) {
+    const late = cl.day && CAL_LATE.has(cl.day) && sy === 2 && sx < 2;
+    const col = !cl.day ? hex2rgb('#141D3A') : cl.d >= 5 ? hex2rgb('#26325E') : late ? RGB.coral : RGB.blue;
+    calc.push({ x: calX(cl.d) + sx - 1, y: calY(cl.w) + sy, z: 0, w: cl.w, col, al: cl.day ? 1 : 0.6 });
+  } });
+  calc.sort((a, b) => a.x - b.x || a.y - b.y);
   const R = mulberry32(7);
+  let ci = 0;
   COLS = cols.map((m, i) => {
-    const s = slots[i] || null;
+    const s = slots[i] || null, cal = s ? calc[ci++] || null : null;
     const hc = clamp(m.h / 6.5);
     return {
-      ...m, ts: T.whip + 0.14 + 0.62 * (m.r + m.c) / (2 * (QN - 1)), slot: s,
+      ...m, ts: T.data + 0.14 + 0.62 * (m.r + m.c) / (2 * (QN - 1)), slot: s, cal,
+      d2: T.cal + 0.03 + (cal ? 0.16 * cal.w / 4 : 0) + 0.3 * R(), dur2: 0.5 + 0.12 * R(),
       d: T.sort + 0.03 + (s ? 0.3 * s.y / 15 : 0) + 0.14 * R(), dur: 0.56 + 0.1 * R(),
       col: hc < 0.5 ? mix(RGB.blue, RGB.cyan, hc * 2) : mix(RGB.cyan, RGB.mint, (hc - 0.5) * 2),
       tcol: s ? (s.k >= 5 ? RGB.coral : RGB.blue) : RGB.blue,
@@ -773,18 +1015,19 @@ function proj(c, x, y, z) {
   return [c.cx + c.f * xc / zc, c.cy - c.f * yc / zc, zc];
 }
 function camState(t) {
-  const a = E.inOutCubic(prog(t, T.whip, T.whip + 1.1));
-  const b = E.inOutSine(prog(t, T.whip + 0.6, T.sort + 0.3));
+  const a = E.inOutCubic(prog(t, T.data, T.data + 1.1));
+  const b = E.inOutSine(prog(t, T.data + 0.6, T.sort + 0.3));
   const c = E.inOutCubic(prog(t, T.sort + 0.08, T.answer + 0.02));
-  return { a, b, c };
+  const k = E.inOutCubic(prog(t, T.cal, T.cal + 0.75)); // takvime geçiş: biraz geri çekil
+  return { a, b, c, k };
 }
 function camAt(t) {
-  const { a, b, c } = camState(t), deg = Math.PI / 180;
+  const { a, b, c, k } = camState(t), deg = Math.PI / 180;
   const pitch = lerp(lerp(89.4, 33, a) + 6 * b, 0, c) * deg;
   const yaw = lerp(lerp(0, -36, a) - 12 * b, 0, c) * deg;
   const D = 64 * (1 + 8 * E.inQuad(c)); // dolly-zoom: uzaklaşırken odak büyür → perspektif düzleşir
-  const ppu = lerp(lerp(30, 25, a) + 1.5 * b, 34, c);
-  return makeCam(0, lerp(lerp(0, 1.4, a), 7.5, c), 0, D, pitch, yaw, ppu * D, lerp(1240, 1290, c), lerp(lerp(540, 610, a), 585, c));
+  const ppu = lerp(lerp(lerp(30, 25, a) + 1.5 * b, 34, c), 29, k);
+  return makeCam(0, lerp(lerp(lerp(0, 1.4, a), 7.5, c), 9.45, k), 0, D, pitch, yaw, ppu * D, lerp(1240, 1290, c), lerp(lerp(lerp(540, 610, a), 585, c), 600, k));
 }
 const SHADE = { top: 1, px: 0.56, nx: 0.8, pz: 0.68, nz: 0.5 };
 function drawBox(g, cam, x, z, y0, h, hw, hd, col, flat, al) {
@@ -840,6 +1083,15 @@ function drawCity(g, t) {
       // yerine oturma sıçraması
       const land = t - m.d - m.dur; if (land > 0 && m.slot) y0 += 0.25 * Math.exp(-land * 12) * Math.sin(land * 30);
     }
+    if (t > m.d2 && m.slot) {
+      const e = E.inOutCubic(prog(t, m.d2, m.d2 + m.dur2));
+      if (m.cal) {
+        x = lerp(m.slot.x, m.cal.x, e); z = lerp(m.slot.z, m.cal.z, e); y0 = lerp(m.slot.y + 0.05, m.cal.y + 0.05, e);
+        const bump = 1 + 0.45 * Math.sin(Math.PI * e); hw = 0.45 * bump; hd = 0.45 * bump; h = 0.9 * bump; y0 -= 0.45 * (bump - 1);
+        col = mix(m.tcol, m.cal.col, e); al = lerp(1, m.cal.al, e);
+        const land = t - m.d2 - m.dur2; if (land > 0) { const k = 1 + 0.18 * Math.exp(-land * 14) * Math.sin(land * 34); hw *= k; h *= k; }
+      } else { h *= 1 - e; al = 1 - e; }
+    }
     if (al <= 0.01 || h <= 0.002) continue;
     const dx = x - cam.px, dy = y0 + h / 2 - cam.py, dz = z - cam.pz;
     list.push({ x, z, y0, h, hw, hd, col, al, d: dx * dx + dy * dy + dz * dz });
@@ -859,8 +1111,9 @@ function drawCity(g, t) {
   return cam;
 }
 function drawChartUI(g, t, cam) {
-  const p0 = T.answer - 0.02;
-  if (t < p0) return;
+  const p0 = T.answer - 0.02, fo = prog(t, T.cal - 0.02, T.cal + 0.25);
+  if (t < p0 || fo >= 1) return;
+  g.save(); g.globalAlpha = 1 - fo;
   const base = proj(cam, 0, 0, 0)[1], X = x => proj(cam, x, 0, 0)[0], Y = y => proj(cam, 0, y, 0)[1];
   const L = X(-13.5) - 10, R = X(13.5) + 10;
   // taban çizgisi ve yatay ızgara
@@ -878,7 +1131,7 @@ function drawChartUI(g, t, cam) {
   BAR_LBL.forEach((s, k) => {
     const q = E.outBack(prog(t, p0 + 0.06 + k * 0.035, p0 + 0.36 + k * 0.035));
     if (q <= 0) return;
-    g.save(); g.globalAlpha = Math.min(1, q);
+    g.save(); g.globalAlpha *= Math.min(1, q);
     mono(g, s, X(BAR_X(k)), base + 44 + (1 - q) * 16, { s: 19, w: 600, c: k >= 5 ? C.coral : C.slate, a: 'center', cw: 0.64 });
     g.restore();
   });
@@ -909,13 +1162,51 @@ function drawChartUI(g, t, cam) {
     text(g, '8 geç', 8, 8, { f: 'Txt', w: 700, s: 21, c: C.coral });
     g.restore();
   }
+  g.restore();
+}
+// Puantaj takvimi: gün başlıkları, gün numaraları, başlık, iş günü rozeti, açıklama
+function drawCalUI(g, t, cam) {
+  const p0 = T.cal + 0.42;
+  if (t < p0) return;
+  const X = x => proj(cam, x, 0, 0)[0], Y = y => proj(cam, 0, y, 0)[1];
+  const L = X(-13.5), R = X(13.5);
+  CAL_DAYS.forEach((d, i) => {
+    const q = E.outCubic(prog(t, p0 + i * 0.03, p0 + 0.3 + i * 0.03));
+    if (q > 0) text(g, d, X(calX(i)), Y(19.55) - (1 - q) * 14, { f: 'Txt', w: 600, s: 18, c: rgb(i >= 5 ? RGB.slate : RGB.paper, q * (i >= 5 ? 0.7 : 0.9)) });
+  });
+  for (const cl of CAL.cells) {
+    if (!cl.day) continue;
+    const q = prog(t, p0 + 0.1 + cl.day * 0.012, p0 + 0.3 + cl.day * 0.012);
+    if (q > 0) text(g, String(cl.day), X(calX(cl.d) - 1.42), Y(calY(cl.w) + 2.92) + 17, { f: 'Txt', w: 700, s: 15, a: 'left', c: `rgba(255,255,255,${0.92 * q})` });
+  }
+  slotText(g, 'Eylül 2026', L, Y(19.55) - 62, { s: 40, w: 800, a: 'left', c: C.white }, prog(t, p0, p0 + 0.5), 0, 0.03);
+  const sub = E.outCubic(prog(t, p0 + 0.2, p0 + 0.5));
+  if (sub > 0) text(g, 'Puantaj · 53 personel', L + 228, Y(19.55) - 64, { f: 'Txt', w: 500, s: 20, a: 'left', c: rgb(RGB.slate, sub) });
+  const bq = E.outBack(prog(t, p0 + 0.3, p0 + 0.58));
+  if (bq > 0) {
+    g.save(); g.translate(R - 84, Y(19.55) - 76); g.scale(bq, bq);
+    g.fillStyle = 'rgba(25,227,161,0.16)'; g.beginPath(); g.roundRect(-84, -22, 168, 44, 22); g.fill();
+    text(g, `${CAL.work} iş günü`, 0, 8, { f: 'Txt', w: 700, s: 20, c: C.mint });
+    g.restore();
+  }
+  const lq = E.outCubic(prog(t, p0 + 0.4, p0 + 0.7));
+  if (lq > 0) {
+    let x = L;
+    [['Tam gün', C.blue], ['Geç giriş', C.coral], ['Hafta sonu', '#26325E']].forEach(([l, c]) => {
+      g.save(); g.globalAlpha = lq; g.fillStyle = c; g.beginPath(); g.roundRect(x, Y(-0.35) + 22, 16, 16, 4); g.fill();
+      text(g, l, x + 26, Y(-0.35) + 36, { f: 'Txt', w: 500, s: 18, a: 'left', c: C.slate });
+      x += 30 + measure(g, l, { f: 'Txt', w: 500, s: 18 }) + 34;
+      g.restore();
+    });
+  }
 }
 function sceneE(g, t) {
-  const wp = 1 - E.outQuint(prog(t, T.whip, T.whip + 0.38)), dx = 2600 * wp;
-  bgDark(g, t, dx * 0.5, 0.22);
-  g.save(); g.translate(dx, 0);
+  const dy = 1500 * (1 - E.outQuint(prog(t, T.data, T.data + 0.38)));
+  bgDark(g, t, 0, 0.22, dy * 0.5);
+  g.save(); g.translate(0, dy);
   const cam = drawCity(g, t);
   drawChartUI(g, t, cam);
+  drawCalUI(g, t, cam);
   g.restore();
   // sol: sorular → cevap
   const o = { s: 92, w: 900, a: 'left' };
@@ -926,8 +1217,11 @@ function sceneE(g, t) {
       prog(t, T.q[i], T.q[i] + 0.5), prog(t, T.answer - 0.26 + i * 0.04, T.answer + 0.02 + i * 0.04), 0.035);
   });
   const o2 = fit(g, 'tek ekranda.', { s: 112, w: 900, a: 'left' }, 640);
-  slotText(g, 'Hepsi', 120, 470, { ...o2, c: C.white }, prog(t, T.answer, T.answer + 0.5), 0, 0.04);
-  slotText(g, 'tek ekranda.', 120, 470 + o2.s * 1.08, { ...o2, cf: () => C.mint }, prog(t, T.answer + 0.08, T.answer + 0.58), 0, 0.03);
+  slotText(g, 'Hepsi', 120, 470, { ...o2, c: C.white }, prog(t, T.answer, T.answer + 0.5), prog(t, T.cal - 0.1, T.cal + 0.2), 0.04);
+  slotText(g, 'tek ekranda.', 120, 470 + o2.s * 1.08, { ...o2, cf: () => C.mint }, prog(t, T.answer + 0.08, T.answer + 0.58), prog(t, T.cal - 0.06, T.cal + 0.24), 0.03);
+  const o3 = fit(g, 'Puantaj hazır.', { s: 112, w: 900, a: 'left' }, 640);
+  slotText(g, 'Ay sonu mu?', 120, 470, { ...o3, c: C.white }, prog(t, T.calText, T.calText + 0.5), 0, 0.035);
+  slotText(g, 'Puantaj hazır.', 120, 470 + o3.s * 1.08, { ...o3, cf: i => i === 13 ? C.white : C.mint }, prog(t, at(12, 2), at(12, 2) + 0.5), 0, 0.03);
   // marka geçişi: dönen iki kare (nane, sonra mavi) ekranı kaplar
   [[C.mint, T.wipe - 0.34, T.wipe - 0.06], [C.blue, T.wipe - 0.27, T.wipe]].forEach(([col, a, b], i) => {
     const p = prog(t, a, b);
@@ -938,7 +1232,7 @@ function sceneE(g, t) {
   });
 }
 
-/* ───────────────────────── 6. MARKA (11.25–15) ───────────────────────── */
+/* ───────────────────────── 7. MARKA (24.375–30) ───────────────────────── */
 const LK = {};
 function lockupLayout(g) {
   LK.ms = 272; LK.gap = 58; LK.ww = measure(g, 'QR Personel', { w: 800, s: 132 });
@@ -1011,10 +1305,47 @@ function bgBlue(g, t) {
   for (const [x, y] of QR_BG) { g.beginPath(); g.roundRect(x * u - u * 0.43, y * u - u * 0.43, u * 0.86, u * 0.86, u * 0.2); g.fill(); }
   g.restore();
 }
+// Kapanış kartı: gerçek, okutulabilir QR (https://www.qrpersonel.com)
+const QC = { x: 1566, y: 530, size: 366 };
+function drawCtaQR(g, t) {
+  const p = prog(t, T.cta + 0.08, T.cta + 0.5);
+  if (p <= 0) return;
+  const e = E.outBack(p), u = QC.size / (QN + 8), sc = lerp(0.6, 1, e); // 4 modüllük sessiz bölge: okuyucular için en güvenlisi
+  g.save(); g.translate(QC.x + (1 - E.outCubic(p)) * 300, QC.y); g.rotate((1 - E.outCubic(p)) * 0.2); g.scale(sc, sc);
+  g.globalAlpha = Math.min(1, p * 2.5);
+  g.save(); g.shadowColor = 'rgba(8,20,90,0.45)'; g.shadowBlur = 50; g.shadowOffsetY = 22;
+  g.fillStyle = C.white; g.beginPath(); g.roundRect(-QC.size / 2, -QC.size / 2, QC.size, QC.size, 34); g.fill(); g.restore();
+  g.fillStyle = C.qink;
+  for (const m of DATA) {
+    const d = T.cta + 0.22 + (m.r + m.c) / (2 * (QN - 1)) * 0.5, q = E.outBack(prog(t, d, d + 0.2));
+    if (q > 0) mod(g, (m.c - QM) * u, (m.r - QM) * u, u * 1.02 * q, 0, 1, 0.14);
+  }
+  EYE_C.forEach(([er, ec], i) => {
+    const d = T.cta + 0.25 + i * 0.1, q = prog(t, d, d + 0.3);
+    if (q > 0) eye(g, (ec - QM) * u, (er - QM) * u, u, (1 - E.outCubic(q)) * Math.PI * 0.5, E.outBack(q));
+  });
+  // vizör köşeleri kilitlenir, kısa bir tarama geçer
+  const bp = E.outBack(prog(t, T.cta + 0.85, T.cta + 1.05));
+  if (bp > 0) {
+    const hw = QC.size / 2 + lerp(80, 34, bp), L = 52;
+    g.save(); g.globalAlpha = Math.min(1, bp * 2); g.strokeStyle = C.mint; g.lineWidth = 10; g.lineCap = 'round'; g.lineJoin = 'round';
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => { g.beginPath(); g.moveTo(a * hw, b * hw - b * L); g.lineTo(a * hw, b * hw); g.lineTo(a * hw - a * L, b * hw); g.stroke(); });
+    g.restore();
+  }
+  const lp = prog(t, T.cta + 1.0, T.cta + 1.4);
+  if (lp > 0 && lp < 1) {
+    const ly = lerp(-QC.size / 2 + 20, QC.size / 2 - 20, E.inOutSine(lp));
+    g.save(); g.globalAlpha = Math.sin(Math.PI * lp); g.fillStyle = C.mint; g.fillRect(-QC.size / 2 - 20, ly - 3, QC.size + 40, 6); g.restore();
+  }
+  g.restore();
+  slotText(g, 'Okut, siteye git', QC.x, QC.y + QC.size / 2 + 78, { f: 'Txt', w: 600, s: 30, c: 'rgba(255,255,255,0.9)' }, prog(t, T.cta + 0.5, T.cta + 1.0), 0, 0.02);
+}
 function sceneF(g, t) {
   bgBlue(g, t);
   const push = 1 + 0.03 * E.outSine(prog(t, T.final, DUR));
   g.save(); zoomAt(g, push, 960, 520);
+  const gx = -262 * E.inOutCubic(prog(t, T.cta, T.cta + 0.55)); // kapanış: logo sola, QR sağa
+  g.save(); g.translate(gx, 0);
   const st = markState(t);
   const slide = E.inOutCubic(prog(t, T.slide, T.slide + 0.42));
   const mxp = lerp(960, LK.mx, slide), myp = lerp(510, LK.my, slide), MS = LK.ms * lerp(1.45, 1, slide);
@@ -1067,6 +1398,8 @@ function sceneF(g, t) {
     g.restore();
   }
   g.restore();
+  drawCtaQR(g, t);
+  g.restore();
   // final flaşı
   const fl = kick(t - T.final, 7) * 0.45 + kick(t - T.wipe, 9) * 0.25;
   if (fl > 0.003) { g.fillStyle = `rgba(255,255,255,${fl})`; g.fillRect(-80, -80, W + 160, H + 160); }
@@ -1074,7 +1407,8 @@ function sceneF(g, t) {
 
 /* ───────────────────────── kamera sarsıntısı, kromatik sapma, HUD ───────────────────────── */
 const IMPACTS = [[T.nine, 18], [T.eyes[0], 5], [T.eyes[1], 5], [T.eyes[2], 7], [T.ok, 6], [T.drop, 24], [T.okut, 8], [T.whip, 10],
-  [T.sort, 6], [T.answer, 6], [T.wipe, 10], [T.leyes[0], 7], [T.leyes[1], 7], [T.leyes[2], 9], [T.final, 18]];
+  [T.lapse1, 10], [T.outOk, 6], [T.data, 10], [T.sort, 6], [T.answer, 6], [T.cal, 6], [T.wipe, 10],
+  [T.leyes[0], 7], [T.leyes[1], 7], [T.leyes[2], 9], [T.final, 18], [T.cta, 4]];
 function shake(t) {
   let x = 0, y = 0;
   IMPACTS.forEach(([t0, a], i) => {
@@ -1084,14 +1418,14 @@ function shake(t) {
   });
   return [x, y];
 }
-const CA_HITS = [[T.nine, 1], [T.drop, 1], [T.whip, 0.9], [T.wipe, 0.6], [T.final, 0.9]];
+const CA_HITS = [[T.nine, 1], [T.drop, 1], [T.whip, 0.9], [T.data, 0.8], [T.wipe, 0.6], [T.final, 0.9]];
 function caAmount(t) {
   let a = 0;
   for (const [t0, s] of CA_HITS) a += s * kick(t - t0, 8);
-  a += 0.8 * E.inQuad(prog(t, T.whip - 0.3, T.whip)) * (t < T.whip ? 1 : 0);
+  for (const w of [T.whip, T.data]) a += 0.8 * E.inQuad(prog(t, w - 0.3, w)) * (t < w ? 1 : 0);
   return a * 16;
 }
-const CHAPTERS = [[0, '01  ZAMAN'], [T.nine, '02  PİKSEL'], [T.scan, '03  OKUT'], [T.drop, '04  GİRİŞ'], [T.whip, '05  VERİ']];
+const CHAPTERS = [[0, '01  ZAMAN'], [T.nine, '02  PİKSEL'], [T.scan, '03  OKUT'], [T.drop, '04  GİRİŞ'], [T.whip, '05  ÇIKIŞ'], [T.data, '06  VERİ']];
 function hud(g, t, f) {
   const a = E.outCubic(prog(t, 0.15, 0.55)) * (1 - E.inCubic(prog(t, T.wipe - 0.4, T.wipe - 0.1)));
   if (a <= 0) return;
@@ -1125,14 +1459,33 @@ function draw(g, t) {
   if (t < T.scan) sceneAB(g, t);
   else if (t < T.drop) sceneC(g, t);
   else if (t < T.whip) sceneD(g, t);
+  else if (t < T.data) sceneOut(g, t);
   else if (t < T.wipe) sceneE(g, t);
   else sceneF(g, t);
+  whipStreaks(g, t, T.whip, 'x');
+  whipStreaks(g, t, T.data, 'y');
+}
+// Kamçı geçişinin kesme anında iki sahne de kadraj dışındadır: hız çizgileri boşluğu doldurur
+const STREAKS = (() => { const R = mulberry32(5); return Array.from({ length: 34 }, () => [R(), 300 + R() * 1100, 1.5 + R() * 5, R(), (R() * 3) | 0]); })();
+function whipStreaks(g, t, t0, axis) {
+  const k = 1 - Math.abs(t - t0) / 0.14;
+  if (k <= 0) return;
+  const cols = [C.white, C.mint, C.blueL];
+  g.save(); g.globalCompositeOperation = 'lighter';
+  for (const [u, len, th, ph, ci] of STREAKS) {
+    const span = (axis === 'x' ? W : H) + len * 2, travel = ((ph * span - (t - t0) * 16000) % span + span) % span - len;
+    g.globalAlpha = 0.38 * k * k; g.fillStyle = cols[ci];
+    if (axis === 'x') g.fillRect(travel, u * H, len, th); else g.fillRect(u * W, travel, th, len);
+  }
+  g.restore();
 }
 // Hızlı hareketlerde daha çok alt-örnek: kamçı geçişinde 24'e kadar
 function samplesAt(t) {
-  if (t > T.whip - 0.3 && t < T.whip + 0.4) return 24;
-  if (t > T.wipe - 0.35 && t < T.wipe + 0.05) return 14;
-  if ((t > T.fly && t < T.card0) || (t > T.wipe + 0.2 && t < T.leyes[2] + 0.05) || (t > T.drop - 0.02 && t < T.drop + 0.85)) return 10;
+  const near = (a, b) => t > a && t < b;
+  if (near(T.whip - 0.3, T.whip + 0.4) || near(T.data - 0.3, T.data + 0.4)) return 24;
+  if (near(T.wipe - 0.35, T.wipe + 0.05)) return 14;
+  if (near(T.fly, T.card0) || near(T.wipe + 0.2, T.leyes[2] + 0.05) || near(T.drop - 0.02, T.drop + 0.85) ||
+      near(T.lapse0, T.lapse1 + 0.1) || near(T.out, T.out + 0.45) || near(T.sort, T.sort + 0.9) || near(T.cal, T.cal + 0.9) || near(T.cta, T.cta + 0.6)) return 10;
   return 6;
 }
 
@@ -1141,19 +1494,23 @@ function buildCues() {
   const q = [];
   const cue = (t, type, o = {}) => q.push({ t: +t.toFixed(4), type, ...o });
   const pan = x => +clamp((x - 960) / 960, -1, 1).toFixed(3);
-  // 01 saat: piksel açılışı, saniye tıkları, elde zinciri, darbe
+  // 01 zaman: piksel açılışı, saniye tıkları, ekip gelir, elde zinciri, darbe
   for (let i = 0; i < 7; i++) cue(0.03 + i * 0.045, 'blip', { pitch: 1 + i * 0.09, gain: 0.12, pan: (i % 2 ? 0.4 : -0.4) });
-  T.tick.forEach((t, i) => cue(t, 'tick', { pitch: i % 2 ? 1.0 : 1.35, gain: 0.55 }));
+  T.ticks.forEach((t, i) => cue(t, 'tick', { pitch: i % 2 ? 1.0 : 1.35, gain: 0.55 }));
+  TEAM.forEach((p, i) => { if (!p.late) cue(T.ticks[i] + 0.03, 'pop', { pitch: 1 + i * 0.09, gain: 0.32, pan: pan(teamX(i)) * 0.6 }); });
+  cue(T.ticks[1], 'whoosh', { dur: 0.3, f0: 800, f1: 3500, gain: 0.15 });
   T.carry.slice(0, 4).forEach((t, i) => cue(t, 'click', { pitch: 1 + i * 0.18, gain: 0.5, pan: pan(ckPos([7, 6, 4, 3][i], 3, 2)[0]) }));
-  cue(T.tick[3] + 0.05, 'riser', { dur: T.nine - T.tick[3] - 0.05, gain: 0.5 });
+  cue(T.ticks[7] + 0.05, 'riser', { dur: T.nine - T.ticks[7] - 0.05, gain: 0.5 });
   cue(T.nine, 'impact', { gain: 1.0 }); cue(T.nine, 'glitch', { dur: 0.16, gain: 0.45 });
   cue(T.nine + 0.03, 'shimmer', { dur: 0.5, gain: 0.3 });
   cue(T.nine + 0.05, 'whoosh', { dur: 0.3, f0: 600, f1: 3000, gain: 0.22 });
+  [6, 7].forEach(i => cue(T.nine + 0.02, 'blip', { pitch: 0.45, gain: 0.2, pan: pan(teamX(i)) * 0.6 }));
   // 02 pikseller uçar: kalkış süpürmesi, iniş tıkları, gözler
-  cue(T.fly - 0.02, 'whoosh', { dur: 0.75, f0: 400, f1: 7000, gain: 0.5 });
-  cue(T.fly, 'sparkle', { dur: 0.9, gain: 0.3 });
+  cue(T.fly - 0.3, 'zip', { dur: 0.25, gain: 0.25 });
+  cue(T.fly - 0.02, 'whoosh', { dur: 0.9, f0: 400, f1: 7000, gain: 0.5 });
+  cue(T.fly, 'sparkle', { dur: 1.2, gain: 0.3 });
   const lands = FLY.map(m => [m.d + m.dur, m.x]).sort((a, b) => a[0] - b[0]);
-  for (let i = 0; i < lands.length; i += 12) cue(lands[i][0], 'tick', { pitch: 1.6 + (i / lands.length) * 0.8, gain: 0.16, pan: pan(lands[i][1]) * 0.6 });
+  for (let i = 0; i < lands.length; i += 10) cue(lands[i][0], 'tick', { pitch: 1.6 + (i / lands.length) * 0.8, gain: 0.16, pan: pan(lands[i][1]) * 0.6 });
   T.eyes.forEach((t, i) => { cue(t, 'thud', { gain: 0.8, pan: pan(qx(EYE_C[i][1])) * 0.5 }); cue(t, 'pop', { pitch: 0.8 + i * 0.25, gain: 0.45, pan: pan(qx(EYE_C[i][1])) * 0.5 }); });
   cue(T.card0, 'sweep', { dur: T.card1 - T.card0, gain: 0.3 });
   cue(T.scan - 0.42, 'reverse', { dur: 0.42, gain: 0.45 });
@@ -1161,33 +1518,61 @@ function buildCues() {
   cue(T.scan, 'impact', { gain: 0.55 });
   [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx], i) => cue(T.scan + 0.17 + i * 0.035, 'click', { pitch: 1.2 + i * 0.1, gain: 0.45, pan: sx * 0.45 }));
   cue(T.scan + 0.1, 'pop', { pitch: 1.3, gain: 0.3 });
-  cue(T.laser0 - 0.04, 'laser', { dur: T.laser1 - T.laser0 + 0.12, gain: 0.32 });
-  DECODE.slice(2, 5).forEach(d => { for (let k = 0; k < 8; k++) cue(d.t + k * 0.04, 'blip', { pitch: 1.6 + hash(k, d.t) * 0.8, gain: 0.07, pan: 0.6 }); });
+  cue(T.laser0 - 0.04, 'laser', { dur: T.laser1 - T.laser0 + 0.12, gain: 0.3 });
+  DECODE.slice(2, 6).forEach(d => { for (let k = 0; k < 8; k++) cue(d.t + k * 0.04, 'blip', { pitch: 1.6 + hash(k, d.t) * 0.8, gain: 0.07, pan: 0.6 }); });
   cue(T.ok, 'beep', { gain: 0.55 }); cue(T.ok + 0.02, 'success', { gain: 0.35 });
   cue(T.drop - 0.36, 'reverse', { dur: 0.36, gain: 0.5 });
-  // 04 giriş: çöküş, taşma, geri çekilme, başlık, bildirimler
+  // 04 giriş: çöküş, taşma, geri çekilme, başlık, bildirimler, sayaç
   cue(T.drop, 'impact', { gain: 1.0, big: true }); cue(T.drop, 'glitch', { dur: 0.12, gain: 0.35 });
   cue(T.drop + 0.05, 'sweep', { dur: 0.3, gain: 0.25 });
   cue(T.drop + 0.27, 'zip', { dur: 0.2, gain: 0.35 });
   cue(T.drop + 0.3, 'whoosh', { dur: 0.5, f0: 5000, f1: 400, gain: 0.45 });
   cue(T.okut, 'slam', { gain: 0.8 });
   cue(T.basla, 'thump', { gain: 0.6 }); cue(T.basla + 0.02, 'whoosh', { dur: 0.25, f0: 1500, f1: 5000, gain: 0.18 });
-  [6.1, 6.18, 6.26, 6.34, 6.42].forEach((t, i) => cue(t, 'blip', { pitch: 1.2 + i * 0.1, gain: 0.14, pan: pan(PH.x) }));
-  CHIP_T.forEach((t, i) => cue(t + 0.05, 'coin', { pitch: CHIPS[i].late ? 0.7 : 1 + i * 0.122, gain: 0.32, pan: 0.7 }));
-  // kamçı geçişi
+  [0.475, 0.555, 0.635, 0.715, 0.795].forEach((d, i) => cue(T.drop + d, 'blip', { pitch: 1.2 + i * 0.1, gain: 0.14, pan: pan(PH.x) }));
+  CHIP_T.forEach((t, i) => cue(t + 0.05, 'coin', { pitch: CHIPS[i].late ? 0.7 : 1 + (i % 4) * 0.122, gain: 0.32, pan: 0.7 }));
+  cue(T.count, 'pop', { pitch: 1.2, gain: 0.35, pan: 0.7 });
+  let prev = 0;
+  for (let k = 0; k <= 60; k++) {
+    const t = T.count + 0.05 + k * 0.0135, n = Math.round(45 * E.outCubic(prog(t, T.count + 0.05, T.count + 0.85)));
+    if (n !== prev && n % 3 === 0) { cue(t, 'tick', { pitch: 1.2 + n / 45, gain: 0.12, pan: 0.7 }); prev = n; }
+  }
   cue(T.whip - 0.4, 'whoosh', { dur: 0.62, f0: 300, f1: 9000, gain: 0.85 });
   cue(T.whip, 'impact', { gain: 0.6 });
-  // 05 veri: sütunlar yükselir, sorular, küpler dizilir, cevap
+  // 05 çıkış: zaman atlaması (her saat bir tık), iniş, telefon, çıkış bip'i, halka
+  let ph = 9;
+  for (let k = 0; k <= 200; k++) {
+    const t = T.lapse0 + k * 0.008, h = Math.floor(lapseMin(t) / 60);
+    if (h !== ph) { cue(t, 'tick', { pitch: 0.9 + (h - 9) * 0.12, gain: 0.4 }); ph = h; }
+  }
+  cue(T.lapse0 + 0.12, 'riser', { dur: T.lapse1 - T.lapse0 - 0.12, gain: 0.4 });
+  cue(at(8, 1), 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.18 });
+  cue(T.lapse1, 'slam', { gain: 0.8 }); cue(T.lapse1 + 0.02, 'shimmer', { dur: 0.5, gain: 0.25 });
+  cue(T.out, 'whoosh', { dur: 0.45, f0: 300, f1: 4000, gain: 0.4, pan: 0.3 });
+  cue(T.out + 0.3, 'click', { pitch: 1.3, gain: 0.35, pan: 0.35 });
+  cue(T.out + 0.2, 'laser', { dur: T.outOk - T.out - 0.2, gain: 0.18 });
+  cue(at(9, 0.5), 'thump', { gain: 0.5 });
+  cue(T.outOk, 'beep', { gain: 0.5 }); cue(T.outOk + 0.02, 'success', { gain: 0.3 }); cue(T.outOk, 'slam', { gain: 0.6 });
+  cue(T.outOk + 0.06, 'zip', { dur: 0.2, gain: 0.3, pan: 0.35 });
+  cue(T.outOk + 0.3, 'sweep', { dur: 0.65, gain: 0.22 });
+  for (let h = 1; h <= 9; h++) cue(T.outOk + 0.3 + 0.65 * h / 9.07, 'blip', { pitch: 1 + h * 0.06, gain: 0.08, pan: 0.35 });
+  cue(T.data - 0.4, 'whoosh', { dur: 0.6, f0: 9000, f1: 300, gain: 0.8 });
+  cue(T.data, 'impact', { gain: 0.6 });
+  // 06 veri: sütunlar yükselir, sorular, küpler dizilir, cevap, takvim
   const rises = COLS.map(m => [m.ts, proj(camAt(m.ts), m.x, 0, m.z)[0]]).sort((a, b) => a[0] - b[0]);
   for (let i = 0; i < rises.length; i += 14) cue(rises[i][0] + 0.05, 'blip', { pitch: 0.7 + 1.3 * i / rises.length, gain: 0.12, pan: pan(rises[i][1]) * 0.7 });
-  cue(T.whip + 0.12, 'sweep', { dur: 0.9, gain: 0.22 });
-  T.q.forEach((t, i) => { cue(t, 'thump', { gain: 0.55 }); cue(t, 'whoosh', { dur: 0.22, f0: 1200, f1: 4500, gain: 0.16, pan: -0.5 }); });
+  cue(T.data + 0.12, 'sweep', { dur: 0.9, gain: 0.22 });
+  T.q.forEach(t => { cue(t, 'thump', { gain: 0.55 }); cue(t, 'whoosh', { dur: 0.22, f0: 1200, f1: 4500, gain: 0.16, pan: -0.5 }); });
   cue(T.sort - 0.05, 'whoosh', { dur: 0.7, f0: 300, f1: 6000, gain: 0.45 });
   const stacks = COLS.filter(m => m.slot).map(m => [m.d + m.dur, m.slot.x]).sort((a, b) => a[0] - b[0]);
   for (let i = 0; i < stacks.length; i += 16) cue(stacks[i][0], 'tick', { pitch: 0.9 + 0.8 * i / stacks.length, gain: 0.2, pan: +(stacks[i][1] / 18).toFixed(3) });
   cue(T.answer, 'slam', { gain: 0.75 }); cue(T.answer + 0.02, 'shimmer', { dur: 0.5, gain: 0.22 });
   BAR_LBL.forEach((_, k) => cue(T.answer + 0.06 + k * 0.035, 'blip', { pitch: 1.4 + k * 0.06, gain: 0.07, pan: +(BAR_X(k) / 18).toFixed(3) }));
   cue(T.answer + 0.4, 'pop', { pitch: 1.4, gain: 0.3, pan: 0.3 });
+  cue(T.cal - 0.05, 'whoosh', { dur: 0.6, f0: 500, f1: 5000, gain: 0.4 });
+  const cals = COLS.filter(m => m.cal).map(m => [m.d2 + m.dur2, m.cal.x]).sort((a, b) => a[0] - b[0]);
+  for (let i = 0; i < cals.length; i += 14) cue(cals[i][0], 'tick', { pitch: 1.1 + 0.9 * i / cals.length, gain: 0.18, pan: +(cals[i][1] / 18).toFixed(3) });
+  cue(T.calText, 'thump', { gain: 0.5 }); cue(at(12, 2), 'slam', { gain: 0.6 }); cue(at(12, 2) + 0.02, 'shimmer', { dur: 0.4, gain: 0.2 });
   // marka geçişi + logo inşası
   cue(T.wipe - 0.36, 'whoosh', { dur: 0.38, f0: 500, f1: 8000, gain: 0.6 });
   cue(T.wipe, 'impact', { gain: 0.7 }); cue(T.wipe + 0.04, 'pop', { pitch: 0.9, gain: 0.5 });
@@ -1205,6 +1590,13 @@ function buildCues() {
   cue(T.final + 0.05, 'shine', { dur: 0.5, gain: 0.32 });
   cue(T.final + 0.22, 'pop', { pitch: 1.3, gain: 0.35 });
   for (let i = 0; i < 18; i++) cue(T.final + 0.3 + i * 0.034, 'type', { gain: 0.16, pan: -0.2 + i * 0.025 });
+  // kapanış: QR kartı gelir, modüller dalga halinde, köşeler kilitlenir, tarama
+  cue(T.cta, 'whoosh', { dur: 0.5, f0: 400, f1: 4000, gain: 0.35, pan: 0.5 });
+  for (let k = 0; k < 12; k++) cue(T.cta + 0.24 + k * 0.045, 'blip', { pitch: 1.2 + k * 0.07, gain: 0.07, pan: 0.6 });
+  [0, 1, 2].forEach(i => cue(T.cta + 0.25 + i * 0.1 + 0.15, 'pop', { pitch: 1.1 + i * 0.2, gain: 0.25, pan: 0.6 }));
+  [0, 1, 2, 3].forEach(i => cue(T.cta + 0.92 + i * 0.03, 'click', { pitch: 1.2 + i * 0.1, gain: 0.35, pan: 0.6 }));
+  cue(T.cta + 1.0, 'laser', { dur: 0.42, gain: 0.15 });
+  cue(T.cta + 1.42, 'success', { gain: 0.3 });
   return q.sort((a, b) => a.t - b.t);
 }
 
@@ -1218,6 +1610,8 @@ const chR = canvas(W, H), chB = canvas(W, H), xR = chR.getContext('2d'), xB = ch
 function initSprites() {
   SPR.blue = makeGlow('47,91,255');
   SPR.mint = makeGlow('25,227,161');
+  SPR.amber = makeGlow('255,181,71');
+  SPR.coral = makeGlow('255,92,108');
   SPR.layer = canvas(W, H); SPR.layerCtx = SPR.layer.getContext('2d');
   // vinyet
   SPR.vig = canvas(W, H);
