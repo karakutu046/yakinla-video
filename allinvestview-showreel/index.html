@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AllInvestView — motion graphics showreel</title>
+<style>
+  @font-face { font-family: 'Disp'; src: url(fonts/InterDisplay-Black.otf); font-weight: 900; }
+  @font-face { font-family: 'Disp'; src: url(fonts/InterDisplay-ExtraBold.otf); font-weight: 800; }
+  @font-face { font-family: 'Disp'; src: url(fonts/InterDisplay-Bold.otf); font-weight: 700; }
+  @font-face { font-family: 'Txt'; src: url(fonts/Inter-Bold.otf); font-weight: 700; }
+  @font-face { font-family: 'Txt'; src: url(fonts/Inter-SemiBold.otf); font-weight: 600; }
+  @font-face { font-family: 'Txt'; src: url(fonts/Inter-Medium.otf); font-weight: 500; }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  canvas { display: block; }
+  body.preview canvas { width: 100vw; height: auto; max-height: 100vh; object-fit: contain; margin: 0 auto; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<!-- Preview: index.html?play (real time, no motion blur) · index.html?t=12.4 (single frame) -->
+<script src="assets/globe.js"></script>
+<script src="src/core.js"></script>
+<script src="src/bg.js"></script>
+<script src="src/s1_chaos.js"></script>
+<script src="src/s2_reveal.js"></script>
+<script src="src/s3_dashboard.js"></script>
+<script src="src/s4_markets.js"></script>
+<script src="src/s5_brokers.js"></script>
+<script src="src/s6_dividends.js"></script>
+<script src="src/s7_risk.js"></script>
+<script src="src/s8_montage.js"></script>
+<script src="src/s9_finale.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>
