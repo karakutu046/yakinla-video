@@ -38,7 +38,7 @@ Kutudan çıkan ürün, Karakutu'nun geliştirdiği **Yakınla** (Afşin'in onli
 ## Yeniden üretmek
 
 ```bash
-./build.sh                         # → out/karakutu_tanitim_10sn.mp4 (~2 dk)
+./build.sh                         # → out/karakutu_tanitim_10sn.mp4 (~4 dk)
 ```
 
 Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy, ffmpeg.
@@ -55,7 +55,7 @@ Tek kare render almak için: `ONLY=0,120,290 STILLS=1 NODE_PATH="$(npm root -g)"
 
 | Dosya | Görevi |
 |---|---|
-| `anim.js` | Animasyonun tamamı. 3B kutu (perspektif, gölgelendirme, menteşeli kapak, yüzlere afin eşlenen kod dokusu) dahil. `draw(g, t)` zamanın saf fonksiyonudur. Her kare 6 alt-örnekle çizilir (gerçek hareket bulanıklığı). |
+| `anim.js` | Animasyonun tamamı. 3B kutu (perspektif, gölgelendirme, menteşeli kapak, yüzlere afin eşlenen kod dokusu) dahil. `draw(g, t)` zamanın saf fonksiyonudur. Her kare 6 alt-örnekle, hızlı anlarda 16 alt-örnekle çizilir (gerçek hareket bulanıklığı). |
 | `render.cjs` | Headless Chromium'da kareleri paralel olarak PNG'ye basar ve ses ipuçlarını yazar. Sayfayı depo kökünden sunar. |
 | `audio.py` | 10 saniyelik beste ve miks. Enstrümanlar `../yakinla-showreel/audio.py`'den gelir. |
 | `build.sh` | Uçtan uca üretim: kare render, ses, iki geçişli loudnorm, BT.709 x264, kapak görseli. |

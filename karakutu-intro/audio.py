@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 from scipy import signal
 
+sys.dont_write_bytecode = True   # komşu klasöre __pycache__ bırakma
 _spec = importlib.util.spec_from_file_location(
     'yakinla_synth', Path(__file__).resolve().parent.parent / 'yakinla-showreel' / 'audio.py')
 b = importlib.util.module_from_spec(_spec)

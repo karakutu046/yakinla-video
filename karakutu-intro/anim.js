@@ -5,8 +5,8 @@
  * Fikir girer, kod olur, ürün çıkar. Çıkan ürün Karakutu'nun geliştirdiği Yakınla.
  *
  * Her kare zamanın saf bir fonksiyonudur: draw(g, t). Rastgelelik tohumludur ve
- * başlangıçta üretilir. renderFrame(f) kareyi SAMPLES alt-örnekle (180° obtüratör)
- * çizip ortalar, böylece gerçek hareket bulanıklığı oluşur.
+ * başlangıçta üretilir. renderFrame(f) kareyi 6 (hızlı anlarda 16) alt-örnekle
+ * (180° obtüratör) çizip ortalar, böylece gerçek hareket bulanıklığı oluşur.
  *
  * Akış (120 BPM, 1 vuruş = 0.5 sn, 1 ölçü = 2 sn):
  *   0–2   Fikir girer   turuncu çizgi açılıp kutu olur, ampul kapaktaki yarığa düşer
@@ -713,10 +713,13 @@ function initSprites() {
   SPR.code = makeCodeStrip();
 }
 
+// Hızlı anlarda (kutunun dönüşü, telefonun fırlaması, kutunun logoya uçuşu) alt-örnek sayısı artar,
+// yoksa bulanıklık üst üste binen kopyalar gibi görünür.
+const samplesAt = t => (t > 2.3 && t < 3.7) || (t > 6.6 && t < 7.5) ? 16 : SAMPLES;
 function renderFrame(f) {
-  const t = f / FPS;
-  for (let s = 0; s < SAMPLES; s++) {
-    const ts = clamp(t + ((s + 0.5) / SAMPLES - 0.5) * SHUTTER / FPS, 0, DUR - 1e-4);
+  const t = f / FPS, n = samplesAt(t);
+  for (let s = 0; s < n; s++) {
+    const ts = clamp(t + ((s + 0.5) / n - 0.5) * SHUTTER / FPS, 0, DUR - 1e-4);
     g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
     draw(g, ts);
     ctx.globalAlpha = 1 / (s + 1);
