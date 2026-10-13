@@ -1,0 +1,30 @@
+{
+  "name": "yakinla-kar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yakınla — 'Dışarıda kar' 15 sn sinematik 3B tanıtım filmi (Remotion + Three.js)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render YakinlaKar out/yakinla-kar-15sn.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "5.2.8",
+    "@fontsource-variable/inter": "5.2.6",
+    "@react-three/fiber": "9.3.0",
+    "@react-three/postprocessing": "3.0.4",
+    "@remotion/cli": "4.0.533",
+    "@remotion/fonts": "4.0.533",
+    "@remotion/three": "4.0.533",
+    "postprocessing": "6.37.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.533",
+    "three": "0.178.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/three": "0.178.1",
+    "typescript": "5.8.3"
+  }
+}
