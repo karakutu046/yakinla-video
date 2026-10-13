@@ -9,7 +9,7 @@ import {MotionBlur} from '../components/MotionBlur';
 // Satırlar ekranda birikir, böylece her cümle en az 1,2 sn okunur.
 // Çıkış: alttaki satırlar yerçekimiyle düşer, saat haneleri düşen pinin çarpmasıyla saçılır.
 
-const A_AT = 0; // "Saat 23:40."
+const A_AT = 0; // "Saat 23:40." — haneler 0. karede zaten dönüyor
 const B_AT = 24; // "Evde süt bitti."
 const C_AT = 40; // "Market kapandı mı?"
 const EXIT_C = 86;
@@ -32,7 +32,16 @@ const Digit: React.FC<{f: number; d: number; at: number; size: number}> = ({f, d
   const lh = size * 1.0;
   const strip = new Array(d + 12).fill(0).map((_, i) => i % 10);
   return (
-    <span style={{display: 'inline-block', height: lh, overflow: 'hidden', verticalAlign: 'top'}}>
+    <span
+      style={{
+        display: 'inline-block',
+        height: lh,
+        overflow: 'hidden',
+        verticalAlign: 'top',
+        // tambur hissi: pencerenin kenarından taşan komşu haneler yumuşakça kaybolur
+        WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, #000 11%, #000 89%, transparent 100%)',
+      }}
+    >
       <span style={{display: 'block', transform: `translateY(${-pos * lh}px)`}}>
         {strip.map((n, i) => (
           <span key={i} style={{display: 'block', height: lh, lineHeight: `${lh}px`}}>
@@ -75,11 +84,11 @@ const Clock: React.FC<{f: number; size: number}> = ({f, size}) => {
         filter: 'drop-shadow(0 0 40px rgba(255,180,90,0.22))',
       }}
     >
-      {part(0, <Digit f={f} d={digits[0]} at={A_AT + 2} size={size} />, 'd0')}
-      {part(1, <Digit f={f} d={digits[1]} at={A_AT + 4} size={size} />, 'd1')}
+      {part(0, <Digit f={f} d={digits[0]} at={A_AT - 8} size={size} />, 'd0')}
+      {part(1, <Digit f={f} d={digits[1]} at={A_AT - 6} size={size} />, 'd1')}
       {part(1.5, <span style={{color: C.amber, opacity: blink, padding: '0 0.02em', display: 'inline-block', transform: 'translateY(-0.06em)'}}>:</span>, 'c')}
-      {part(2, <Digit f={f} d={digits[2]} at={A_AT + 6} size={size} />, 'd2')}
-      {part(3, <Digit f={f} d={digits[3]} at={A_AT + 8} size={size} />, 'd3')}
+      {part(2, <Digit f={f} d={digits[2]} at={A_AT - 4} size={size} />, 'd2')}
+      {part(3, <Digit f={f} d={digits[3]} at={A_AT - 2} size={size} />, 'd3')}
       {part(4, <span style={{color: C.amber}}>.</span>, 'p')}
     </div>
   );
