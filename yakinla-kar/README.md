@@ -37,7 +37,10 @@ ve kapanış akoru. Tamamı `scripts/ses.py` ile numpy kullanılarak sentezlenir
 ```bash
 npm install
 ./scripts/ses.sh                  # → public/ses.wav (sentez + -14 LUFS)
-npm run render                    # → out/yakinla-kar-15sn.mp4
+npm run render                    # → out/yakinla-kar-15sn.mp4 (4 sekme, yazılımsal WebGL ile ~35 dk)
+# Sosyal medya uyumu için yuv420p / BT.709'a çevirip tam 15 sn'ye sabitlemek:
+ffmpeg -i out/yakinla-kar-15sn.mp4 -t 15 -vf "scale=in_range=pc:out_range=tv:out_color_matrix=bt709,format=yuv420p" \
+  -c:v libx264 -preset slow -crf 17 -tune film -c:a aac -b:a 256k -movflags +faststart out/yakinla-kar-15sn-son.mp4
 node scripts/stills.mjs out/kareler 60 140 230 312 350 420   # kontrol kareleri
 ```
 

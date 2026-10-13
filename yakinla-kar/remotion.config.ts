@@ -7,6 +7,8 @@ Config.setPixelFormat('yuv420p');
 Config.setCrf(17);
 Config.setOverwriteOutput(true);
 Config.setConcurrency(4);
+// Yazılımsal WebGL'de ilk karede shader derleme ve doku üretimi uzun sürer
+Config.setDelayRenderTimeoutInMilliseconds(240000);
 // WebGL: yazılımsal ANGLE (SwiftShader) — GPU'suz makinede de aynı sonucu verir
 Config.setChromiumOpenGlRenderer('swangle');
 
