@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Karakutu Muhasebe — Reels konsept panosu</title>
+<style>
+  @font-face { font-family: 'Disp'; src: url(../fonts/InterDisplay-Black.otf); font-weight: 900; }
+  @font-face { font-family: 'Disp'; src: url(../fonts/InterDisplay-ExtraBold.otf); font-weight: 800; }
+  @font-face { font-family: 'Disp'; src: url(../fonts/InterDisplay-Bold.otf); font-weight: 700; }
+  @font-face { font-family: 'Txt'; src: url(../fonts/Inter-Bold.otf); font-weight: 700; }
+  @font-face { font-family: 'Txt'; src: url(../fonts/Inter-SemiBold.otf); font-weight: 600; }
+  @font-face { font-family: 'Txt'; src: url(../fonts/Inter-Medium.otf); font-weight: 500; }
+  @font-face { font-family: 'Hand'; src: url(../fonts/Caveat-Bold.ttf); font-weight: 700; }
+
+  :root {
+    --ink: #0C0D10; --ink2: #17191E; --ink3: #24272E;
+    --or: #FF6A13; --or2: #FF8F45; --orD: #E2540A;
+    --cream: #FFF6EC; --paper: #F5EDDB;
+    --wa: #25D366; --waD: #128C4B;
+    --mute: #8A8F98;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #E9E5DF; font-family: 'Txt', sans-serif; color: var(--ink); width: 1860px; }
+
+  /* ───────── pano ───────── */
+  .board { padding: 64px 72px 56px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 44px; }
+  .head .kick { font: 700 17px 'Txt'; letter-spacing: 3px; color: var(--orD); text-transform: uppercase; }
+  .head h1 { font: 900 64px/1 'Disp'; letter-spacing: -1.5px; margin-top: 12px; }
+  .head p { font: 500 19px/1.45 'Txt'; color: #4A4E57; max-width: 640px; text-align: right; }
+  .head p b { color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(3, 540px); gap: 56px 48px; }
+  .cell { display: flex; flex-direction: column; }
+  .shot { width: 540px; height: 960px; border-radius: 26px; overflow: hidden; position: relative;
+          box-shadow: 0 30px 60px -28px rgba(20,16,10,.45), 0 0 0 1px rgba(0,0,0,.06); }
+  .shot > .frame { transform: scale(.5); transform-origin: 0 0; }
+  .cap { padding: 22px 6px 0; }
+  .cap .row { display: flex; align-items: baseline; gap: 14px; }
+  .cap .n { font: 900 40px/1 'Disp'; color: var(--or); }
+  .cap h3 { font: 800 30px/1.1 'Disp'; letter-spacing: -.4px; }
+  .cap .tags { font: 600 14px 'Txt'; letter-spacing: 1.6px; text-transform: uppercase; color: #7A7F88; margin: 8px 0 12px; }
+  .cap .hook { font: 600 17px/1.4 'Txt'; background: #fff; border-left: 4px solid var(--or); padding: 10px 14px; border-radius: 0 10px 10px 0; margin-bottom: 12px; }
+  .cap ol { list-style: none; font: 500 15.5px/1.42 'Txt'; color: #3D414A; }
+  .cap li { display: grid; grid-template-columns: 74px 1fr; gap: 6px; padding: 5px 0; border-top: 1px dashed #CFC9C0; }
+  .cap li b { font: 700 14px/1.5 'Txt'; color: var(--orD); }
+  .foot { margin-top: 48px; display: flex; justify-content: space-between; align-items: center; gap: 40px;
+          background: var(--ink); color: #fff; border-radius: 22px; padding: 26px 34px; }
+  .foot .ask { font: 800 28px/1.2 'Disp'; }
+  .foot .ask span { color: var(--or); }
+  .foot .note { font: 500 15px/1.45 'Txt'; color: #A9AEB7; max-width: 760px; }
+
+  /* ───────── ortak kare öğeleri (1080×1920) ───────── */
+  .frame { width: 1080px; height: 1920px; position: relative; overflow: hidden; font-family: 'Txt'; }
+  .abs { position: absolute; }
+  .ic { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .logo { display: flex; align-items: center; gap: 18px; }
+  .logo svg { width: 76px; height: 76px; }
+  .logo .wm { line-height: .92; }
+  .logo .wm b { display: block; font: 900 52px 'Disp'; letter-spacing: -1px; }
+  .logo .wm i { display: block; font: 700 21px 'Txt'; font-style: normal; letter-spacing: 7px; text-transform: uppercase; color: var(--or); margin-top: 6px; }
+  .url { font: 700 30px 'Txt'; letter-spacing: .5px; }
+  .chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 24px; border-radius: 999px; font: 700 26px 'Txt'; letter-spacing: 2px; text-transform: uppercase; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .18; mix-blend-mode: overlay; }
+
+  /* 1 — kara kutu açılıyor */
+  .f1 { background: radial-gradient(120% 70% at 50% 72%, #4A1D04 0%, #1A0F0A 32%, #0C0D10 62%, #060608 100%); color: #fff; }
+  .f1 .tag { left: 0; right: 0; top: 150px; text-align: center; font: 700 26px 'Txt'; letter-spacing: 9px; color: var(--or); }
+  .f1 h1 { left: 0; right: 0; top: 205px; text-align: center; font: 900 128px/0.98 'Disp'; letter-spacing: -3px; }
+  .f1 h1 span { color: var(--or); }
+  .f1 .beam { left: -200px; right: -200px; top: 360px; height: 1050px;
+              clip-path: polygon(39% 100%, 61% 100%, 100% 0, 0 0);
+              background: linear-gradient(to top, rgba(255,150,60,.95) 0%, rgba(255,106,19,.45) 30%, rgba(255,106,19,.08) 75%, rgba(255,106,19,0) 100%);
+              filter: blur(10px); mix-blend-mode: screen; }
+  .f1 .ray { width: 6px; height: 900px; background: linear-gradient(to top, rgba(255,210,160,.9), rgba(255,180,120,0)); transform-origin: 50% 100%; filter: blur(2px); mix-blend-mode: screen; }
+  .f1 .card { display: flex; align-items: center; gap: 22px; padding: 22px 30px 22px 22px; background: rgba(255,255,255,.97); color: var(--ink);
+              border-radius: 28px; box-shadow: 0 30px 60px -10px rgba(255,110,20,.55), 0 0 0 2px rgba(255,255,255,.4); }
+  .f1 .card .ico { width: 84px; height: 84px; border-radius: 22px; background: var(--ink); color: var(--or); display: grid; place-items: center; font-size: 46px; }
+  .f1 .card b { display: block; font: 800 36px/1.05 'Disp'; }
+  .f1 .card small { display: block; font: 600 22px 'Txt'; color: #6A6F78; margin-top: 6px; }
+  .f1 .dot { width: 10px; height: 10px; border-radius: 50%; background: #FFB27A; box-shadow: 0 0 14px 4px rgba(255,120,40,.7); }
+  .f1 .bot { left: 0; right: 0; top: 1690px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+
+  /* 2 — defter kapandı */
+  .f2 { background: var(--ink); color: #fff; }
+  .f2 .paper { inset: 0; clip-path: polygon(0 0, 100% 0, 100% 40%, 0 47.5%);
+               background:
+                 radial-gradient(circle at 930px 640px, transparent 78px, rgba(140,90,40,.20) 80px, rgba(140,90,40,.10) 88px, transparent 92px),
+                 linear-gradient(90deg, transparent 128px, #E46A6A 128px, #E46A6A 131px, transparent 131px),
+                 repeating-linear-gradient(to bottom, transparent 0 86px, #A9C0DD 86px 88px),
+                 var(--paper); }
+  .f2 .hand { font-family: 'Hand'; font-weight: 700; color: #22357A; white-space: nowrap; }
+  .f2 .strike { position: relative; }
+  .f2 .strike::after { content: ''; position: absolute; left: -6px; right: -6px; top: 52%; height: 5px; background: #C93434; border-radius: 3px; transform: rotate(-4deg); }
+  .f2 .circ { border: 5px solid #C93434; border-radius: 50%; padding: 2px 26px; }
+  .f2 .sticky { width: 300px; height: 290px; background: #FFE066; box-shadow: 0 24px 30px -18px rgba(0,0,0,.45); transform: rotate(7deg);
+                padding: 34px 26px; font: 700 54px/1.0 'Hand'; color: #3B2A00; }
+  .f2 .sticky::before { content: ''; position: absolute; left: 90px; top: -18px; width: 120px; height: 40px; background: rgba(255,255,255,.55); transform: rotate(-4deg); }
+  .f2 .split { inset: 0; clip-path: polygon(0 47.5%, 100% 40%, 100% 40.9%, 0 48.4%); background: var(--or); }
+  .f2 h1 { left: 70px; top: 1000px; font: 900 108px/0.98 'Disp'; letter-spacing: -2.5px; }
+  .f2 h1 span { color: var(--or); }
+  .phone { position: absolute; background: #050506; border-radius: 96px; padding: 22px; box-shadow: 0 60px 90px -30px rgba(0,0,0,.8), inset 0 0 0 3px #2A2C31; }
+  .phone .scr { width: 100%; height: 100%; border-radius: 76px; overflow: hidden; position: relative; }
+  .phone .notch { position: absolute; left: 50%; top: 22px; width: 190px; height: 50px; margin-left: -95px; background: #050506; border-radius: 30px; z-index: 5; }
+  .app { background: #F6F5F3; color: var(--ink); height: 100%; padding: 96px 40px 0; }
+  .app .sb { position: absolute; top: 30px; left: 60px; right: 60px; display: flex; justify-content: space-between; font: 700 26px 'Txt'; }
+  .app .hi { font: 600 24px 'Txt'; color: #7A7F88; }
+  .app .tt { font: 900 50px 'Disp'; letter-spacing: -1px; margin: 4px 0 24px; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 26px; }
+  .kpi { border-radius: 30px; padding: 24px 26px; }
+  .kpi small { display: block; font: 600 22px 'Txt'; opacity: .8; }
+  .kpi b { display: block; font: 900 46px 'Disp'; letter-spacing: -1px; margin-top: 6px; }
+  .kpi.o { background: var(--or); color: #fff; }
+  .kpi.k { background: var(--ink); color: #fff; }
+  .kpi.k b span { color: var(--or); }
+  .lst { background: #fff; border-radius: 30px; padding: 6px 26px; }
+  .lst .it { display: flex; align-items: center; gap: 18px; padding: 20px 0; border-bottom: 2px solid #F0EEEA; }
+  .lst .it:last-child { border-bottom: 0; }
+  .av { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font: 800 26px 'Disp'; color: #fff; flex: none; }
+  .lst .nm { flex: 1; }
+  .lst .nm b { display: block; font: 700 27px 'Txt'; }
+  .lst .nm small { display: block; font: 500 21px 'Txt'; color: #8A8F98; margin-top: 3px; }
+  .pill { font: 700 20px 'Txt'; padding: 9px 16px; border-radius: 999px; white-space: nowrap; }
+  .pill.g { background: #DDF8E7; color: var(--waD); }
+  .pill.o { background: #FFE6D6; color: var(--orD); }
+  .pill.k { background: var(--ink); color: #fff; }
+
+  /* 3 — whatsapp */
+  .f3 { background: radial-gradient(90% 60% at 50% 30%, #17483A 0%, #0D2A22 50%, #07130F 100%); color: #fff; }
+  .f3 .pat { inset: 0; opacity: .07; }
+  .f3 .tag { left: 0; right: 0; top: 140px; text-align: center; }
+  .f3 .tag .chip { background: var(--wa); color: #06281A; font-size: 24px; }
+  .f3 h1 { left: 0; right: 0; top: 240px; text-align: center; font: 900 120px/0.98 'Disp'; letter-spacing: -3px; }
+  .f3 h1 span { color: var(--wa); }
+  .f3 .sub { left: 0; right: 0; top: 500px; text-align: center; font: 600 36px 'Txt'; color: #C9E8DA; }
+  .chat { height: 100%; background: #EBE3D8; position: relative; }
+  .chat .top { background: #1E3A31; color: #fff; padding: 92px 34px 26px; display: flex; align-items: center; gap: 20px; }
+  .chat .top .back { font: 700 44px 'Txt'; opacity: .9; }
+  .chat .top .av2 { width: 78px; height: 78px; border-radius: 50%; background: #0C0D10; display: grid; place-items: center; }
+  .chat .top .av2 svg { width: 54px; height: 54px; }
+  .chat .top b { display: block; font: 700 32px 'Txt'; }
+  .chat .top small { display: block; font: 500 22px 'Txt'; color: #A9D8C3; margin-top: 4px; }
+  .chat .body { padding: 26px 30px; display: flex; flex-direction: column; gap: 18px; }
+  .chat .day { align-self: center; background: #DCEFF7; color: #4D6470; font: 700 20px 'Txt'; letter-spacing: 1.5px; padding: 8px 18px; border-radius: 14px; }
+  .bub { max-width: 88%; padding: 20px 24px 14px; border-radius: 28px; font: 500 29px/1.36 'Txt'; color: #111B21; box-shadow: 0 2px 2px rgba(0,0,0,.08); }
+  .bub.in { background: #fff; align-self: flex-start; border-top-left-radius: 6px; }
+  .bub.out { background: #D9FDD3; align-self: flex-end; border-top-right-radius: 6px; }
+  .bub .tm { display: block; text-align: right; font: 500 20px 'Txt'; color: #667781; margin-top: 6px; }
+  .bub .tm .tk { color: #53BDEB; font-weight: 700; letter-spacing: -3px; margin-left: 6px; }
+  .bub .auto { display: flex; align-items: center; gap: 8px; font: 700 19px 'Txt'; color: var(--orD); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .toast { display: flex; align-items: center; gap: 22px; background: #fff; color: var(--ink); border-radius: 32px; padding: 24px 34px 24px 24px; box-shadow: 0 40px 60px -20px rgba(0,0,0,.6); }
+  .toast .ok { width: 80px; height: 80px; border-radius: 50%; background: var(--wa); color: #fff; display: grid; place-items: center; font-size: 46px; }
+  .toast small { display: block; font: 700 21px 'Txt'; letter-spacing: 2px; color: #7A7F88; text-transform: uppercase; }
+  .toast b { display: block; font: 900 50px 'Disp'; letter-spacing: -1px; }
+
+  /* 4 — bir iş günü */
+  .f4 { background: linear-gradient(180deg, #FFE2C4 0%, #FFF3E6 28%, #FFF8F1 100%); color: var(--ink); }
+  .f4 .sun { width: 520px; height: 520px; right: -170px; top: -170px; border-radius: 50%; background: radial-gradient(circle, #FFB37A 0%, #FF8F45 45%, rgba(255,143,69,0) 70%); }
+  .f4 .tag { left: 70px; top: 130px; }
+  .f4 .tag .chip { background: var(--ink); color: #fff; font-size: 22px; }
+  .f4 h1 { left: 70px; top: 220px; font: 900 96px/0.98 'Disp'; letter-spacing: -2.5px; }
+  .f4 h1 span { color: var(--or); }
+  .tl { left: 0; right: 0; top: 520px; }
+  .tl .line { position: absolute; left: 213px; top: 40px; height: 1060px; width: 6px; border-radius: 3px; background: repeating-linear-gradient(to bottom, #E8C9AA 0 16px, transparent 16px 28px); }
+  .tl .line.done { background: var(--or); height: 815px; }
+  .ev { position: absolute; left: 0; display: flex; align-items: center; height: 150px; }
+  .ev .t { width: 180px; text-align: right; font: 800 40px 'Disp'; letter-spacing: -.5px; padding-right: 22px; }
+  .ev .nd { width: 34px; height: 34px; border-radius: 50%; background: var(--or); border: 7px solid #FFF3E6; box-shadow: 0 0 0 3px var(--or); margin-left: 0; flex: none; }
+  .ev .cd { margin-left: 34px; width: 780px; display: flex; align-items: center; gap: 24px; background: #fff; border-radius: 30px; padding: 22px 26px; box-shadow: 0 16px 30px -18px rgba(120,60,10,.35); }
+  .ev .cd .ico { width: 82px; height: 82px; border-radius: 22px; background: #FFE8D6; color: var(--orD); display: grid; place-items: center; font-size: 44px; flex: none; }
+  .ev .cd b { display: block; font: 800 34px 'Disp'; letter-spacing: -.3px; }
+  .ev .cd small { display: block; font: 600 24px 'Txt'; color: #7A7F88; margin-top: 4px; }
+  .ev.on .cd { background: var(--ink); color: #fff; transform: scale(1.04); transform-origin: left center; box-shadow: 0 30px 50px -20px rgba(0,0,0,.5); }
+  .ev.on .cd .ico { background: var(--wa); color: #fff; }
+  .ev.on .cd small { color: #9FE3BE; }
+  .ev.on .t { color: var(--or); font-size: 48px; }
+  .ev.on .nd { width: 44px; height: 44px; margin-left: -5px; box-shadow: 0 0 0 3px var(--or), 0 0 0 18px rgba(255,106,19,.18); }
+  .ev.off { opacity: .42; }
+  .ev.off .nd { background: #FFF3E6; }
+  .shop { left: 0; right: 0; top: 1610px; height: 310px; }
+
+  /* 5 — kinetik tipografi */
+  .f5 { background: var(--or); color: var(--ink); }
+  .f5 .w { position: absolute; left: 60px; font-family: 'Disp'; font-weight: 900; line-height: .8; letter-spacing: -.035em; white-space: nowrap; }
+  .f5 .w.inv { color: var(--or); }
+  .f5 .band { position: absolute; left: 0; right: 0; background: var(--ink); }
+  .f5 .stk { position: absolute; right: 36px; background: #fff; color: var(--ink); font: 800 27px 'Txt'; padding: 13px 20px; border-radius: 18px; box-shadow: 0 16px 24px -12px rgba(0,0,0,.45); display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+  .f5 .stk .ic { font-size: 34px; color: var(--or); stroke-width: 2.6; }
+  .f5 .all { left: 60px; right: 60px; top: 1350px; font: 900 100px/0.98 'Disp'; letter-spacing: -2.5px; color: #fff; }
+  .f5 .bot { left: 60px; right: 60px; top: 1610px; display: flex; justify-content: space-between; align-items: center; }
+  .f5 .bot .url { color: var(--ink); }
+  .f5 .bot .logo { background: var(--ink); color: #fff; padding: 18px 30px 18px 22px; border-radius: 30px; }
+
+  /* 6 — tekliften tahsilata */
+  .f6 { background:
+          linear-gradient(rgba(255,255,255,.035) 2px, transparent 2px) 0 0 / 60px 60px,
+          linear-gradient(90deg, rgba(255,255,255,.035) 2px, transparent 2px) 0 0 / 60px 60px,
+          radial-gradient(80% 50% at 50% 55%, #1E1410 0%, #0C0D10 70%);
+        color: #fff; }
+  .f6 h1 { left: 70px; top: 150px; font: 900 112px/0.98 'Disp'; letter-spacing: -3px; }
+  .f6 h1 span { color: var(--or); }
+  .f6 .flow { left: 0; top: 0; }
+  .node { position: absolute; width: 132px; text-align: center; transform: translate(-50%, -50%); }
+  .node .c { width: 112px; height: 112px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; font-size: 54px; background: var(--ink2); color: #6E737C; box-shadow: inset 0 0 0 4px #3A3D45; }
+  .node.done .c { background: var(--or); color: #fff; box-shadow: 0 0 0 10px rgba(255,106,19,.18), 0 0 40px rgba(255,106,19,.6); }
+  .node.now .c { background: #fff; color: var(--or); box-shadow: 0 0 0 10px rgba(255,255,255,.14), 0 0 50px rgba(255,170,100,.8); }
+  .node b { position: absolute; left: 50%; top: 124px; transform: translateX(-50%); white-space: nowrap; font: 800 28px 'Disp'; }
+  .node.todo b { color: #8A8F98; }
+  .doc { width: 300px; height: 340px; background: #fff; color: var(--ink); border-radius: 22px; padding: 26px; box-shadow: 0 50px 80px -20px rgba(0,0,0,.8), 0 0 60px rgba(255,140,60,.35); }
+  .doc .dh { display: flex; justify-content: space-between; align-items: center; font: 900 27px 'Disp'; }
+  .doc .dh small { font: 700 18px 'Txt'; color: #8A8F98; }
+  .doc .ln { height: 12px; border-radius: 6px; background: #ECEAE6; margin-top: 15px; }
+  .doc .tot { margin-top: 22px; display: flex; justify-content: space-between; font: 900 27px 'Disp'; border-top: 3px solid var(--ink); padding-top: 14px; }
+  .doc .stamp { position: absolute; right: -46px; bottom: -34px; transform: rotate(-14deg); border: 6px solid var(--or); color: var(--or); font: 900 36px 'Disp'; letter-spacing: 2px; padding: 8px 18px; border-radius: 14px; background: rgba(255,255,255,.92); }
+  .f6 .sum { left: 70px; right: 70px; top: 1560px; display: flex; justify-content: space-between; align-items: center; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Yer tutucu logo: izometrik kara kutu, turuncu kapak -->
+    <symbol id="logo" viewBox="0 0 100 100">
+      <polygon points="50,6 92,29 50,52 8,29" fill="#FF6A13"/>
+      <polygon points="8,29 50,52 50,96 8,73" fill="#2A2C33"/>
+      <polygon points="50,52 92,29 92,73 50,96" fill="#121317"/>
+      <polyline points="8,29 50,52 92,29" fill="none" stroke="#FFB07A" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2.5 3.5 7v10L12 21.5 20.5 17V7z M3.5 7 12 11.5 20.5 7 M12 11.5v10 M7.8 4.8l8.4 4.5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.6"/><path d="M2.5 20.5v-1.2A4.8 4.8 0 0 1 7.3 14.5h3.4a4.8 4.8 0 0 1 4.8 4.8v1.2 M16 4.6a3.6 3.6 0 0 1 0 6.8 M18.6 14.8a4.8 4.8 0 0 1 2.9 4.4v1.3"/></symbol>
+    <symbol id="i-inv" viewBox="0 0 24 24"><path d="M5.5 2.5h13v19l-2.6-1.7-2.6 1.7-2.6-1.7-2.6 1.7-2.6-1.7z M9 7.5h6 M9 11h6 M9 14.5h3.5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.8 11.6a8.6 8.6 0 0 1-12.6 7.6L3 20.8l1.7-4.9a8.6 8.6 0 1 1 16.1-4.3z"/><path d="M8.6 9.2c.3 2.6 2.6 5 5.3 5.4l1.3-1.3 2 1-.4 1.6c-4.2.6-9.4-4.6-8.8-8.8l1.6-.4 1 2z" stroke-width="1.4"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z M14 2.5V8h5.5 M8 13h8 M8 16.5h5"/></symbol>
+    <symbol id="i-io" viewBox="0 0 24 24"><path d="M4 8h14 M14.5 4.5 18 8l-3.5 3.5 M20 16H6 M9.5 12.5 6 16l3.5 3.5"/></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5L19.5 6.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+    <symbol id="i-lira" viewBox="0 0 24 24"><path d="M9 3v14.5c4.5 0 9-2.5 9-8 M5.5 11l8-3.5 M5.5 15l8-3.5"/></symbol>
+    <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M8.5 3.5h7l-1 7h-5z M4 14.5h16v3H4z M6 20.5h12"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z M10 21h4"/></symbol>
+    <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .9 0"/></filter>
+  </defs>
+</svg>
+
+<div class="board">
+  <div class="head">
+    <div>
+      <div class="kick">Karakutu Muhasebe · Instagram Reels · 9:16 · 30–45 sn</div>
+      <h1>6 konsept, 6 ana kare</h1>
+    </div>
+    <p>Her kare, o konseptin videodaki <b>en güçlü anıdır</b>. Altında kanca cümlesi ve sahne akışı var.
+       Birini seçin; seçtiğiniz konsept <b>~40 sn'lik, sesli, animasyonlu Reels</b>'e dönüşsün.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- ═════════════ 1 · KARA KUTU AÇILIYOR ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f1">
+        <div class="abs tag">KARAKUTU MUHASEBE</div>
+        <h1 class="abs">İşletmenin<br><span>kara kutusu.</span></h1>
+        <div class="abs beam"></div>
+        <div class="abs ray" style="left:536px;top:470px;transform:rotate(-24deg)"></div>
+        <div class="abs ray" style="left:536px;top:470px;transform:rotate(-9deg);opacity:.7"></div>
+        <div class="abs ray" style="left:536px;top:470px;transform:rotate(11deg);opacity:.8"></div>
+        <div class="abs ray" style="left:536px;top:470px;transform:rotate(27deg);opacity:.6"></div>
+        <div id="dots1"></div>
+
+        <div class="abs card" style="left:70px;top:520px;transform:rotate(-7deg)"><div class="ico"><svg class="ic"><use href="#i-box"/></svg></div><div><b>Stok takibi</b><small>Kritik seviye: 3 ürün</small></div></div>
+        <div class="abs card" style="left:590px;top:500px;transform:rotate(6deg)"><div class="ico"><svg class="ic"><use href="#i-inv"/></svg></div><div><b>e-Fatura</b><small>Programdan kes</small></div></div>
+        <div class="abs card" style="left:250px;top:700px;transform:rotate(-2deg)"><div class="ico"><svg class="ic"><use href="#i-users"/></svg></div><div><b>Cari kayıt</b><small>Borç · alacak · ekstre</small></div></div>
+        <div class="abs card" style="left:560px;top:830px;transform:rotate(5deg)"><div class="ico" style="color:#25D366"><svg class="ic"><use href="#i-chat"/></svg></div><div><b>WhatsApp</b><small>Otomatik hatırlatma</small></div></div>
+        <div class="abs card" style="left:60px;top:900px;transform:rotate(4deg)"><div class="ico"><svg class="ic"><use href="#i-quote"/></svg></div><div><b>Teklif</b><small>Hazırla, gönder</small></div></div>
+        <div class="abs card" style="left:40px;top:1085px;transform:rotate(-4deg) scale(.88)"><div class="ico"><svg class="ic"><use href="#i-io"/></svg></div><div><b>Gelen / Giden</b><small>Tüm faturalar tek yerde</small></div></div>
+
+        <svg class="abs" style="left:240px;top:1130px" width="600" height="520" viewBox="0 0 600 520">
+          <defs>
+            <radialGradient id="glow1" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFE3C4"/><stop offset=".45" stop-color="#FF9A4D"/><stop offset="1" stop-color="#FF6A13"/></radialGradient>
+            <linearGradient id="sideL" x1="0" x2="1"><stop offset="0" stop-color="#26272D"/><stop offset="1" stop-color="#1A1B20"/></linearGradient>
+          </defs>
+          <polygon points="40,190 300,320 300,500 40,370" fill="url(#sideL)"/>
+          <polygon points="300,320 560,190 560,370 300,500" fill="#0E0F12"/>
+          <polygon points="300,60 560,190 300,320 40,190" fill="url(#glow1)"/>
+          <polygon points="300,92 512,190 300,288 88,190" fill="#FFF1E0" opacity=".55"/>
+          <g fill="none" stroke="#FF6A13" stroke-width="5" stroke-linejoin="round">
+            <polyline points="40,190 40,370 300,500 560,370 560,190"/>
+            <line x1="300" y1="320" x2="300" y2="500"/>
+            <polygon points="300,60 560,190 300,320 40,190"/>
+          </g>
+          <text transform="matrix(0.894,-0.447,0,1,334,448)" font-family="Disp" font-weight="900" font-size="36" letter-spacing="5" fill="#FF6A13">KARAKUTU</text>
+          <text transform="matrix(0.894,0.447,0,1,78,300)" font-family="Txt" font-weight="700" font-size="22" letter-spacing="8" fill="#6C6F78">MUHASEBE</text>
+        </svg>
+        <svg class="abs" style="left:650px;top:1035px;transform:rotate(18deg)" width="330" height="184" viewBox="0 0 360 200">
+          <polygon points="180,10 350,95 180,180 10,95" fill="#1C1D22" stroke="#FF6A13" stroke-width="5" stroke-linejoin="round"/>
+          <polygon points="10,95 180,180 180,198 10,113" fill="#101114"/>
+          <polygon points="180,180 350,95 350,113 180,198" fill="#08080A"/>
+        </svg>
+
+        <div class="abs bot">
+          <div class="logo"><svg><use href="#logo"/></svg><div class="wm"><b>karakutu</b><i>muhasebe</i></div></div>
+          <div class="url" style="color:#D8D9DE">karakutuveri.com/muhasebe</div>
+        </div>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">01</span><h3>Kara Kutu Açılıyor</h3></div>
+        <div class="tags">Sinematik · premium · koyu tema</div>
+        <div class="hook">“Her işletmenin bir kara kutusu var.”</div>
+        <ol>
+          <li><b>0–4 sn</b>Karanlık. Turuncu çizgi kutunun kenarlarını çizer, bas vuruşu.</li>
+          <li><b>4–30 sn</b>Kapak açılır; ışıktan kartlar tek tek yükselir, her kart kendi ekran anına zoom yapar.</li>
+          <li><b>30–40 sn</b>Kartlar kutuya döner, kapak kapanır → logo + adres.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═════════════ 2 · DEFTER KAPANDI ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f2">
+        <div class="abs paper">
+          <div class="abs hand" style="left:160px;top:96px;font-size:96px">Veresiye — Ekim</div>
+          <div class="abs" style="left:160px;top:200px;width:520px;height:6px;background:#22357A;border-radius:3px;transform:rotate(-1.5deg)"></div>
+          <div class="abs hand" style="left:160px;top:250px;font-size:66px">Ahmet abi — <span class="strike">1.250 ₺</span> <span style="color:#C93434">1.400?</span></div>
+          <div class="abs hand" style="left:160px;top:338px;font-size:62px;transform:rotate(-1deg)">Kırtasiye Ltd. → fatura kes!!</div>
+          <div class="abs hand" style="left:160px;top:424px;font-size:62px">Koli: <span class="strike">12</span> <span class="strike">9</span> 14 ???</div>
+          <div class="abs hand" style="left:150px;top:505px;font-size:62px;transform:rotate(-2deg)"><span class="circ">Mehmet'i ARA</span> (2. kez)</div>
+          <div class="abs hand" style="left:160px;top:600px;font-size:58px;color:#5A6BA5">Teklif → pazartesi... galiba</div>
+          <div class="abs sticky" style="left:770px;top:40px;width:270px;height:250px;font-size:50px;padding:30px 24px">Kim ödedi,<br>kim ödemedi??</div>
+          <div class="abs chip" style="left:56px;top:736px;background:var(--ink);color:#fff;font-size:22px;transform:rotate(-4deg)">Önce</div>
+        </div>
+        <div class="abs split"></div>
+        <div class="abs chip" style="right:56px;top:830px;background:var(--or);color:#fff;font-size:22px">Sonra</div>
+        <h1 class="abs">Defter kapandı.<br><span>Karakutu açıldı.</span></h1>
+        <div class="phone" style="left:170px;top:1265px;width:740px;height:1000px">
+          <div class="notch"></div>
+          <div class="scr app">
+            <div class="sb"><span>09:41</span><span>●●●</span></div>
+            <div class="hi">Günaydın, Yılmaz Ticaret</div>
+            <div class="tt">Bugünün özeti</div>
+            <div class="kpis">
+              <div class="kpi o"><small>Toplam alacak</small><b>48.320 ₺</b></div>
+              <div class="kpi k"><small>Kritik stok</small><b><span>3</span> ürün</b></div>
+            </div>
+            <div class="lst">
+              <div class="it"><div class="av" style="background:#4E7CF4">AK</div><div class="nm"><b>Ahmet Kaya</b><small>Bakiye 1.400,00 ₺</small></div><span class="pill g">Hatırlatıldı ✓✓</span></div>
+              <div class="it"><div class="av" style="background:#9A5CF0">KL</div><div class="nm"><b>Kırtasiye Ltd.</b><small>Fatura #2026-0418</small></div><span class="pill k">e-Fatura ✓</span></div>
+              <div class="it"><div class="av" style="background:#E5484D">MD</div><div class="nm"><b>Mehmet Demir</b><small>Bakiye 2.150,00 ₺</small></div><span class="pill o">Vadesi geldi</span></div>
+            </div>
+          </div>
+        </div>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">02</span><h3>Defter Kapandı</h3></div>
+        <div class="tags">Önce / sonra · tanıdık · esprili</div>
+        <div class="hook">“Hâlâ veresiye defteriyle mi?”</div>
+        <ol>
+          <li><b>0–5 sn</b>Karalanmış defter, yapışkan notlar, hesap makinesi tıkırtısı.</li>
+          <li><b>5–30 sn</b>Defter kapanır, kapağı ekrana dönüşür. Her karalama modülüne uçar: not → cari, koli → stok, “fatura kes” → e-Fatura, “ara” → WhatsApp.</li>
+          <li><b>30–40 sn</b>“Defter kapandı. Karakutu açıldı.” → adres.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═════════════ 3 · ALACAĞINI KOVALAMA ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f3">
+        <svg class="abs pat" width="1080" height="1920"><defs><pattern id="pt" width="180" height="180" patternUnits="userSpaceOnUse">
+          <g fill="none" stroke="#fff" stroke-width="4"><rect x="20" y="24" width="70" height="44" rx="16"/><circle cx="135" cy="120" r="22"/><path d="M40 140h40 M120 40l20 20"/></g></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#pt)"/></svg>
+        <div class="abs tag"><span class="chip"><svg class="ic" style="font-size:30px"><use href="#i-bell"/></svg>Otomatik borç hatırlatma</span></div>
+        <h1 class="abs">Alacağını<br>sen <span>kovalama.</span></h1>
+        <div class="abs sub">Karakutu, WhatsApp'tan hatırlatsın.</div>
+        <div class="phone" style="left:170px;top:620px;width:740px;height:1420px">
+          <div class="notch"></div>
+          <div class="scr chat">
+            <div class="top"><span class="back">‹</span><div class="av2"><svg><use href="#logo"/></svg></div><div><b>Yılmaz Ticaret</b><small>işletme hesabı</small></div></div>
+            <div class="body">
+              <div class="day">BUGÜN</div>
+              <div class="bub in"><div class="auto"><svg class="ic"><use href="#i-clock"/></svg>Otomatik hatırlatma</div>Merhaba Ahmet Bey 👋<br>Cari hesabınızda <b>12.450,00 ₺</b> vadesi gelmiş bakiye bulunmaktadır. İyi çalışmalar dileriz.<span class="tm">09:00</span></div>
+              <div class="bub out">Tamam, bugün havale ediyorum 👍<span class="tm">09:04<span class="tk">✓✓</span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="abs toast" style="left:430px;top:1410px;transform:rotate(-4deg)"><div class="ok"><svg class="ic" style="stroke-width:3"><use href="#i-ok"/></svg></div><div><small>Tahsilat alındı</small><b>+12.450 ₺</b></div></div>
+        <div class="abs chip" style="left:60px;top:1610px;background:var(--or);color:#fff;font-size:22px;transform:rotate(3deg)"><svg class="ic" style="font-size:28px"><use href="#i-clock"/></svg>Vade gelince, kendiliğinden</div>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">03</span><h3>Alacağını Kovalama</h3></div>
+        <div class="tags">Telefon POV · rahatlatıcı · çözüm odaklı</div>
+        <div class="hook">“Alacağını sen kovalama, Karakutu hatırlatsın.”</div>
+        <ol>
+          <li><b>0–4 sn</b>Telefon titrer, hatırlatma mesajı düşer. Müşteri: “Tamam, havale ediyorum 👍”</li>
+          <li><b>4–25 sn</b>Kamera geri çekilir: cari listesi → vade kuralı → mesajlar kendiliğinden gider → bakiye sıfırlanır.</li>
+          <li><b>25–40 sn</b>Hızlı montaj: stok, e-Fatura, gelen/giden, teklif → adres.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═════════════ 4 · DÜKKÂNIN BİR GÜNÜ ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f4">
+        <div class="abs sun"></div>
+        <div class="abs tag"><span class="chip"><svg class="ic" style="font-size:28px"><use href="#i-clock"/></svg>Bir iş günü</span></div>
+        <h1 class="abs">Dükkânın bütün günü<br><span>tek programda.</span></h1>
+        <div class="abs tl">
+          <div class="line"></div><div class="line done"></div>
+          <div class="ev" style="top:0"><div class="t">09:00</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-box"/></svg></div><div><b>Mal geldi</b><small>Stok +120 adet işlendi</small></div></div></div>
+          <div class="ev" style="top:185px"><div class="t">11:30</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-quote"/></svg></div><div><b>Teklif hazırlandı</b><small>PDF müşteriye gitti</small></div></div></div>
+          <div class="ev" style="top:370px"><div class="t">14:00</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-inv"/></svg></div><div><b>e-Fatura kesildi</b><small>Programın içinden, tek tıkla</small></div></div></div>
+          <div class="ev" style="top:555px"><div class="t">15:15</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-io"/></svg></div><div><b>Gelen fatura düştü</b><small>Gelen / giden hepsi listede</small></div></div></div>
+          <div class="ev on" style="top:740px"><div class="t">17:00</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-chat"/></svg></div><div><b>WhatsApp hatırlatma</b><small>8 cariye otomatik gitti ✓✓</small></div></div></div>
+          <div class="ev off" style="top:925px"><div class="t">18:30</div><div class="nd"></div><div class="cd"><div class="ico"><svg class="ic"><use href="#i-ok"/></svg></div><div><b>Gün kapandı</b><small>Stok · cari · fatura güncel</small></div></div></div>
+        </div>
+        <svg class="abs shop" viewBox="0 0 1080 310" preserveAspectRatio="none">
+          <rect x="0" y="0" width="1080" height="310" fill="#2A2C33"/>
+          <rect x="60" y="20" width="960" height="70" rx="10" fill="#0C0D10"/>
+          <text x="540" y="70" text-anchor="middle" font-family="Disp" font-weight="900" font-size="40" letter-spacing="8" fill="#FF6A13">YILMAZ TİCARET</text>
+          <g id="awn"></g>
+          <rect x="90" y="160" width="900" height="150" fill="#B9BCC3"/>
+          <g stroke="#8E929B" stroke-width="3"><line x1="90" y1="180" x2="990" y2="180"/><line x1="90" y1="200" x2="990" y2="200"/><line x1="90" y1="220" x2="990" y2="220"/><line x1="90" y1="240" x2="990" y2="240"/><line x1="90" y1="260" x2="990" y2="260"/><line x1="90" y1="280" x2="990" y2="280"/><line x1="90" y1="300" x2="990" y2="300"/></g>
+          <rect x="90" y="160" width="900" height="10" fill="#6C7079"/>
+        </svg>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">04</span><h3>Dükkânın Bir Günü</h3></div>
+        <div class="tags">Zaman çizelgesi · sıcak · gündelik</div>
+        <div class="hook">“Sabah kepenk açılır, Karakutu da açılır.”</div>
+        <ol>
+          <li><b>0–3 sn</b>Kepenk yukarı kalkar, saat 09:00'ı vurur.</li>
+          <li><b>3–33 sn</b>Saat ilerler, her saatte bir iş: stok girişi, teklif, e-Fatura, gelen fatura, WhatsApp hatırlatma.</li>
+          <li><b>33–40 sn</b>18:30, kepenk iner: “Bütün gün tek programda.” → adres.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═════════════ 5 · HEPSİ TEK PROGRAMDA ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f5" id="f5">
+        <div class="band" id="band5"></div>
+        <div class="w" data-y="170">STOK.</div>
+        <div class="w" data-y="0">CARİ.</div>
+        <div class="w inv" data-y="0">E-FATURA.</div>
+        <div class="w" data-y="0">TEKLİF.</div>
+        <div class="w" data-y="0">WHATSAPP.</div>
+        <div class="stk"><svg class="ic"><use href="#i-box"/></svg>Kritik stok: 3</div>
+        <div class="stk"><svg class="ic"><use href="#i-users"/></svg>+1 yeni cari</div>
+        <div class="stk"><svg class="ic"><use href="#i-ok"/></svg>Gönderildi</div>
+        <div class="stk"><svg class="ic"><use href="#i-quote"/></svg>PDF hazır</div>
+        <div class="stk"><svg class="ic" style="color:#25D366"><use href="#i-chat"/></svg>✓✓ okundu</div>
+        <div class="abs all">Hepsi<br>tek programda.</div>
+        <div class="abs bot">
+          <div class="logo"><svg><use href="#logo"/></svg><div class="wm"><b>karakutu</b><i>muhasebe</i></div></div>
+          <div class="url">karakutuveri.com/muhasebe</div>
+        </div>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">05</span><h3>Hepsi Tek Programda</h3></div>
+        <div class="tags">Kinetik tipografi · enerjik · ritme oturan</div>
+        <div class="hook">“STOK. CARİ. E-FATURA. TEKLİF. WHATSAPP.”</div>
+        <ol>
+          <li><b>0–2 sn</b>Turuncu ekran, tek kelime vuruşla çakılır: STOK.</li>
+          <li><b>2–30 sn</b>Her vuruşta bir kelime + o modülün 2 sn'lik ekran anı (kritik stok, yeni cari, e-Fatura, teklif PDF, ✓✓).</li>
+          <li><b>30–40 sn</b>Kelimeler üst üste yığılır → “Hepsi tek programda.” → adres.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═════════════ 6 · TEKLİFTEN TAHSİLATA ═════════════ -->
+    <div class="cell">
+      <div class="shot"><div class="frame f6">
+        <h1 class="abs">Tekliften<br>tahsilata<br><span>tek akış.</span></h1>
+        <svg class="abs flow" width="1080" height="1920">
+          <defs><filter id="gl"><feGaussianBlur stdDeviation="8"/></filter></defs>
+          <path id="p6" d="M180,600 H880 a150,150 0 0 1 0,300 H180 a150,150 0 0 0 0,300 H880" fill="none" stroke="#3A3D45" stroke-width="10" stroke-dasharray="4 22" stroke-linecap="round"/>
+          <path id="p6d" d="M180,600 H880 a150,150 0 0 1 0,300 H180 a150,150 0 0 0 0,300 H880" fill="none" stroke="#FF6A13" stroke-width="16" filter="url(#gl)" opacity=".8"/>
+          <path id="p6e" d="M180,600 H880 a150,150 0 0 1 0,300 H180 a150,150 0 0 0 0,300 H880" fill="none" stroke="#FFB07A" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <div class="node done" style="left:180px;top:600px"><div class="c"><svg class="ic"><use href="#i-quote"/></svg></div><b>Teklif</b></div>
+        <div class="node done" style="left:530px;top:600px"><div class="c"><svg class="ic"><use href="#i-ok"/></svg></div><b>Onay</b></div>
+        <div class="node done" style="left:880px;top:600px"><div class="c"><svg class="ic"><use href="#i-inv"/></svg></div><b>e-Fatura</b></div>
+        <div class="node done" style="left:880px;top:900px"><div class="c"><svg class="ic"><use href="#i-io"/></svg></div><b>Giden fatura</b></div>
+        <div class="node done" style="left:530px;top:900px"><div class="c"><svg class="ic"><use href="#i-box"/></svg></div><b>Stok güncel</b></div>
+        <div class="node done" style="left:180px;top:900px"><div class="c"><svg class="ic"><use href="#i-users"/></svg></div><b>Cari işlendi</b></div>
+        <div class="node done" style="left:180px;top:1200px"><div class="c"><svg class="ic"><use href="#i-chat"/></svg></div><b>Hatırlatma</b></div>
+        <div class="node now" style="left:880px;top:1200px"><div class="c"><svg class="ic"><use href="#i-lira"/></svg></div><b>Tahsil edildi</b></div>
+        <div class="abs doc" style="left:385px;top:1040px;transform:rotate(-7deg)">
+          <div class="dh">FATURA<small>#0418</small></div>
+          <div class="ln" style="width:70%"></div><div class="ln"></div><div class="ln" style="width:85%"></div><div class="ln" style="width:60%"></div><div class="ln" style="width:78%"></div>
+          <div class="tot"><span>Toplam</span><span>24.800 ₺</span></div>
+          <div class="stamp">e-FATURA ✓</div>
+        </div>
+        <div class="abs sum">
+          <div class="logo"><svg><use href="#logo"/></svg><div class="wm"><b>karakutu</b><i>muhasebe</i></div></div>
+          <div class="url" style="color:#D8D9DE;text-align:right">karakutuveri.com<br>/muhasebe</div>
+        </div>
+        <svg class="grain"><rect width="100%" height="100%" filter="url(#noise)"/></svg>
+      </div></div>
+      <div class="cap">
+        <div class="row"><span class="n">06</span><h3>Tekliften Tahsilata</h3></div>
+        <div class="tags">Akış / yolculuk · akıllı · B2B</div>
+        <div class="hook">“Bir teklifin tahsilata kadar yolculuğu.”</div>
+        <ol>
+          <li><b>0–4 sn</b>Boş teklif belgesi kendini doldurur, “Gönder”e basılır.</li>
+          <li><b>4–32 sn</b>Belge turuncu hat boyunca ilerler: onay → e-Fatura → giden faturalar → stok → cari → WhatsApp hatırlatma → tahsilat.</li>
+          <li><b>32–40 sn</b>Hat toplanıp logoya dönüşür → adres.</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <div class="ask">Hangisi? <span>1 – 6</span> arasından seçin,<br>animasyonu o konseptle kuralım.</div>
+    <div class="note">Logo ve renkler yer tutucudur: karakutuveri.com bu çalışma ortamından açılamadı. Marka logonuzu ve renk kodlarınızı iletirseniz videoya birebir işlenir.
+      Ekranlardaki isim ve tutarlar örnektir. Konseptler birleştirilebilir (ör. 2'nin kancası + 5'in ritmi).</div>
+  </div>
+</div>
+
+<script>
+  // 1 — ışık hüzmesindeki kıvılcımlar (tohumlu, her render aynı)
+  let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const d1 = document.getElementById('dots1');
+  for (let i = 0; i < 46; i++) {
+    const y = 420 + rnd() * 900, spread = (y - 420) / 900;
+    const x = 540 + (rnd() - .5) * (1100 - spread * 820);
+    const e = document.createElement('div'); e.className = 'abs dot';
+    const sc = .4 + rnd() * 1.1;
+    e.style.cssText = `left:${x}px;top:${y}px;transform:scale(${sc});opacity:${.35 + rnd() * .65}`;
+    d1.appendChild(e);
+  }
+  // 4 — tente (turuncu/beyaz dilimli)
+  const awn = document.getElementById('awn'); let a = '';
+  for (let i = 0; i < 12; i++) {
+    const x = 40 + i * 83.3, c = i % 2 ? '#FFFFFF' : '#FF6A13';
+    a += `<path d="M${x},96 h83.3 v40 a41.65,26 0 0 1 -83.3,0z" fill="${c}"/>`;
+  }
+  awn.innerHTML = `<rect x="40" y="90" width="1000" height="10" fill="#0C0D10"/>` + a;
+  // 5 — kelimeleri genişliğe sığdır, alt alta diz
+  Promise.all(['900 100px Disp','800 30px Disp','700 30px Txt','700 30px Hand'].map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => {
+    const f5 = document.getElementById('f5'), ws = [...f5.querySelectorAll('.w')];
+    let y = 190; const stks = [...f5.querySelectorAll('.stk')];
+    ws.forEach((w, i) => {
+      w.style.fontSize = '100px';
+      const fs = Math.min(320, 100 * 790 / w.offsetWidth);
+      w.style.fontSize = fs + 'px'; w.style.top = y + 'px';
+      if (w.classList.contains('inv')) { const b = document.getElementById('band5'); b.style.top = (y - fs * .1) + 'px'; b.style.height = (fs * 1.0) + 'px'; }
+      const st = stks[i]; st.style.top = (y + fs * .5 - st.offsetHeight / 2 - fs * .08) + 'px';
+      st.style.transform = `rotate(${i % 2 ? -6 : 6}deg)`;
+      y += fs * .86;
+    });
+    // 6 — tamamlanan yol: son satırın ortasına (belgenin olduğu yere) kadar
+    const L = 700 * 2 + Math.PI * 150 * 2 + 360;
+    for (const id of ['p6d', 'p6e']) document.getElementById(id).setAttribute('stroke-dasharray', `${L} 99999`);
+    document.body.dataset.ready = '1';
+  });
+</script>
+</body>
+</html>
