@@ -17,6 +17,8 @@
 - Her üretim ElevenLabs kredisi harcar. Metin kesinleşmeden ses üretilmez. Üretim çağrısı hata verirse
   aynı çağrı tekrarlanmaz (ikinci kez ücretlendirir): `creative_get_flow` ile düğüm `not_run` ise
   `creative_run_flow_nodes` ile aynı düğüm yeniden çalıştırılır.
+- Bu ElevenLabs hesabı aynı anda tek üretime izin veriyor: varsayılan iki kayıttan ikincisi `429`
+  ile düşer. `generations_count: 1` verilir; ikinci bir okuma gerekirse ilki bittikten sonra istenir.
 - Montajda dış ses müziğin üstünde kalır (müzik konuşma altında kısılır), son miks -14 LUFS'tur.
 
 ## ElevenLabs bağlantısı
