@@ -64,6 +64,10 @@ Karelerin hepsi videoyu üretecek aynı kodla çizildi. Yani panodaki görüntü
 | B · 08:59 | [`storyboard/konsept_B_sabah_0859.jpg`](storyboard/konsept_B_sabah_0859.jpg) | Hikâye: kâğıt föyden QR'a, sabah girişten akşam çıkışa |
 | C · Ürün demosu | [`storyboard/konsept_C_urun_demosu.jpg`](storyboard/konsept_C_urun_demosu.jpg) | Açık tema, gerçek uygulama ekranları, 3 adım: Okut → Takip et → Raporla |
 | D · İzometrik ofis | [`storyboard/konsept_D_izometrik_ofis.jpg`](storyboard/konsept_D_izometrik_ofis.jpg) | 3B illüstrasyon; logodaki kişiler minik karakterler olur |
+| E · Kalkış panosu | [`storyboard/konsept_E_kalkis_panosu.jpg`](storyboard/konsept_E_kalkis_panosu.jpg) | Havalimanı split-flap panosu; mekanik pullar, sarı yön tabelası |
+| F · Bento | [`storyboard/konsept_F_bento.jpg`](storyboard/konsept_F_bento.jpg) | İsviçre ızgarası; cesur renk blokları vuruşla yer değiştirir |
+| G · Mesajlaşma | [`storyboard/konsept_G_mesajlasma.jpg`](storyboard/konsept_G_mesajlasma.jpg) | Sohbet ekranında anlatılan, Reels'e özgü hikâye |
+| H · Kâğıt kesik | [`storyboard/konsept_H_kagit_kesik.jpg`](storyboard/konsept_H_kagit_kesik.jpg) | Kâğıt kolaj, stop-motion, sıcak el işi görünümü |
 
 ## Logo
 
@@ -74,6 +78,6 @@ sürümleri vardır; parantezler ve kişiler ayrı ayrı canlandırılabilir.
 ## Storyboard'ları yeniden üretmek
 
 ```bash
-NODE_PATH="$(npm root -g)" node storyboard/render_frames.cjs /tmp/kareler   # 24 kare (1080×1920)
-python3 storyboard/board.py /tmp/kareler storyboard                         # 4 pano
+NODE_PATH="$(npm root -g)" node storyboard/render_frames.cjs /tmp/kareler   # 48 kare (1080×1920)
+python3 storyboard/board.py /tmp/kareler storyboard                         # 8 pano (A–H)
 ```

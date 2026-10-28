@@ -65,6 +65,54 @@ CONCEPTS = {
             ('13–17 sn', 'Puantaj', '“Ay sonu? Puantaj hazır.”', 'Bina küplerine ayrılır ve 3B çubuk grafiğe dönüşür; puantaj kartı onayla kapanır.'),
             ('17–20 sn', 'Marka', '“QR Personel · qrpersonel.com”', 'Küpler ikonu oluşturur; ikon platformun üstünde katman katman yükselip oturur.'),
         ]),
+    'E': dict(
+        name='KALKIŞ PANOSU', pitch='Havalimanı kalkış panosu gibi: mekanik pullar döner, her okutma panoya yeni bir satır olarak düşer.',
+        tags=['≈ 30 sn · 9:16 · 1080×1920', 'Siyah pano + havalimanı sarısı', 'Müzik: retro synth + pul tıkırtısı, 116 BPM'],
+        palette=['#0B0B0C', '#1C1D21', '#F2EFE6', '#FFB000', '#3DDC84', '#FF5A4F'], bg='#0E0E10', fg='#F2EFE6', sub='#8A8E96', acc='#FFB000',
+        scenes=[
+            ('0–4 sn', 'Kanca', '“08:59 · KİM GELDİ?”', 'Pano ilk karede tıkırdayarak döner; saat 08:59’a, alt satır harf harf “KİM GELDİ?”ye oturur.'),
+            ('4–9 sn', 'Girişler', '“Kim geldi, kim geç kaldı: tek panoda.”', 'Satırlar sırayla dolar: isim, saat, durum. GİRDİ yeşil, GEÇ kırmızı, BEKLE yanıp söner.'),
+            ('9–14 sn', 'Okut', '“QR OKUT · GİRİŞ · KAPI 1”', 'Sarı yön tabelası kayarak gelir, telefon kapıdaki QR’ı okur, pano yeni satırı ekler.'),
+            ('14–19 sn', 'İçeride', '“45/53 · Canlı. Her okutmada döner.”', 'Dev sayaç pulları 44’ten 45’e döner, son gelenler alt satırlarda akar.'),
+            ('19–25 sn', 'Çıkış ve puantaj', '“ÇIKIŞLAR · PUANTAJ HAZIR”', 'Akşam panosu: çıkış saatleri ve süreler; “PUANTAJ HAZIR” büyük pullarla tek tek oturur.'),
+            ('25–30 sn', 'Marka', '“QR Personel · qrpersonel.com →”', 'Ekran havalimanı sarısına döner; logo tabelaya piktogram gibi oturur, adres ok işaretiyle gelir.'),
+        ]),
+    'F': dict(
+        name='BENTO', pitch='İsviçre ızgarası: cesur renkli kutular vuruşla yer değiştirir, her kutu bir özelliği anlatır.',
+        tags=['≈ 30 sn · 9:16 · 1080×1920', 'Krem + kobalt, mandalina, limon, lila', 'Müzik: funky house, 124 BPM'],
+        palette=['#EFECE6', '#121212', '#2D4BFF', '#FF6B2C', '#C6F45E', '#C9B8FF'], bg='#E9E6DF', fg='#121212', sub='#6E6A63', acc='#2D4BFF',
+        scenes=[
+            ('0–4 sn', 'Kanca', '“Ekibin, tek bakışta. · 45/53”', 'Kutular boş ızgaraya vuruşla düşer; sayılar ve saat dönerek dolar.'),
+            ('4–9 sn', 'Okut', '“Okut.”', 'Mavi kutu ekranı kaplayacak kadar büyür; QR’a köşeler kilitlenir, Giriş/Çıkış kutuları alttan kayar.'),
+            ('9–14 sn', 'Giriş', '“Giriş yapıldı 08:57:12 · Geç: 2”', 'Limon kutuda onay; liste kutusu satır satır dolar, turuncu kutuda geç sayacı.'),
+            ('14–19 sn', 'Rapor', '“Giriş saatleri · Puantaj hazır.”', 'Çubuklar büyür, takvim hücreleri dama gibi dolar, siyah kutuda onay.'),
+            ('19–25 sn', 'Özellikler', '“Giriş · Çıkış · Geç kalanlar · Puantaj”', 'Dört kutu dönerek yer değiştirir, ikonlar küçük animasyonlarla canlanır.'),
+            ('25–30 sn', 'Marka', '“QR Personel · qrpersonel.com →”', 'Bütün kutular tek siyah kutuda birleşir; logo, adres ve renk şeritleri.'),
+        ]),
+    'G': dict(
+        name='MESAJLAŞMA', pitch='Reels’e özgü bir sohbet hikâyesi: “Kim geldi?” mesajları birikir, QR Personel tek mesajla cevap verir.',
+        tags=['≈ 30 sn · 9:16 · 1080×1920', 'Sohbet arayüzü + yeşil vurgu', 'Müzik: lo-fi pop, 100 BPM, mesaj sesleri'],
+        palette=['#E9EBEE', '#FFFFFF', '#111111', '#2BBE6E', '#FF5A4F'], bg='#E4E6EA', fg='#111111', sub='#5F6670', acc='#2BBE6E',
+        scenes=[
+            ('0–4 sn', 'Kanca', '“Her sabah aynı soru…”', 'Yönetici yazar: “Günaydın! Bugün kim geldi?” Yazıyor balonu titrer, alt yazı Reels tarzında belirir.'),
+            ('4–9 sn', 'Kaos', '“Mesaj trafiği mi?”', 'Cevaplar üst üste yağar: yoldayım, trafik, kart unuttum… Bildirim sesleri sıklaşır.'),
+            ('9–14 sn', 'Cevap', '“Sormana gerek yok. · 45/53 içeride”', 'QR Personel kartı tek mesajda gelir: içeride, geç, bekleniyor; avatarlar dizilir.'),
+            ('14–19 sn', 'Okut', '“Okut, kayda geçsin.”', 'Bot QR’ı paylaşır, “Okuttum” yanıtı gelir, yeşil sistem satırı: giriş 08:57.'),
+            ('19–25 sn', 'Akşam', '“Ay sonu? Hazır.”', 'Çıkış satırı 18:04 · 9 sa 04 dk; Eylül puantajı kartı açılır, günler renklenir.'),
+            ('25–30 sn', 'Marka', '“QR Personel · qrpersonel.com · Hemen başlayın”', 'Sohbet kayar, logo profil fotoğrafı gibi büyür, çevrimiçi noktası yanar.'),
+        ]),
+    'H': dict(
+        name='KÂĞIT KESİK', pitch='El yapımı kolaj: kâğıt föyler, yapışkan notlar ve makasla kesilen bir QR. Stop-motion ritim.',
+        tags=['≈ 30 sn · 9:16 · 1080×1920', 'Kraft kâğıt + kiremit, hardal, adaçayı', 'Müzik: akustik pop, el çırpma, 110 BPM'],
+        palette=['#E6D9C2', '#FBF7EE', '#1C1B19', '#D4643B', '#E7B347', '#8DAA7B'], bg='#E3D6BE', fg='#1C1B19', sub='#6E6250', acc='#D4643B',
+        scenes=[
+            ('0–4 sn', 'Kanca', '“KİM GELDİ?”', 'Kesik harfler tek tek yapışır; imza föyü, “Ali?” ve “Kart kayıp!” notları masaya düşer (12 fps stop-motion).'),
+            ('4–9 sn', 'Kesip at', '“OKUT.”', 'Makas föyü kesik çizgiden keser; parçalar kâğıttan bir QR’a dönüşür, şeritler havaya uçar.'),
+            ('9–14 sn', 'Giriş', '“Okuttun, girdin. · GİRİŞ 08:57”', 'Kâğıt telefon QR’ı okur, iple bağlı yeşil etiket sallanarak düşer.'),
+            ('14–19 sn', 'Ekip', '“45/53 içeride · Ekip tamam mı? Bir bakışta.”', 'Kâğıttan kişiler katman katman dizilir, sayaç etiketi zıplar.'),
+            ('19–25 sn', 'Puantaj', '“Ay sonu? Hazır.”', 'Takvime çıkartmalar yapışır, lastik damga “PUANTAJ HAZIR” diye basılır.'),
+            ('25–30 sn', 'Marka', '“QR Personel · qrpersonel.com”', 'Logo kartondan katmanlarla kurulur, adres etiketi iple sallanır.'),
+        ]),
 }
 
 BW, TW, TH, GAP, MX = 1920, 540, 960, 60, 90
@@ -130,7 +178,7 @@ def board(key, frames_dir, out_dir):
         for line in wrap(d, note, F_NOTE, TW)[:3]:
             d.text((x0, ty), line, font=F_NOTE, fill=c['sub']); ty += 31
     d.text((BW - MX, BH - 40), 'QR Personel · Instagram Reels storyboard · kareler gerçek render', font=F_TAG, fill=c['sub'], anchor='rm')
-    slug = {'A': 'vizor', 'B': 'sabah_0859', 'C': 'urun_demosu', 'D': 'izometrik_ofis'}[key]
+    slug = {'A': 'vizor', 'B': 'sabah_0859', 'C': 'urun_demosu', 'D': 'izometrik_ofis', 'E': 'kalkis_panosu', 'F': 'bento', 'G': 'mesajlasma', 'H': 'kagit_kesik'}[key]
     path = os.path.join(out_dir, f'konsept_{key}_{slug}.jpg')
     im.save(path, quality=90)
     return path
@@ -139,5 +187,5 @@ def board(key, frames_dir, out_dir):
 if __name__ == '__main__':
     frames_dir, out_dir = sys.argv[1], sys.argv[2]
     os.makedirs(out_dir, exist_ok=True)
-    for k in CONCEPTS:
+    for k in (sys.argv[3] if len(sys.argv) > 3 else ''.join(CONCEPTS)):
         print(board(k, frames_dir, out_dir))
