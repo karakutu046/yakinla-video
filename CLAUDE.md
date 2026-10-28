@@ -2,21 +2,26 @@
 
 ## Seslendirme (dış ses)
 
-- Seslendirme her zaman **ElevenLabs** ile yapılır: `mcp__elevenlabs__text_to_speech`.
-  Higgsfield ya da başka bir TTS kullanılmaz. Bu kural, `yakinla-tanitim-videosu` skill'indeki
-  seslendirme adımının yerine geçer; skill'in senaryo, sahne ve montaj adımları aynen uygulanır.
-- `language: "tr"` mutlaka verilir (araç varsayılan olarak `en` kullanır).
-  Model `eleven_multilingual_v2`, daha canlı bir okuma gerekirse `eleven_v3`.
-- `output_directory` projenin `build/vo/` klasörüdür (araç varsayılan olarak `$HOME/Desktop`'a yazar).
-  `build/` git'e girmez; ses yalnızca montajlanmış MP4'ün içinde depoya girer.
-- Her üretim ElevenLabs kredisi harcar. Metin kesinleşmeden ses üretilmez, aynı metin gereksiz yere
-  yeniden üretilmez.
+- Seslendirme her zaman **ElevenLabs** ile yapılır: claude.ai'daki **ElevenLabs** bağlayıcısının
+  `mcp__ElevenLabs__creative_generate_speech` aracı. Higgsfield ya da başka bir TTS kullanılmaz.
+  Bu kural, `yakinla-tanitim-videosu` skill'indeki seslendirme adımının yerine geçer; skill'in
+  senaryo, sahne ve montaj adımları aynen uygulanır.
+- Ses `creative_list_voices` ile `languages: ["tr"]` filtresiyle seçilir. Model `eleven_v4`'tür;
+  `[warmly]`, `[excited]` gibi etiketlerle okuma yönlendirilebilir.
+- Üretim akışı:
+  1. `creative_generate_speech` → dönen `flow_id` ve `session_ids` saklanır.
+  2. `creative_get_flow_run_status` ile `all_completed` olana kadar beklenir.
+  3. `creative_get_generations` → `full_res_url` (storage.googleapis.com) `curl` ile projenin
+     `build/vo/` klasörüne indirilir. `build/` git'e girmez; ses yalnızca montajlanmış MP4'ün
+     içinde depoya girer.
+- Her üretim ElevenLabs kredisi harcar. Metin kesinleşmeden ses üretilmez. Üretim çağrısı hata verirse
+  aynı çağrı tekrarlanmaz (ikinci kez ücretlendirir): `creative_get_flow` ile düğüm `not_run` ise
+  `creative_run_flow_nodes` ile aynı düğüm yeniden çalıştırılır.
 - Montajda dış ses müziğin üstünde kalır (müzik konuşma altında kısılır), son miks -14 LUFS'tur.
 
 ## ElevenLabs bağlantısı
 
-- Sunucu `.mcp.json` içinde tanımlıdır, `.claude/settings.json` onu otomatik onaylar.
-- API anahtarı ortamdaki `ELEVENLABS_API_KEY` değişkeninden okunur. Anahtar hiçbir dosyaya,
-  commit'e ya da PR'a yazılmaz.
-- Bulut ortamının ağ ayarlarında `api.elevenlabs.io` izinli olmalıdır; değilse araçlar
-  `403 Forbidden` döner.
+- Bağlayıcı adresi `https://api.elevenlabs.io/v1/mcp`, giriş ElevenLabs hesabıyla (OAuth) yapılır.
+  Trafik Anthropic sunucularından geçtiği için bulut ortamında API anahtarı ya da ağ izni gerekmez.
+- Bulut ortamı `api.elevenlabs.io`'ya doğrudan erişemez; yerel `elevenlabs-mcp` sunucusu bu yüzden
+  kullanılmaz. API anahtarı hiçbir dosyaya, commit'e ya da PR'a yazılmaz.
