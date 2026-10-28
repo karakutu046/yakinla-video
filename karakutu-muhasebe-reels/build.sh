@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Karakutu Muhasebe Reels filmini sıfırdan üretir: kareler (Chromium) → ses (sentez) → MP4 (ffmpeg).
-# Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy, ffmpeg.
+# Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy + piper-tts, ffmpeg.
+# Dış ses: VO=0 ile kapatılır; VOICE=tr_TR-fettah-medium gibi başka bir Piper sesi seçilebilir.
 set -euo pipefail
 cd "$(dirname "$0")"
 OUT=${1:-out/karakutu_muhasebe_reels_38sn.mp4}
@@ -8,7 +9,12 @@ DUR=38
 mkdir -p build/frames "$(dirname "$OUT")"
 
 [ -n "${SKIP_RENDER:-}" ] || NODE_PATH="${NODE_PATH:-$(npm root -g)}" node render.cjs build/frames
-python3 audio.py build/cues.json build/audio.wav
+if [ "${VO:-1}" = "1" ]; then
+  python3 voiceover.py build/vo.wav "${VOICE:-tr_TR-fahrettin-medium}"
+  python3 audio.py build/cues.json build/audio.wav build/vo.wav
+else
+  python3 audio.py build/cues.json build/audio.wav
+fi
 
 # Ses: iki geçişli loudnorm → -14 LUFS (Instagram/TikTok/YouTube seviyesi), ardından 4× örneklemeli
 # sınırlayıcı: AAC kodlamasının tepe aşımına rağmen gerçek tepe -1.5 dBTP'nin altında kalsın

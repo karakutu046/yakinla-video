@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Karakutu Muhasebe Reels filminin müziği ve ses efektleri: tamamı sentez (numpy + scipy), dış örnek yok.
 
-Kullanım:  python3 audio.py build/cues.json build/audio.wav
+Kullanım:  python3 audio.py build/cues.json build/audio.wav [build/vo.wav]
 
 - Müzik 120 BPM, 4/4. Sahne geçişleri vuruşlara, ana geçişler ölçü başlarına oturur.
   Defter (0–4): La minör, pizzicato ve saat tıkırtısı; kanca kelimeleri akor vuruşlarıyla çakılır.
@@ -10,6 +10,7 @@ Kullanım:  python3 audio.py build/cues.json build/audio.wav
   Logo (32–38): kırılma, yükseliş ve Do majör çözülme; ses logosu C5 – E5 – G5 – C6 ("ka-ra-ku-tu").
 - Efektler, anim.js'in ürettiği cues.json'dan gelir; böylece her kalem, tık ve bildirim
   ekrandaki hareketle aynı karede ve aynı yönde (pan) duyulur.
+- Dış ses (voiceover.py) verilirse ortaya yerleşir; konuşma sürerken müzik ~8 dB, efektler ~3 dB kısılır.
 """
 import json
 import sys
@@ -653,8 +654,34 @@ def compose():
     return kicks
 
 
+def load_vo(path):
+    import wave
+    with wave.open(path, 'rb') as w:
+        assert w.getframerate() == SR and w.getnchannels() == 1, 'dış ses 48 kHz mono olmalı'
+        x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(float) / 32768
+    out = np.zeros(N)
+    out[:min(N, len(x))] = x[:N]
+    return out
+
+
+def follower(x, attack=0.012, release=0.32, look=0.06):
+    """Dış sesin zarfı (0..1): hızlı açılır, yavaş kapanır; müzik konuşmadan biraz önce kısılmaya başlar."""
+    hop = ns(0.005)
+    fr = np.sqrt(np.convolve(x ** 2, np.ones(hop) / hop, 'same')[::hop])
+    a, r = np.exp(-0.005 / attack), np.exp(-0.005 / release)
+    env = np.zeros_like(fr); e = 0.0
+    for i, v in enumerate(fr):
+        e = a * e + (1 - a) * v if v > e else r * e + (1 - r) * v
+        env[i] = e
+    env = np.clip(env / (10 ** (-30 / 20)), 0, 1)
+    env = np.interp(np.arange(N), np.arange(len(env)) * hop, env)
+    k = ns(look)
+    return np.concatenate([env[k:], np.zeros(k)])
+
+
 def main():
     cues_path, out = sys.argv[1], sys.argv[2]
+    vo = load_vo(sys.argv[3]) if len(sys.argv) > 3 else None
     info = json.load(open(cues_path, encoding='utf-8'))
     cues = info['cues'] if isinstance(info, dict) else info
     kicks = compose()
@@ -680,8 +707,19 @@ def main():
     vL = signal.fftconvolve(verb.L, irL)[:N] * 0.55
     vR = signal.fftconvolve(verb.R, irR)[:N] * 0.55
 
-    L = drums.L * 0.85 + (bass_bus.L * 0.85 + music.L) * duck + sfx.L * 1.0 + vL
-    R = drums.R * 0.85 + (bass_bus.R * 0.85 + music.R) * duck + sfx.R * 1.0 + vR
+    dm = ds = 1.0
+    if vo is not None:  # dış ses konuşurken müzik ve efektler geri çekilir
+        e = follower(vo)
+        dm, ds = 1 - 0.6 * e, 1 - 0.3 * e
+        # seviye: konuşma, müziğin ortalamasından 3 dB yukarıda (müzik ayrıca ~8 dB kısılır)
+        bed = (drums.L + drums.R) * 0.425 + (bass_bus.L + bass_bus.R + (music.L + music.R) / 0.85) * 0.425 * duck + (sfx.L + sfx.R) / 2
+        vo = vo * np.sqrt(np.mean(bed ** 2)) * 10 ** (3 / 20) / (np.sqrt(np.mean(vo[e > 0.5] ** 2)) + 1e-9)
+        vL += signal.fftconvolve(vo * 0.06, irL)[:N] * 0.55
+        vR += signal.fftconvolve(vo * 0.06, irR)[:N] * 0.55
+    L = (drums.L * 0.85 + (bass_bus.L * 0.85 + music.L) * duck) * dm + sfx.L * ds + vL
+    R = (drums.R * 0.85 + (bass_bus.R * 0.85 + music.R) * duck) * dm + sfx.R * ds + vR
+    if vo is not None:
+        L, R = L + vo, R + vo
     # alçak frekans temizliği + yumuşak limit
     L, R = hp(L, 28), hp(R, 28)
     peak = max(np.max(np.abs(L)), np.max(np.abs(R)))
