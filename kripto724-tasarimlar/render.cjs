@@ -24,7 +24,7 @@ const server = http.createServer((req, res) => {
 server.listen(0, '127.0.0.1', async () => {
   const base = `http://127.0.0.1:${server.address().port}/${HERE}/index.html`;
   const browser = await chromium.launch({ args: ['--force-color-profile=srgb', '--disable-lcd-text'] });
-  const ctx = await browser.newContext({ viewport: { width: 3240, height: 2760 }, deviceScaleFactor: 1 });
+  const ctx = await browser.newContext({ viewport: { width: 3240, height: 2840 }, deviceScaleFactor: 1 });
   const out = path.join(__dirname, SS ? 'build' : 'out');
   fs.mkdirSync(out, { recursive: true });
   let failed = false;
