@@ -1,8 +1,12 @@
 # QR Personel — Instagram Reels tanıtım videosu (9:16)
 
 [qrpersonel.com](https://www.qrpersonel.com) için dikey (1080×1920) SaaS tanıtım filmi.
-**Çıktı:** [`out/qrpersonel_reels_30sn.mp4`](out/qrpersonel_reels_30sn.mp4): Konsept A · Vizör, 30 sn, 1080×1920, 60 fps,
-H.264 + AAC, -14 LUFS. Kapak seçenekleri: [`out/kapak_kanca.jpg`](out/kapak_kanca.jpg) ("Kim geldi?") ve [`out/kapak_logo.jpg`](out/kapak_logo.jpg).
+İki film var, ikisi de 30 sn, 1080×1920, H.264 + AAC, -14 LUFS:
+
+| Film | Dosya | Kapaklar |
+|---|---|---|
+| Konsept A · Vizör (60 fps) | [`out/qrpersonel_reels_30sn.mp4`](out/qrpersonel_reels_30sn.mp4) | [`kanca`](out/kapak_kanca.jpg) · [`logo`](out/kapak_logo.jpg) |
+| Konsept H · Kâğıt Kesik (24 fps, 12 fps stop-motion) | [`kagit-kesik/out/qrpersonel_reels_kagit_kesik_30sn.mp4`](kagit-kesik/out/qrpersonel_reels_kagit_kesik_30sn.mp4) | [`kanca`](kagit-kesik/out/kapak_kanca.jpg) · [`logo`](kagit-kesik/out/kapak_logo.jpg) |
 
 Görüntüdeki her şey kodla çizilir, müzik ve efektler sentezle üretilir: stok görüntü ya da dış ses dosyası yok.
 
@@ -33,7 +37,32 @@ hareketle aynı karede duyulur.
 **Varsayımlar:** Ekrandaki isimler, saatler ve sayılar örnek arayüz verisidir. "Çıkışta okutma" ve "puantaj"
 özelliklerinin üründe olduğunu varsaydık; sitedeki ürünle örtüştüğünü kontrol edin.
 
-## Yeniden üretmek
+## Film: Konsept H · Kâğıt Kesik
+
+Kraft zemin üstünde kâğıt kolaj, 12 fps stop-motion: her çizim iki kare ekranda kalır ve her parça her adımda hafifçe
+"kaynar" (elle yeniden konmuş gibi). Hareket bulanıklığı yok; parçalar düşer, yapıştırılır, makasla kesilir, iple sallanır.
+Palet: kâğıt beyazı, mürekkep, kiremit, hardal, adaçayı, mavi. Kod `kagit-kesik/` klasöründe; ortak `lib.js`'i kullanır.
+
+| Zaman | Sahne | Ekranda | Hareket |
+|---|---|---|---|
+| 0–4 sn | Kanca | **KİM GELDİ?** · İMZA FÖYÜ · "Ali? 9:15 ??" · "Kart kayıp!" | Föy masaya düşer, fidye notu harfleri tek tek çakılır, yapışkan notlar ve ataş eklenir. |
+| 4–8 sn | Okut | **OKUT.** | Makas föyü kesik çizgi boyunca keser, iki yarı savrulur; kâğıt QR kart düşer, modüller satır satır dizilir, üç göz pop eder. |
+| 8–14 sn | Giriş | **Günaydın, Ali! Tam vaktinde.** · GİRİŞ 08:57 · **Okuttun, girdin.** | QR küçülüp kâğıt telefona girer, adaçayı köşeler ve tarama şeridi, onay rozeti; giriş etiketi ipte sallanır. Açılıştaki "9:15 ??" notunun cevabı. |
+| 14–18 sn | Ekip | **08 → 21 → 37 → 45 / 53 İÇERİDE** · **Ekip tamam mı? Bir bakışta.** | 15 kâğıt figür sırayla ayağa kalkar, sayaç kartları değişir; çıkışta figürler devrilir. |
+| 18–24 sn | Puantaj | **EYLÜL** · **PUANTAJ HAZIR** · **Ay sonu? Hazır.** | Takvime yeşil/kiremit çıkartmalar yapışır, lastik damga iner, vurur, mürekkep izi bırakır. |
+| 24–30 sn | Marka | **QR Personel · QR kodla personel takibi · qrpersonel.com · Hemen başlayın →** | Logo kâğıttan yeniden kurulur: siyah kart, dört parantez parçası, üç kişi; adres etiketi ipte sallanır. |
+
+**Ses:** Do majör akustik gitar (Karplus-Strong sentezi, C · G · Am · F), yumuşak kick, el çırpma, shaker; 120 BPM, 15 ölçü.
+Logo ölçüsünde ritim durur, glokenşpil arpeji (Mi–Sol–Do–Mi) ses logosu olur. 155 kâğıt efekti (harf şaplağı, makas,
+yırtılma, damga, ip, tık) `anim.js`'ten üretilir ve görüntüyle aynı adımda duyulur.
+
+Ekrandaki QR gerçek ve okunur (https://www.qrpersonel.com).
+
+```bash
+./kagit-kesik/build.sh   # → kagit-kesik/out/qrpersonel_reels_kagit_kesik_30sn.mp4 (~8 dk)
+```
+
+## Yeniden üretmek (Konsept A)
 
 ```bash
 ./build.sh            # → out/qrpersonel_reels_30sn.mp4 (~11 dk)
@@ -51,7 +80,7 @@ Tek kare: `index.html?t=12.4` (HTTP sunucusuyla açın) ya da
 
 ---
 
-Ön prodüksiyon: seçim için hazırlanan dört konsept storyboard'u aşağıda.
+Ön prodüksiyon: seçim için hazırlanan sekiz konsept storyboard'u aşağıda.
 
 ## Storyboard panoları
 
