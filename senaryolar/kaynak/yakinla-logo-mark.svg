@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Ana mavi gradient (pin için) -->
+    <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3B8BFF"/>
+      <stop offset="50%" stop-color="#1F73F0"/>
+      <stop offset="100%" stop-color="#0E5FE0"/>
+    </linearGradient>
+
+    <!-- İç parlaklık gradient (sol-üst aydınlanma) -->
+    <radialGradient id="highlight" cx="35%" cy="25%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Saat yüzü gradient -->
+    <linearGradient id="faceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EFF4FA"/>
+    </linearGradient>
+
+    <!-- Saat çerçevesi iç gölge gradient -->
+    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0E5FE0"/>
+      <stop offset="100%" stop-color="#1F73F0"/>
+    </linearGradient>
+
+    <!-- Saat ibresi gradient -->
+    <linearGradient id="handGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2A7CF0"/>
+      <stop offset="100%" stop-color="#0E5FE0"/>
+    </linearGradient>
+
+    <!-- Dış zemin yumuşak gölge -->
+    <filter id="pinShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="10" result="off"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Saat yüzü iç gölge -->
+    <filter id="innerShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+      <feOffset dx="0" dy="4" result="off"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Pin shape: tepesi yuvarlak, alt ucu sivri (klasik konum pini) -->
+    <!-- Merkez: cx=512, üst yarıçap ~310, sivri alt nokta y=920 -->
+    <path id="pinShape" d="
+      M 512 104
+      C 340 104, 202 242, 202 414
+      C 202 540, 270 638, 360 712
+      C 430 770, 480 830, 504 900
+      C 508 914, 516 914, 520 900
+      C 544 830, 594 770, 664 712
+      C 754 638, 822 540, 822 414
+      C 822 242, 684 104, 512 104
+      Z"/>
+  </defs>
+
+  <!-- Şeffaf zemin -->
+
+  <!-- Pin gövdesi (gölge ile) -->
+  <use href="#pinShape" fill="url(#pinGradient)" filter="url(#pinShadow)"/>
+
+  <!-- Üst parlaklık (highlight) -->
+  <use href="#pinShape" fill="url(#highlight)"/>
+
+  <!-- Saat çerçevesi (dış halka) -->
+  <circle cx="512" cy="414" r="208" fill="url(#ringGradient)"/>
+
+  <!-- Saat yüzü -->
+  <circle cx="512" cy="414" r="186" fill="url(#faceGradient)" filter="url(#innerShadow)"/>
+
+  <!-- Saat ibreleri - 3 saat konumu (akrep ve yelkovan) -->
+  <!-- Yelkovan (dakika ibresi): 12 yönü, daha uzun ve ince -->
+  <rect x="498" y="246" width="28" height="180" rx="14" fill="url(#handGradient)"/>
+
+  <!-- Akrep (saat ibresi): 3 yönü, daha kısa ve kalın -->
+  <rect x="508" y="400" width="160" height="28" rx="14" fill="url(#handGradient)"/>
+
+  <!-- Merkez nokta -->
+  <circle cx="512" cy="414" r="20" fill="#0E5FE0"/>
+  <circle cx="512" cy="414" r="10" fill="#3B8BFF"/>
+</svg>
