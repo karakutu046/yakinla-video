@@ -23,6 +23,7 @@ WANT = {
     'unbounded': ['400', '600', '800'],
     'dm-serif-display': ['400', '400-italic'],
     'manrope': ['500', '600', '700', '800'],
+    'poppins': ['500', '600', '700', '800'],
 }
 KEEP = re.compile(r'-(latin|latin-ext)-\d+-(normal|italic)\b')
 

@@ -1,18 +1,61 @@
 'use strict';
-/* TASARIM 02 · 7/24 SAAT
- * "Piyasalar hiç uyumaz." The film turns around one 24-hour dial (noon at the top,
- * midnight at the bottom, clockwise). Scene by scene the hand moves on from 03:00
- * and the sky warms from deep night navy to dawn coral and daylight amber.
- * Calm and premium: Sora + Manrope, frosted glass, hairline ticks, slow star parallax.
- * The app syncs NIGHTLY: nothing here implies live or real-time tracking. */
+/* TASARIM 02 · 7/24 SAAT  (brief v2: kripto724)
+ * "Piyasa hiç durmuyor." One 24-hour dial carries the film (İstanbul time, 00 at the bottom,
+ * 12 at the top, clockwise). The orange hand moves from 03:00 at night to sunrise at 07:00 while
+ * the sky warms from night navy to dawn; in between, the dial maps the market rhythms:
+ * crypto 7/24 (the outer ring that never goes dark), BIST 10:00–18:00, Nasdaq 16:30–23:00 and
+ * Kapalıçarşı by day. Two layers: the film's own frosted-glass layer (Sora + Manrope) and the
+ * app's light cards and phone screens (Inter), drawn with the app's exact data. */
 
 const D2 = {
-  night: '#0B1026', navy: '#24346E', coral: '#FF7A59', amber: '#FFC15E', teal: '#3DD9C1',
+  night: '#0B1026', navy: '#24346E', orange: '#F7931A', coral: '#FF7A59', teal: '#3DD9C1',
   ink: '#F6F2FB', soft: '#ABA8CF', dim: '#6F7099', peri: '#8C9BFF', lilac: '#C9B8FF', deep: '#060A1C',
+  glow: '#FFB866',              // light orange for the sun core and the horizon
 };
-const D2F = 'Sora', D2T = 'Manrope';
-const D2_DAWN = [[0, D2.amber], [1, D2.coral]];
-const D2_ST = { stars: null, mc: null };
+// the app's light UI
+const D2A = {
+  page: '#EEF0F5', card: '#FFFFFF', ink: '#14161F', sub: '#7A7F8C', line: '#EEF0F4',
+  up: '#16A34A', upBg: '#DCF5E6', dn: '#E5484D', dnBg: '#FDE2E2', track: '#F1F0FA', lav: '#ECEBFF',
+  cntBg: '#E5E3FF', cnt: '#6E5BFF', live: '#10B981', liveInk: '#0C8F63', liveBg: '#E3F7EE',
+  cream: '#FFF7E3', creamTrack: '#F4E7C2', gold1: '#D9A520', gold2: '#F2C14E',
+};
+const D2F = 'Sora', D2T = 'Manrope', D2U = 'Inter';
+const D2_DAWN = [[0, D2.orange], [1, D2.coral]];
+const D2_ST = { stars: null };
+
+/* ── the app's data (from the client's screenshots) ── */
+const D2_COINS = [
+  ['BTC', 'Bitcoin', 'BTC/USDT', '$80.220,05', '−1,49%', '−2,05%'],
+  ['ETH', 'Ethereum', 'ETH/USDT', '$2.325,10', '−1,67%', '−3,24%'],
+  ['XRP', 'XRP', 'XRP/USDT', '$1,2913', '−2,64%', '−2,80%'],
+  ['BNB', 'BNB', 'BNB/USDT', '$740,00', '−2,66%', '+0,89%'],
+  ['SOL', 'Solana', 'SOL/USDT', '$100,56', '−2,17%', '−3,83%'],
+  ['DOGE', 'Dogecoin', 'DOGE/USDT', '$0,07862', '−1,87%', '−0,87%'],
+  ['ADA', 'Cardano', 'ADA/USDT', '$0,201', '−2,85%', '−7,42%'],
+];
+const D2_COINC = { BTC: ['#F7931A', 'B'], ETH: ['#5B63E8', 'E'], XRP: ['#14161F', 'X'], BNB: ['#F3BA2F', 'B'], SOL: [['#8B5CF6', '#3DD9C1'], 'S'], DOGE: ['#C9A23A', 'D'], ADA: ['#2A6FDB', 'A'] };
+const D2_IDX = [['BIST 100', '11.165,44', '+0,13%', 31], ['Nasdaq 100', '29.813,16', '+0,55%', 47]];
+const D2_STOCKS = [
+  ['MU', 'Micron Technology', '$983,23', '+5,87%'],
+  ['META', 'Meta Platforms', '$612,49', '−1,24%'],
+  ['NVDA', 'NVIDIA', '$215,38', '−1,17%'],
+  ['GOOGL', 'Alphabet (Google)', '$324,89', '+1,34%'],
+  ['TSLA', 'Tesla', '$404,22', '−0,79%'],
+  ['MSFT', 'Microsoft', '$531,01', '−0,06%'],
+  ['AAPL', 'Apple', '$343,83', '−0,94%'],
+];
+// Ürün, alt satır, Alış, Satış, Değişim (changes not in the brief are filled in plausibly)
+const D2_GOLD = [
+  ['Gram Altın', '24 ayar · gram', '6.422,05', '6.510,83', '+0,40%'],
+  ['Has Altın', '995 · gram', '6.454,32', '6.491,36', '+0,40%'],
+  ['22 Ayar', 'bilezik · gram', '5.871,43', '6.081,88', '+0,40%'],
+  ['Çeyrek Altın', '1,75 gr · 22 ayar', '10.327', '10.476', '+0,60%'],
+  ['Yarım Altın', '3,5 gr · 22 ayar', '20.654', '20.815', '+0,58%'],
+  ['Tam Altın', '7 gr · 22 ayar', '41.372', '41.727', '+0,55%'],
+  ['Ata Altın', '7,2 gr · 22 ayar', '42.566', '42.993', '+0,32%'],
+  ['Gremse', '17,5 gr · 22 ayar', '102.946', '104.301', '+0,41%'],
+  ['Ata Beşli', '36 gr · 22 ayar', '212.799', '214.914', '+0,25%'],
+];
 
 /* ── type ── */
 function d2_up(s) { return s.toLocaleUpperCase('tr'); }
@@ -22,13 +65,20 @@ function d2_h(g, s, x, y, size, col, o = {}) {
   if (o.max) f = fit(g, s, f, o.max);
   text(g, s, x, y, { ...f, a: o.a || 'left', b: o.b, c: col });
 }
-// text line (Manrope: also carries every ₺ amount, Sora has no ₺)
+// text line (Manrope: also carries every ₺ amount in the film layer, Sora has no ₺)
 function d2_t(g, s, x, y, size, col, o = {}) {
   let f = { f: D2T, w: o.w || 600, s: size, ls: o.ls || 0 };
   if (o.max) f = fit(g, s, f, o.max);
   text(g, s, x, y, { ...f, a: o.a || 'left', b: o.b, c: col });
 }
 function d2_tw(g, s, size, o = {}) { return measure(g, s, { f: o.f || D2T, w: o.w || 600, s: size, ls: o.ls || 0 }); }
+// app UI text (Inter)
+function d2_u(g, s, x, y, size, col, o = {}) {
+  let f = { f: D2U, w: o.w || 600, s: size, ls: o.ls || 0 };
+  if (o.max) f = fit(g, s, f, o.max);
+  text(g, s, x, y, { ...f, a: o.a || 'left', b: o.b, c: col });
+}
+function d2_uw(g, s, size, w = 600) { return measure(g, s, { f: D2U, w, s: size }); }
 // display line painted in the dawn gradient
 function d2_grad(g, s, x, y, size, o = {}) {
   let f = { f: o.f || D2F, w: o.w || 800, s: size, ls: o.ls == null ? -size * 0.025 : o.ls };
@@ -41,6 +91,15 @@ function d2_grad(g, s, x, y, size, o = {}) {
   if (o.shadow) g.restore();
   return w;
 }
+// "a" in ink and "b" in the dawn gradient on one centred line
+function d2_two(g, a, b, x, y, size, o = {}) {
+  const ls = -size * 0.02, fa = { f: D2F, w: o.w || 700, s: size, ls }, fb = { ...fa, w: o.wb || 800 };
+  const wa = measure(g, a, fa), wb = measure(g, b, fb), x0 = x - (wa + wb) / 2;
+  if (o.shadow) { g.save(); g.shadowColor = o.shadow; g.shadowBlur = 34; }
+  text(g, a, x0, y, { ...fa, a: 'left', c: o.c || D2.ink });
+  d2_grad(g, b, x0 + wa, y, size, { w: fb.w, ls });
+  if (o.shadow) g.restore();
+}
 // small spaced capitals with a glowing dot
 function d2_kick(g, s, x, y, col, o = {}) {
   const S = o.s || 21, label = d2_up(s), f = { f: D2T, w: 800, s: S, ls: S * 0.2 };
@@ -50,17 +109,27 @@ function d2_kick(g, s, x, y, col, o = {}) {
   g.fillStyle = col; g.beginPath(); g.arc(x0 + 6, y - S * 0.36, 5.5, 0, TAU); g.fill();
   text(g, label, x0 + 26, y, { ...f, a: 'left', c: col });
 }
+// frosted pill of the film layer
 function d2_pill(g, x, y, label, o = {}) {
   const s = o.s || 22, h = o.h || s * 2.1, padX = o.padX || s * 0.95;
-  const font = { f: D2T, s, w: o.w || 700, a: 'left', b: 'middle', c: o.c || D2.ink, ls: o.ls || 0 };
+  const font = { f: o.f || D2T, s, w: o.w || 700, a: 'left', b: 'middle', c: o.c || D2.ink, ls: o.ls || 0 };
   const dot = o.dot ? s * 0.9 : 0;
   const tw = measure(g, label, font), w = o.width || padX * 2 + tw + dot;
   const ax = o.a === 'center' ? x - w / 2 : o.a === 'right' ? x - w : x;
   rr(g, ax, y - h / 2, w, h, h / 2); g.fillStyle = o.fill || 'rgba(255,255,255,0.07)'; g.fill();
   if (o.stroke !== false) { g.lineWidth = 1.5; g.strokeStyle = o.stroke || 'rgba(255,255,255,0.2)'; g.stroke(); }
-  if (o.dot) { g.fillStyle = o.dot; g.beginPath(); g.arc(ax + padX + s * 0.2, y, s * 0.24, 0, TAU); g.fill(); }
+  if (o.dot) { addGlow(g, o.dot, ax + padX + s * 0.2, y, s * 0.9, 0.5); g.fillStyle = o.dot; g.beginPath(); g.arc(ax + padX + s * 0.2, y, s * 0.24, 0, TAU); g.fill(); }
   text(g, label, ax + (o.width ? (w - tw - dot) / 2 : padX) + dot, y + 1, font);
   return w;
+}
+function d2_legend(g, items, x, y, size = 20) {
+  let cx = x;
+  items.forEach(([c, l]) => {
+    addGlow(g, c, cx + 7, y - size * 0.36, 22, 0.5);
+    g.fillStyle = c; g.beginPath(); g.arc(cx + 7, y - size * 0.36, 6.5, 0, TAU); g.fill();
+    d2_t(g, l, cx + 22, y, size, D2.ink, { w: 600 });
+    cx += 22 + d2_tw(g, l, size) + 30;
+  });
 }
 
 /* ── icons ── */
@@ -73,7 +142,7 @@ function d2_moon(g, x, y, r, glowA = 1) {
   g.fillStyle = gr; g.fill('evenodd');
   g.restore();
 }
-function d2_sunIcon(g, x, y, r, col = D2.amber) {
+function d2_sunIcon(g, x, y, r, col = D2.orange) {
   g.save(); g.fillStyle = col; g.strokeStyle = col; g.lineWidth = r * 0.24; g.lineCap = 'round';
   addGlow(g, col, x, y, r * 3.5, 0.4);
   g.beginPath(); g.arc(x, y, r * 0.52, 0, TAU); g.fill();
@@ -88,12 +157,173 @@ function d2_arrow(g, x, y, s, col, lw = 4) {
   g.beginPath(); g.moveTo(x - s, y); g.lineTo(x + s, y); g.moveTo(x + s * 0.35, y - s * 0.62); g.lineTo(x + s, y); g.lineTo(x + s * 0.35, y + s * 0.62); g.stroke();
   g.restore();
 }
-function d2_coin(g, x, y, r) {
-  addGlow(g, D2.amber, x, y, r * 3.6, 0.4);
-  const gr = g.createLinearGradient(x - r, y - r, x + r, y + r); gr.addColorStop(0, '#FFE6AE'); gr.addColorStop(0.5, D2.amber); gr.addColorStop(1, '#E3913A');
-  g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
-  g.strokeStyle = 'rgba(122,62,10,0.4)'; g.lineWidth = Math.max(1, r * 0.09); g.beginPath(); g.arc(x, y, r * 0.74, 0, TAU); g.stroke();
-  text(g, '₺', x, y + r * 0.37, { f: D2T, w: 800, s: r * 1.02, a: 'center', c: '#83460F' });
+function d2_star(g, x, y, r, col) {
+  g.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? r * 0.46 : r; g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); }
+  g.closePath(); g.fillStyle = col; g.fill();
+}
+function d2_mag(g, x, y, s, col) {
+  g.save(); g.strokeStyle = col; g.lineWidth = s * 0.13; g.lineCap = 'round';
+  g.beginPath(); g.arc(x - s * 0.08, y - s * 0.08, s * 0.3, 0, TAU); g.stroke();
+  g.beginPath(); g.moveTo(x + s * 0.15, y + s * 0.15); g.lineTo(x + s * 0.4, y + s * 0.4); g.stroke();
+  g.restore();
+}
+function d2_bell(g, x, y, s, col, fill = true) {
+  g.save(); g.fillStyle = col; g.strokeStyle = col; g.lineWidth = Math.max(1.5, s * 0.1); g.lineJoin = 'round'; g.lineCap = 'round';
+  g.beginPath();
+  g.moveTo(x - s * 0.44, y + s * 0.26);
+  g.quadraticCurveTo(x - s * 0.3, y + s * 0.12, x - s * 0.3, y - s * 0.06);
+  g.bezierCurveTo(x - s * 0.3, y - s * 0.48, x + s * 0.3, y - s * 0.48, x + s * 0.3, y - s * 0.06);
+  g.quadraticCurveTo(x + s * 0.3, y + s * 0.12, x + s * 0.44, y + s * 0.26);
+  g.closePath();
+  if (fill) g.fill(); else g.stroke();
+  g.beginPath(); g.arc(x, y + s * 0.38, s * 0.1, 0, TAU); g.fill();
+  g.restore();
+}
+function d2_lock(g, x, y, s, col, hole = D2.night) {
+  g.save(); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = s * 0.12; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x - s * 0.25, y); g.lineTo(x - s * 0.25, y - s * 0.2); g.arc(x, y - s * 0.2, s * 0.25, Math.PI, 0); g.lineTo(x + s * 0.25, y); g.stroke();
+  rr(g, x - s * 0.42, y - s * 0.04, s * 0.84, s * 0.62, s * 0.13); g.fill();
+  g.fillStyle = hole; g.beginPath(); g.arc(x, y + s * 0.22, s * 0.075, 0, TAU); g.fill(); g.fillRect(x - s * 0.03, y + s * 0.22, s * 0.06, s * 0.15);
+  g.restore();
+}
+function d2_play(g, x, y, r) {
+  g.save(); g.shadowColor = 'rgba(0,0,0,0.3)'; g.shadowBlur = 10;
+  g.fillStyle = 'rgba(255,255,255,0.94)'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.restore();
+  g.fillStyle = D2A.ink; g.beginPath(); g.moveTo(x - r * 0.28, y - r * 0.4); g.lineTo(x + r * 0.46, y); g.lineTo(x - r * 0.28, y + r * 0.4); g.closePath(); g.fill();
+}
+// the app icon: black rounded square with the white stacked logo (logo ≈ 0.66 × the square)
+function d2_appIcon(g, x, y, s, o = {}) {
+  g.save();
+  if (o.shadow !== false) { g.shadowColor = 'rgba(0,0,0,0.45)'; g.shadowBlur = s * 0.3; g.shadowOffsetY = s * 0.08; }
+  rr(g, x - s / 2, y - s / 2, s, s, s * 0.22); g.fillStyle = '#0A0A0A'; g.fill();
+  g.restore();
+  if (o.rim) { rr(g, x - s / 2, y - s / 2, s, s, s * 0.22); g.strokeStyle = o.rim; g.lineWidth = 2; g.stroke(); }
+  logo(g, x, y, s * 0.66, { ink: '#FFFFFF' });
+}
+
+/* ── app UI primitives (light theme, Inter) ── */
+function d2_acard(g, x, y, w, h, r = 22, fill = D2A.card, sh = 0.4) {
+  g.save();
+  if (sh > 0) { g.shadowColor = `rgba(4,8,30,${sh})`; g.shadowBlur = sh > 0.2 ? 60 : 14; g.shadowOffsetY = sh > 0.2 ? 24 : 4; }
+  rr(g, x, y, w, h, r); g.fillStyle = fill; g.fill();
+  g.restore();
+}
+// change pill: (x, y) = right end (o.a 'left' | 'center'), vertical middle
+function d2_chg(g, s, x, y, size = 18, o = {}) {
+  const up = s[0] !== '−', tw = d2_uw(g, s, size, 700), h = size * 1.75;
+  const w = Math.max(o.minW || 0, tw + size * 1.2), ax = o.a === 'left' ? x : o.a === 'center' ? x - w / 2 : x - w;
+  rr(g, ax, y - h / 2, w, h, h * 0.34); g.fillStyle = up ? D2A.upBg : D2A.dnBg; g.fill();
+  d2_u(g, s, ax + w / 2, y + size * 0.36, size, up ? D2A.up : D2A.dn, { w: 700, a: 'center' });
+  return w;
+}
+// "● CANLI" badge, (x, y) = right end, vertical middle
+function d2_live(g, x, y, size = 16, label = 'CANLI') {
+  const tw = d2_uw(g, label, size, 700), h = size * 1.9, w = tw + size * 2.5, ax = x - w;
+  rr(g, ax, y - h / 2, w, h, h / 2); g.fillStyle = D2A.liveBg; g.fill();
+  g.fillStyle = D2A.live; g.beginPath(); g.arc(ax + size * 0.98, y, size * 0.3, 0, TAU); g.fill();
+  d2_u(g, label, ax + size * 1.62, y + size * 0.36, size, D2A.liveInk, { w: 700 });
+  return w;
+}
+// segmented tabs: items [[label, count?]], (x, y) top-left
+function d2_seg(g, x, y, w, h, items, sel, o = {}) {
+  rr(g, x, y, w, h, h / 2); g.fillStyle = o.track || D2A.track; g.fill();
+  const n = items.length, p = o.pad || 5, iw = (w - 2 * p) / n, size = o.s || h * 0.34;
+  items.forEach(([lab, cnt], i) => {
+    const ix = x + p + i * iw;
+    if (i === sel) {
+      g.save(); g.shadowColor = 'rgba(20,22,60,0.14)'; g.shadowBlur = 8; g.shadowOffsetY = 2;
+      rr(g, ix, y + p, iw, h - 2 * p, (h - 2 * p) / 2);
+      if (o.selGrad) { const gr = g.createLinearGradient(ix, 0, ix + iw, 0); gr.addColorStop(0, o.selGrad[0]); gr.addColorStop(1, o.selGrad[1]); g.fillStyle = gr; } else g.fillStyle = '#FFFFFF';
+      g.fill(); g.restore();
+    }
+    const lw = d2_uw(g, lab, size, 700), cw = cnt ? d2_uw(g, cnt, size * 0.8, 700) + size * 0.9 : 0, gap = cnt ? size * 0.4 : 0;
+    const tx = ix + iw / 2 - (lw + gap + cw) / 2;
+    d2_u(g, lab, tx, y + h / 2 + size * 0.36, size, i === sel ? (o.selInk || D2A.ink) : (o.ink || D2A.sub), { w: 700 });
+    if (cnt) {
+      const bx = tx + lw + gap, bh = size * 1.32;
+      rr(g, bx, y + h / 2 - bh / 2, cw, bh, bh / 2); g.fillStyle = D2A.cntBg; g.fill();
+      d2_u(g, cnt, bx + cw / 2, y + h / 2 + size * 0.29, size * 0.8, D2A.cnt, { w: 700, a: 'center' });
+    }
+  });
+}
+function d2_coinI(g, x, y, r, sym) {
+  const [c, l] = D2_COINC[sym];
+  if (Array.isArray(c)) { const gr = g.createLinearGradient(x - r, y - r, x + r, y + r); gr.addColorStop(0, c[0]); gr.addColorStop(1, c[1]); g.fillStyle = gr; } else g.fillStyle = c;
+  g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+  d2_u(g, l, x, y + r * 0.37, r * 1.02, sym === 'BNB' ? '#3B2A00' : '#FFFFFF', { w: 700, a: 'center' });
+}
+function d2_tickI(g, x, y, r, t) {
+  g.fillStyle = '#E8EAF1'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+  const f = fit(g, t, { f: D2U, w: 700, s: r * 0.62 }, r * 1.55);
+  text(g, t, x, y + f.s * 0.36, { ...f, a: 'center', c: D2A.ink });
+}
+// bend a random walk so it ends exactly at `target`
+function d2_shape(s, target) { const n = s.length, e = s[n - 1]; return s.map((v, i) => v * Math.pow(target / e, i / (n - 1))); }
+function d2_spark(g, x, y, w, h, seed, up, o = {}) {
+  const s = d2_shape(walk(seed, o.n || 30, 0, o.vol || 0.018), up ? 1.05 : 0.95), lo = Math.min(...s), hi = Math.max(...s);
+  const pts = s.map((v, i) => [x + i / (s.length - 1) * w, y + h - (v - lo) / (hi - lo || 1) * h]);
+  const col = o.col || (up ? D2A.up : D2A.dn);
+  if (o.fill) {
+    const gr = g.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, hexA(col, 0.22)); gr.addColorStop(1, hexA(col, 0));
+    g.beginPath(); smoothPath(g, pts); g.lineTo(x + w, y + h); g.lineTo(x, y + h); g.closePath(); g.fillStyle = gr; g.fill();
+  }
+  g.beginPath(); smoothPath(g, pts); g.strokeStyle = col; g.lineWidth = o.lw || 2; g.lineJoin = 'round'; g.stroke();
+  return pts;
+}
+function d2_status(g, sw, t, col = D2A.ink) {
+  d2_u(g, t, sw * 0.14, 41, 16, col, { w: 600, a: 'center' });
+  const bx = sw * 0.86;
+  g.fillStyle = col;
+  for (let i = 0; i < 4; i++) { rr(g, bx - 46 + i * 6, 41 - 4 - i * 3, 4, 4 + i * 3, 1); g.fill(); }
+  rr(g, bx - 14, 30, 26, 12, 3.5); g.strokeStyle = col; g.lineWidth = 1.4; g.stroke();
+  rr(g, bx - 12, 32, 19, 8, 2); g.fill();
+}
+function d2_navIcon(g, kind, x, y, s, col) {
+  g.save(); g.strokeStyle = col; g.fillStyle = col; g.lineWidth = Math.max(1.6, s * 0.1); g.lineCap = 'round'; g.lineJoin = 'round';
+  if (kind === 'akis') {
+    for (let i = 0; i < 3; i++) { const yy = y - s * 0.3 + i * s * 0.3; g.beginPath(); g.moveTo(x - s * 0.4, yy); g.lineTo(x + s * (i === 2 ? 0.1 : 0.4), yy); g.stroke(); }
+  } else if (kind === 'haber') {
+    rr(g, x - s * 0.38, y - s * 0.42, s * 0.76, s * 0.84, s * 0.12); g.stroke();
+    g.beginPath(); g.moveTo(x - s * 0.18, y - s * 0.14); g.lineTo(x + s * 0.18, y - s * 0.14); g.moveTo(x - s * 0.18, y + s * 0.12); g.lineTo(x + s * 0.1, y + s * 0.12); g.stroke();
+  } else if (kind === 'alarm') d2_bell(g, x, y, s, col, false);
+  else if (kind === 'hesap') {
+    g.beginPath(); g.arc(x, y - s * 0.16, s * 0.2, 0, TAU); g.stroke();
+    g.beginPath(); g.arc(x, y + s * 0.48, s * 0.38, Math.PI * 1.08, Math.PI * 1.92); g.stroke();
+  }
+  g.restore();
+}
+// the app's bottom nav: Akış · Haberler · [icon] · Alarmlarım · Hesabım
+function d2_nav(g, x, y, w, h, active = -1, o = {}) {
+  const items = [['Akış', 'akis'], ['Haberler', 'haber'], ['Alarmlarım', 'alarm'], ['Hesabım', 'hesap']];
+  if (o.card) d2_acard(g, x, y, w, h, o.r || 30, '#FFFFFF', o.sh == null ? 0.4 : o.sh);
+  else { g.fillStyle = '#FFFFFF'; g.fillRect(x, y, w, h); g.fillStyle = D2A.line; g.fillRect(x, y, w, 1.5); }
+  const sw = w / 5, s = o.s || 11;
+  items.forEach(([lab, ic], i) => {
+    const slot = i < 2 ? i : i + 1, cx = x + sw * (slot + 0.5), on = i === active, col = on ? D2A.ink : D2A.sub;
+    d2_navIcon(g, ic, cx, y + h * 0.4, s * 1.75, col);
+    d2_u(g, lab, cx, y + h * 0.4 + s * 2.3, s, col, { w: on ? 700 : 600, a: 'center' });
+    if (on && o.badge) {
+      g.fillStyle = D2.orange; g.beginPath(); g.arc(cx + s * 0.95, y + h * 0.4 - s * 0.85, s * 0.42, 0, TAU); g.fill();
+      g.strokeStyle = '#FFFFFF'; g.lineWidth = 2; g.stroke();
+    }
+  });
+  d2_appIcon(g, x + w / 2, y + h * 0.44, o.icon || h * 0.6, { shadow: false });
+}
+// phone: (x, y) top-left; paint(g, sw, sh) draws the screen in local coordinates
+function d2_phone(g, x, y, w, h, paint, o = {}) {
+  const r = w * 0.14, b = w * 0.026;
+  g.save(); g.shadowColor = 'rgba(2,4,18,0.62)'; g.shadowBlur = 90; g.shadowOffsetY = 34;
+  rr(g, x, y, w, h, r); g.fillStyle = '#0C0E16'; g.fill(); g.restore();
+  rr(g, x, y, w, h, r); g.strokeStyle = 'rgba(255,255,255,0.26)'; g.lineWidth = 2; g.stroke();
+  rr(g, x + 3, y + 3, w - 6, h - 6, r - 3); g.strokeStyle = 'rgba(255,255,255,0.06)'; g.lineWidth = 1.5; g.stroke();
+  const sx = x + b, sy = y + b, sw = w - 2 * b, sh = h - 2 * b;
+  g.save(); rr(g, sx, sy, sw, sh, r - b); g.clip(); g.translate(sx, sy);
+  g.fillStyle = o.page || D2A.page; g.fillRect(0, 0, sw, sh);
+  paint(g, sw, sh);
+  rr(g, sw / 2 - sw * 0.15, sw * 0.03, sw * 0.3, sw * 0.08, sw * 0.04); g.fillStyle = '#05060A'; g.fill();
+  rr(g, sw / 2 - sw * 0.17, sh - 12, sw * 0.34, 5, 3); g.fillStyle = 'rgba(20,22,31,0.55)'; g.fill();
+  g.restore();
 }
 
 /* ── sky ── */
@@ -103,7 +333,7 @@ const D2_SKY = [
   [0.30, ['#050920', '#0A1130', '#17205A', '#2A3878']],
   [0.55, ['#070C26', '#141D4E', '#3A3A7E', '#A35C7E']],
   [0.75, ['#0B1230', '#22306C', '#7E5088', '#FF7A59']],
-  [1.00, ['#18245A', '#3B3F84', '#D06A7E', '#FFC15E']],
+  [1.00, ['#18245A', '#3B3F84', '#C9667A', '#FFA64D']],
 ];
 function d2_skyStops(k) {
   let i = 0; while (i < D2_SKY.length - 2 && k > D2_SKY[i + 1][0]) i++;
@@ -130,17 +360,16 @@ function d2_sky(g, k, o = {}) {
   const gr = g.createLinearGradient(0, 0, 0, hz);
   [0, 0.42, 0.78, 1].forEach((p, j) => gr.addColorStop(p, rgb(cs[j])));
   g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  // horizon glow: lavender at night, coral → amber at dawn
+  // horizon glow: lavender at night, coral → orange at dawn
   const warm = clamp((k - 0.3) / 0.7), gx = o.gx == null ? CX : o.gx;
   g.save(); g.translate(gx, hz); g.scale(1, 0.4);
   const rg = g.createRadialGradient(0, 0, 0, 0, 0, 1400);
-  rg.addColorStop(0, rgb(mix(hex2rgb('#4A55A8'), hex2rgb(D2.amber), warm), 0.35 + 0.4 * warm));
+  rg.addColorStop(0, rgb(mix(hex2rgb('#4A55A8'), hex2rgb(D2.glow), warm), 0.35 + 0.4 * warm));
   rg.addColorStop(0.45, rgb(mix(hex2rgb('#2A3478'), hex2rgb(D2.coral), warm), 0.12 + 0.18 * warm));
   rg.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = rg; g.fillRect(-1600, -1400, 3200, 2800);
   g.restore();
   d2_stars(g, (1 - clamp((k - 0.45) / 0.5)) * (o.starA == null ? 1 : o.starA), o.px || 0, hz);
-  // soft vignette at the top
   const v = g.createLinearGradient(0, 0, 0, 260); v.addColorStop(0, 'rgba(2,4,16,0.35)'); v.addColorStop(1, 'rgba(2,4,16,0)');
   g.fillStyle = v; g.fillRect(0, 0, W, 260);
 }
@@ -153,21 +382,21 @@ function d2_sea(g, hz, k, sx) {
   for (let i = 0; i < n; i++) {
     const u = i / n, y = hz + 5 + Math.pow(u, 1.35) * (H - hz - 8);
     const w = (260 - u * 170) * (0.55 + r() * 0.9);
-    g.fillStyle = hexA(i % 3 ? D2.amber : D2.coral, 0.42 * (1 - u) * k);
+    g.fillStyle = hexA(i % 3 ? D2.orange : D2.coral, 0.42 * (1 - u) * k);
     rr(g, sx - w / 2 + (r() - 0.5) * 60, y, w, 2.2 + u * 2, 2); g.fill();
   }
   g.restore();
   const hl = g.createLinearGradient(0, 0, W, 0);
-  hl.addColorStop(0, hexA(D2.amber, 0)); hl.addColorStop(sx / W, hexA('#FFE2A8', 0.85 * k)); hl.addColorStop(1, hexA(D2.amber, 0));
+  hl.addColorStop(0, hexA(D2.orange, 0)); hl.addColorStop(clamp(sx / W, 0.01, 0.99), hexA('#FFE2B0', 0.85 * k)); hl.addColorStop(1, hexA(D2.orange, 0));
   g.fillStyle = hl; g.fillRect(0, hz - 1, W, 2);
 }
 function d2_sun(g, x, y, r, hz) {
-  addGlow(g, D2.amber, x, y, r * 7, 0.55);
+  addGlow(g, D2.orange, x, y, r * 7, 0.55);
   addGlow(g, D2.coral, x, y, r * 12, 0.25);
   g.save();
   if (hz != null) { g.beginPath(); g.rect(0, 0, W, hz); g.clip(); }
   const gr = g.createRadialGradient(x, y - r * 0.3, r * 0.1, x, y, r);
-  gr.addColorStop(0, '#FFFBEE'); gr.addColorStop(0.55, '#FFE2A0'); gr.addColorStop(1, D2.amber);
+  gr.addColorStop(0, '#FFFBEE'); gr.addColorStop(0.55, '#FFDDA6'); gr.addColorStop(1, D2.orange);
   g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
   g.restore();
 }
@@ -188,8 +417,8 @@ function d2_dial(g, x, y, R, o = {}) {
   if (o.bezel !== false) {
     const rb = R - bw / 2;
     g.lineWidth = bw;
-    g.strokeStyle = 'rgba(5,8,26,0.72)'; g.beginPath(); g.arc(x, y, rb, 0, Math.PI); g.stroke();       // night half 18 → 00 → 06
-    g.strokeStyle = hexA(D2.amber, 0.1); g.beginPath(); g.arc(x, y, rb, Math.PI, TAU); g.stroke();    // day half 06 → 12 → 18
+    g.strokeStyle = 'rgba(5,8,26,0.72)'; g.beginPath(); g.arc(x, y, rb, 0, Math.PI); g.stroke();        // night half 18 → 00 → 06
+    g.strokeStyle = hexA(D2.orange, 0.1); g.beginPath(); g.arc(x, y, rb, Math.PI, TAU); g.stroke();    // day half 06 → 12 → 18
     g.lineWidth = 1.5; g.strokeStyle = 'rgba(255,255,255,0.24)'; g.beginPath(); g.arc(x, y, R, 0, TAU); g.stroke();
     g.strokeStyle = 'rgba(255,255,255,0.1)'; g.beginPath(); g.arc(x, y, R - bw, 0, TAU); g.stroke();
   }
@@ -201,7 +430,7 @@ function d2_dial(g, x, y, R, o = {}) {
     const major = Math.abs(hh - Math.round(hh)) < 1e-6, card = major && Math.round(hh) % 6 === 0;
     const l = card ? 0.74 : major ? 0.52 : 0.24;
     const [ax, ay] = d2_pt(x, y, R - bw * 0.18, hh), [bx, by] = d2_pt(x, y, R - bw * (0.18 + l), hh);
-    g.strokeStyle = card ? hexA(D2.amber, 0.95 * f) : `rgba(246,242,251,${(major ? 0.72 : 0.3) * f})`;
+    g.strokeStyle = card ? hexA(o.cardCol || D2.orange, 0.95 * f) : `rgba(246,242,251,${(major ? 0.72 : 0.3) * f})`;
     g.lineWidth = (card ? 3.4 : major ? 2.3 : 1.3) * (o.tickW || 1);
     g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.stroke();
   }
@@ -222,7 +451,7 @@ function d2_dial(g, x, y, R, o = {}) {
 }
 // the hour hand: a bezel pointer with a glowing orb and a conic sweep trail from o.from
 function d2_hand(g, x, y, R, h, o = {}) {
-  const col = o.col || D2.amber, bw = o.bw || Math.max(22, R * 0.075), rb = R - bw / 2, a = d2_ang(h);
+  const col = o.col || D2.orange, bw = o.bw || Math.max(22, R * 0.075), rb = R - bw / 2, a = d2_ang(h);
   g.save();
   if (o.from != null && o.from < h) {
     const a0 = d2_ang(o.from), f = (h - o.from) / 24, ta = o.trailA || 0.6;
@@ -230,11 +459,6 @@ function d2_hand(g, x, y, R, h, o = {}) {
     cg.addColorStop(0, hexA(col, 0)); cg.addColorStop(f * 0.97, hexA(col, ta)); cg.addColorStop(f, hexA(col, ta)); cg.addColorStop(Math.min(1, f + 0.001), hexA(col, 0));
     g.strokeStyle = cg; g.lineWidth = bw * (o.trailW || 1); g.lineCap = 'butt';
     g.beginPath(); g.arc(x, y, rb, a0, a); g.stroke();
-  }
-  if (o.hair) {
-    const [hx, hy] = d2_pt(x, y, R - bw, h);
-    const hg = g.createLinearGradient(x, y, hx, hy); hg.addColorStop(0, hexA(col, 0)); hg.addColorStop(1, hexA(col, o.hair));
-    g.strokeStyle = hg; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(hx, hy); g.stroke();
   }
   const [ax, ay] = d2_pt(x, y, R - bw - (o.len == null ? R * 0.1 : o.len), h), [bx, by] = d2_pt(x, y, R + (o.over == null ? 14 : o.over), h);
   g.shadowColor = col; g.shadowBlur = 22; g.strokeStyle = col; g.lineWidth = o.lw || 5; g.lineCap = 'round';
@@ -244,6 +468,26 @@ function d2_hand(g, x, y, R, h, o = {}) {
   addGlow(g, col, ox, oy, orb * 6, 0.6);
   g.fillStyle = '#FFF9EE'; g.beginPath(); g.arc(ox, oy, orb, 0, TAU); g.fill();
   g.lineWidth = Math.max(2, orb * 0.22); g.strokeStyle = col; g.stroke();
+  g.restore();
+}
+// a market session on the dial, from h0 to h1 (clockwise)
+function d2_arc(g, x, y, r, h0, h1, col, lw, o = {}) {
+  g.save(); g.lineCap = o.cap || 'round';
+  if (o.glow) { g.shadowColor = typeof col === 'string' ? col : D2.orange; g.shadowBlur = o.glow; }
+  g.strokeStyle = col; g.lineWidth = lw;
+  g.beginPath(); g.arc(x, y, r, d2_ang(h0), d2_ang(h1)); g.stroke();
+  g.restore();
+}
+// crypto never closes: a full thin ring with a comet running on it
+function d2_cryptoRing(g, x, y, r, hc, o = {}) {
+  g.save();
+  g.strokeStyle = hexA(D2.orange, o.base || 0.42); g.lineWidth = o.lw || 3; g.beginPath(); g.arc(x, y, r, 0, TAU); g.stroke();
+  const a = d2_ang(hc), span = o.span || 1.6, cg = g.createConicGradient(a - span, x, y);
+  cg.addColorStop(0, hexA(D2.orange, 0)); cg.addColorStop(span / TAU, hexA(D2.glow, 1)); cg.addColorStop(span / TAU + 0.001, hexA(D2.orange, 0));
+  g.strokeStyle = cg; g.lineWidth = (o.lw || 3) + 3; g.lineCap = 'round'; g.beginPath(); g.arc(x, y, r, a - span, a); g.stroke();
+  const ex = x + Math.cos(a) * r, ey = y + Math.sin(a) * r;
+  addGlow(g, D2.orange, ex, ey, 54, 0.9);
+  g.fillStyle = '#FFF4E2'; g.beginPath(); g.arc(ex, ey, 6, 0, TAU); g.fill();
   g.restore();
 }
 
@@ -285,10 +529,8 @@ function d2_stamp(g, hhmm, k, label = 'İstanbul') {
   text(g, hhmm, ix + 30, iy + 11, { ...f, a: 'left', c: D2.ink });
   d2_t(g, label, ix + 30 + tw + 16, iy + 7, 20, D2.soft);
 }
-// bend a random walk so it ends exactly at `target`
-function d2_shape(s, target) { const n = s.length, e = s[n - 1]; return s.map((v, i) => v * Math.pow(target / e, i / (n - 1))); }
 
-/* ── scene 1 props: app windows floating in the dark ── */
+/* ── scene 1 props: three separate screens floating in the dark ── */
 function d2_float(g, T, sx, sy, z, rot, o = {}) {
   const k = FOCAL / (FOCAL + z);
   const pose = { x: CX + (sx - CX) / k, y: CY + (sy - CY) / k, z, rx: rot[0], ry: rot[1], rz: rot[2], s: 1 };
@@ -299,54 +541,25 @@ function d2_float(g, T, sx, sy, z, rot, o = {}) {
   if (o.blur) g.filter = `blur(${o.blur}px)`;
   g.drawImage(L, 0, 0); g.restore();
 }
-function d2_texPhone() {
-  const w = 330, h = 660, T = makeTex(w, h, 2), x = texBegin(T);
-  rr(x, 0, 0, w, h, 52); x.fillStyle = '#20284F'; x.fill();
-  rr(x, 7, 7, w - 14, h - 14, 46);
-  const gr = x.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#131A3E'); gr.addColorStop(1, '#0A0F27'); x.fillStyle = gr; x.fill();
-  rr(x, w / 2 - 46, 20, 92, 28, 14); x.fillStyle = '#04060F'; x.fill();
-  d2_t(x, '03:00', 38, 42, 16, D2.ink, { w: 700 });
-  d2_h(x, 'Aracı kurum', 28, 104, 25, D2.ink);
-  d2_t(x, 'Hisse hesabı · USD', 28, 130, 15, D2.soft, { w: 500 });
-  x.fillStyle = hexA(D2.teal, 0.18); x.beginPath(); x.arc(w - 46, 96, 18, 0, TAU); x.fill();
-  d2_t(x, '₺4.218.640', 28, 182, 34, D2.ink, { w: 800 });
-  d2_t(x, '+%0,42 bugün', 28, 208, 15, D2.teal, { w: 700 });
-  const s = d2_shape(walk(41, 40, 0.002, 0.016), 1.08), lo = Math.min(...s), hi = Math.max(...s);
-  const pts = s.map((v, i) => [26 + i / 39 * (w - 52), 310 - (v - lo) / (hi - lo) * 80]);
-  const ag = x.createLinearGradient(0, 230, 0, 312); ag.addColorStop(0, hexA(D2.teal, 0.3)); ag.addColorStop(1, hexA(D2.teal, 0));
-  x.beginPath(); smoothPath(x, pts); x.lineTo(w - 26, 312); x.lineTo(26, 312); x.closePath(); x.fillStyle = ag; x.fill();
-  x.beginPath(); smoothPath(x, pts); x.strokeStyle = D2.teal; x.lineWidth = 2.5; x.stroke();
-  [['AAPL', 'Apple', '₺1.402.180', '+%1,24'], ['MSFT', 'Microsoft', '₺986.410', '−%0,38'], ['VOO', 'Vanguard S&P 500', '₺2.058.904', '+%0,58'], ['KO', 'Coca-Cola', '₺412.300', '+%0,12']].forEach(([t, n, v, c], i) => {
-    const y = 360 + i * 62;
-    x.fillStyle = 'rgba(255,255,255,0.07)'; x.fillRect(26, y - 30, w - 52, 1);
-    d2_h(x, t, 28, y + 2, 18, D2.ink);
-    d2_t(x, n, 28, y + 22, 13, D2.soft, { w: 500 });
-    d2_t(x, v, w - 28, y + 2, 16, D2.ink, { w: 700, a: 'right' });
-    d2_t(x, c, w - 28, y + 22, 13, c[0] === '−' ? D2.coral : D2.teal, { w: 700, a: 'right' });
-  });
-  rr(x, w / 2 - 60, h - 26, 120, 5, 3); x.fillStyle = 'rgba(255,255,255,0.4)'; x.fill();
-  const sh = x.createLinearGradient(0, 0, w, h); sh.addColorStop(0, 'rgba(255,255,255,0.07)'); sh.addColorStop(0.4, 'rgba(255,255,255,0)');
-  rr(x, 0, 0, w, h, 52); x.fillStyle = sh; x.fill();
-  return T;
-}
+// a crypto exchange window (generic, no names)
 function d2_texCrypto() {
   const w = 640, h = 420, T = makeTex(w, h, 2), x = texBegin(T);
   rr(x, 0, 0, w, h, 20); x.fillStyle = '#0F1536'; x.fill();
   x.strokeStyle = 'rgba(255,255,255,0.16)'; x.lineWidth = 1.5; x.stroke();
-  x.fillStyle = 'rgba(255,255,255,0.04)'; x.fillRect(0, 0, w, 44);
-  [D2.coral, D2.amber, D2.teal].forEach((c, i) => { x.fillStyle = c; x.beginPath(); x.arc(24 + i * 20, 22, 6, 0, TAU); x.fill(); });
-  d2_t(x, 'Kripto borsası', w / 2, 28, 16, D2.soft, { w: 700, a: 'center' });
+  x.save(); rr(x, 0, 0, w, h, 20); x.clip(); x.fillStyle = 'rgba(255,255,255,0.04)'; x.fillRect(0, 0, w, 44); x.restore();
+  [D2.coral, D2.orange, D2.teal].forEach((c, i) => { x.fillStyle = c; x.beginPath(); x.arc(24 + i * 20, 22, 6, 0, TAU); x.fill(); });
+  d2_t(x, 'Kripto uygulaması', w / 2, 28, 16, D2.soft, { w: 700, a: 'center' });
   d2_h(x, 'BTC / USDT', 28, 92, 22, D2.ink);
-  d2_t(x, '67.412,50', 28, 142, 40, D2.ink, { w: 800 });
-  d2_t(x, '−%3,18 · 24 sa', 30, 168, 16, D2.coral, { w: 700 });
-  d2_t(x, 'Bakiye', w - 28, 86, 15, D2.soft, { w: 500, a: 'right' });
-  d2_t(x, '0,4821 BTC', w - 28, 112, 20, D2.ink, { w: 700, a: 'right' });
-  const r = mulberry32(19); let v = 0.62;
+  d2_t(x, '$80.220,05', 28, 142, 40, D2.ink, { w: 800 });
+  d2_t(x, '−1,49% · 24 sa', 30, 168, 16, D2.coral, { w: 700 });
+  d2_t(x, 'ETH / USDT', w - 28, 86, 15, D2.soft, { w: 600, a: 'right' });
+  d2_t(x, '$2.325,10', w - 28, 112, 20, D2.ink, { w: 700, a: 'right' });
+  const r = mulberry32(19); let v = 0.72;
   x.strokeStyle = 'rgba(255,255,255,0.05)';
   for (let k = 0; k < 4; k++) { x.beginPath(); x.moveTo(28, 200 + k * 60); x.lineTo(w - 28, 200 + k * 60); x.stroke(); }
   const n = 36, bw = (w - 56) / n;
   for (let i = 0; i < n; i++) {
-    const o = v; v = clamp(v - 0.006 + (r() - 0.5) * 0.12, 0.1, 0.92);
+    const o = v; v = clamp(v - 0.01 + (r() - 0.5) * 0.12, 0.1, 0.92);
     const hi = Math.max(o, v) + r() * 0.05, lo = Math.min(o, v) - r() * 0.05, up = v >= o, cx = 28 + i * bw + bw / 2;
     const Y = q => 392 - q * 190;
     x.fillStyle = up ? D2.teal : D2.coral;
@@ -356,37 +569,184 @@ function d2_texCrypto() {
   x.setLineDash([5, 5]); x.strokeStyle = hexA(D2.coral, 0.6); x.beginPath(); x.moveTo(28, 392 - v * 190); x.lineTo(w - 28, 392 - v * 190); x.stroke(); x.setLineDash([]);
   return T;
 }
-function d2_texSheet() {
+// a stock market web page (light, generic)
+function d2_texStock() {
   const w = 600, h = 380, T = makeTex(w, h, 2), x = texBegin(T);
-  rr(x, 0, 0, w, h, 14); x.fillStyle = '#ECEAF6'; x.fill();
+  rr(x, 0, 0, w, h, 14); x.fillStyle = '#F4F3FA'; x.fill();
   x.save(); rr(x, 0, 0, w, h, 14); x.clip();
-  x.fillStyle = D2.navy; x.fillRect(0, 0, w, 40);
-  d2_t(x, 'portföy_SON_v7.xlsx', 20, 26, 16, '#FFFFFF', { w: 700 });
-  x.fillStyle = '#DCD9EC'; x.fillRect(0, 40, w, 32);
-  d2_t(x, 'fx', 18, 62, 15, '#5A5F8A', { w: 700 });
-  d2_t(x, '=DÜŞEYARA(B4;Kurlar!A:C;3;0)', 52, 62, 15, '#3A3F66', { w: 600 });
-  const cols = [44, 112, 112, 112, 112, 108], rows = ['', 'Varlık|Adet|Maliyet|Kur|Değer', 'AAPL|40|172,10|32,41|223.115', 'BTC|0,48|#YOK|#YOK|#YOK', 'VOO|25|402,55|34,02|#BAŞV!', 'ETH|3,2|2.410|?|—', 'Altın|?|||', 'TOPLAM||||#BAŞV!'];
-  const y0 = 72, rh = 38;
-  x.fillStyle = '#E2DFF0'; x.fillRect(0, y0, w, 26); x.fillRect(0, y0, cols[0], h);
-  'ABCDE'.split('').forEach((c, i) => d2_t(x, c, cols[0] + i * 112 + 56, y0 + 19, 14, '#6A6E96', { a: 'center', w: 700 }));
-  rows.slice(1).forEach((rw, j) => {
-    const y = y0 + 26 + j * rh;
-    d2_t(x, String(j + 1), cols[0] / 2, y + 25, 14, '#6A6E96', { a: 'center', w: 700 });
-    rw.split('|').forEach((c, i) => {
-      const cx = cols[0] + i * 112, err = c[0] === '#';
-      if (err) { x.fillStyle = hexA(D2.coral, 0.2); x.fillRect(cx, y, 112, rh); }
-      if (c) d2_t(x, c, cx + 10, y + 25, 15, err ? '#D2462A' : j === 0 ? '#24346E' : '#2A2F55', { w: j === 0 || err ? 800 : 600 });
-    });
-  });
-  x.strokeStyle = 'rgba(40,46,90,0.14)'; x.lineWidth = 1;
-  for (let i = 0; i <= 5; i++) { const cx = cols[0] + i * 112; x.beginPath(); x.moveTo(cx, y0); x.lineTo(cx, h); x.stroke(); }
-  for (let j = 0; j <= 8; j++) { const y = y0 + 26 + j * rh; x.beginPath(); x.moveTo(0, y); x.lineTo(w, y); x.stroke(); }
-  x.strokeStyle = D2.teal; x.lineWidth = 3; x.strokeRect(cols[0] + 4 * 112, y0 + 26 + 3 * rh, 112, rh);
+  x.fillStyle = '#DCD9EC'; x.fillRect(0, 0, w, 46);
+  ['#FF7A59', '#F7B500', '#3DBE6E'].forEach((c, i) => { x.fillStyle = c; x.beginPath(); x.arc(22 + i * 18, 23, 5.5, 0, TAU); x.fill(); });
+  rr(x, 92, 9, 196, 37, [10, 10, 0, 0]); x.fillStyle = '#F4F3FA'; x.fill();
+  d2_t(x, 'Borsa · Endeksler', 108, 33, 14, '#3A3F66', { w: 700 });
+  d2_t(x, 'Hisse ekranı', 310, 33, 14, '#7B7FA2', { w: 600 });
+  d2_h(x, 'BIST 100', 28, 92, 22, D2.navy);
+  d2_t(x, '11.165,44', 28, 140, 40, '#1C2140', { w: 800 });
+  d2_t(x, '+0,13%', 30, 166, 16, '#16A34A', { w: 800 });
+  d2_t(x, 'Nasdaq 100', w - 28, 86, 15, '#6A6E96', { w: 600, a: 'right' });
+  d2_t(x, '29.813,16', w - 28, 112, 20, '#1C2140', { w: 800, a: 'right' });
+  d2_t(x, '+0,55%', w - 28, 134, 14, '#16A34A', { w: 800, a: 'right' });
+  const s = d2_shape(walk(63, 50, 0, 0.012), 1.03), lo = Math.min(...s), hi = Math.max(...s);
+  const pts = s.map((v, i) => [28 + i / 49 * (w - 56), 296 - (v - lo) / (hi - lo) * 100]);
+  const ag = x.createLinearGradient(0, 190, 0, 300); ag.addColorStop(0, 'rgba(22,163,74,0.22)'); ag.addColorStop(1, 'rgba(22,163,74,0)');
+  x.beginPath(); smoothPath(x, pts); x.lineTo(w - 28, 300); x.lineTo(28, 300); x.closePath(); x.fillStyle = ag; x.fill();
+  x.beginPath(); smoothPath(x, pts); x.strokeStyle = '#16A34A'; x.lineWidth = 2.5; x.stroke();
+  rr(x, 28, 316, w - 56, 46, 8); x.fillStyle = '#E3E1EE'; x.fill();
+  d2_t(x, 'REKLAM', w / 2, 345, 13, '#9A98B8', { w: 800, a: 'center', ls: 3 });
   x.restore();
   return T;
 }
+// a gold price page on a dark phone
+function d2_texGold() {
+  const w = 330, h = 660, T = makeTex(w, h, 2), x = texBegin(T);
+  rr(x, 0, 0, w, h, 52); x.fillStyle = '#20284F'; x.fill();
+  rr(x, 7, 7, w - 14, h - 14, 46);
+  const gr = x.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#131A3E'); gr.addColorStop(1, '#0A0F27'); x.fillStyle = gr; x.fill();
+  rr(x, w / 2 - 46, 20, 92, 28, 14); x.fillStyle = '#04060F'; x.fill();
+  d2_t(x, '03:00', 38, 42, 16, D2.ink, { w: 700 });
+  d2_h(x, 'Altın fiyatları', 28, 104, 25, D2.ink);
+  d2_t(x, 'Gram altın · satış', 28, 130, 15, D2.soft, { w: 500 });
+  const cg = x.createLinearGradient(w - 64, 78, w - 28, 114); cg.addColorStop(0, D2A.gold2); cg.addColorStop(1, D2A.gold1);
+  x.fillStyle = cg; x.beginPath(); x.arc(w - 46, 96, 18, 0, TAU); x.fill();
+  d2_t(x, 'Au', w - 46, 101, 13, '#5A3F00', { w: 800, a: 'center' });
+  d2_t(x, '₺6.510,83', 28, 182, 34, D2.ink, { w: 800 });
+  d2_t(x, '+0,40% bugün', 28, 208, 15, D2.teal, { w: 700 });
+  const s = d2_shape(walk(41, 40, 0, 0.014), 1.04), lo = Math.min(...s), hi = Math.max(...s);
+  const pts = s.map((v, i) => [26 + i / 39 * (w - 52), 310 - (v - lo) / (hi - lo) * 80]);
+  const ag = x.createLinearGradient(0, 230, 0, 312); ag.addColorStop(0, hexA(D2A.gold2, 0.3)); ag.addColorStop(1, hexA(D2A.gold2, 0));
+  x.beginPath(); smoothPath(x, pts); x.lineTo(w - 26, 312); x.lineTo(26, 312); x.closePath(); x.fillStyle = ag; x.fill();
+  x.beginPath(); smoothPath(x, pts); x.strokeStyle = D2A.gold2; x.lineWidth = 2.5; x.stroke();
+  [['Çeyrek Altın', '₺10.476'], ['Yarım Altın', '₺20.815'], ['Tam Altın', '₺41.727'], ['Ata Altın', '₺42.993']].forEach(([n, v], i) => {
+    const y = 370 + i * 62;
+    x.fillStyle = 'rgba(255,255,255,0.07)'; x.fillRect(26, y - 34, w - 52, 1);
+    d2_t(x, n, 28, y, 18, D2.ink, { w: 700 });
+    d2_t(x, 'satış', 28, y + 20, 13, D2.soft, { w: 500 });
+    d2_t(x, v, w - 28, y + 4, 17, D2.ink, { w: 800, a: 'right' });
+  });
+  rr(x, w / 2 - 60, h - 26, 120, 5, 3); x.fillStyle = 'rgba(255,255,255,0.4)'; x.fill();
+  const sh = x.createLinearGradient(0, 0, w, h); sh.addColorStop(0, 'rgba(255,255,255,0.07)'); sh.addColorStop(0.4, 'rgba(255,255,255,0)');
+  rr(x, 0, 0, w, h, 52); x.fillStyle = sh; x.fill();
+  return T;
+}
 
-/* ── init: stars and the Monte Carlo paths ── */
+/* ── app screens ── */
+// Anasayfa · Kripto tab: the live crypto table
+function d2_cryptoCard(g, x, y, w, h, time) {
+  d2_acard(g, x, y, w, h, 30);
+  const P = 44;
+  d2_seg(g, x + P, y + 38, 420, 62, [['Kripto'], ['Borsa'], ['Emtia']], 0, { s: 21 });
+  d2_live(g, x + w - P, y + 69, 18);
+  const cP = x + 572, cD = x + 694, cWk = x + w - P - 60, hy = y + 160;
+  d2_u(g, 'Varlık', x + P, hy, 18, D2A.sub, { w: 600 });
+  d2_u(g, 'Fiyat', cP, hy, 18, D2A.sub, { w: 600, a: 'right' });
+  d2_u(g, 'Günlük', cD, hy, 18, D2A.sub, { w: 600, a: 'center' });
+  d2_u(g, 'Haftalık', cWk, hy, 18, D2A.sub, { w: 600, a: 'center' });
+  const ry0 = y + 182, rh = 90;
+  D2_COINS.forEach(([sym, name, pair, price, d, wk], i) => {
+    const top = ry0 + rh * i, my = top + rh / 2;
+    if (i === 0) { rr(g, x + 16, top + 6, w - 32, rh - 12, 20); g.fillStyle = '#FFF3E2'; g.fill(); }
+    else { g.fillStyle = D2A.line; g.fillRect(x + P, top, w - 2 * P, 1.5); }
+    d2_coinI(g, x + P + 28, my, 28, sym);
+    d2_u(g, name, x + P + 74, my - 4, 25, D2A.ink, { w: 700 });
+    d2_u(g, pair, x + P + 74, my + 24, 17, D2A.sub, { w: 500 });
+    d2_u(g, price, cP, my + 9, 25, D2A.ink, { w: 700, a: 'right' });
+    d2_chg(g, d, cD, my, 19, { a: 'center', minW: 116 });
+    d2_chg(g, wk, cWk, my, 19, { a: 'center', minW: 116 });
+  });
+  d2_u(g, 'Güncellendi ' + time, x + w / 2, y + h - 30, 18, D2A.sub, { w: 600, a: 'center' });
+}
+// Borsa screen inside a phone
+function d2_borsaScreen(g, sw, sh) {
+  const P = 22;
+  d2_status(g, sw, '14:23');
+  d2_u(g, 'Borsa', P, 106, 32, D2A.ink, { w: 700 });
+  d2_u(g, 'BIST ve Nasdaq hisseleri', P, 132, 15, D2A.sub, { w: 500 });
+  d2_live(g, sw - P, 98, 12.5, 'CANLI · 14:23');
+  const cw = (sw - 2 * P - 12) / 2;
+  D2_IDX.forEach(([n, v, c, seed], i) => {
+    const cx = P + i * (cw + 12), cy = 154;
+    d2_acard(g, cx, cy, cw, 112, 16, '#FFFFFF', 0.06);
+    d2_u(g, n, cx + 14, cy + 28, 14, D2A.sub, { w: 600 });
+    d2_chg(g, c, cx + cw - 12, cy + 23, 11);
+    d2_u(g, v, cx + 14, cy + 58, 22, D2A.ink, { w: 700 });
+    d2_spark(g, cx + 14, cy + 70, cw - 28, 30, seed, true, { lw: 1.6, fill: true });
+  });
+  d2_seg(g, P, 282, sw - 2 * P, 46, [['Tümü', '210'], ['BIST', '108'], ['Nasdaq', '102']], 0, { s: 13 });
+  let fx = P; const fy = 360;
+  [['Favoriler', 'star'], ['Popüler', 'sel'], ['Yükselenler'], ['Düşenler']].forEach(([l, k]) => {
+    const st = k === 'star' ? 17 : 0, w = d2_uw(g, l, 13, 600) + st + 26;
+    rr(g, fx, fy - 16, w, 32, 16); g.fillStyle = k === 'sel' ? D2A.ink : '#FFFFFF'; g.fill();
+    if (st) d2_star(g, fx + 20, fy - 1, 7, D2.orange);
+    d2_u(g, l, fx + 13 + st, fy + 5, 13, k === 'sel' ? '#FFFFFF' : D2A.ink, { w: 600 });
+    fx += w + 8;
+  });
+  rr(g, P, 392, sw - 2 * P, 44, 14); g.fillStyle = '#FFFFFF'; g.fill();
+  d2_mag(g, P + 22, 413, 17, D2A.sub);
+  d2_u(g, 'Hisse adı ya da kodu ara…', P + 42, 419, 14, D2A.sub, { w: 500 });
+  d2_u(g, '210 hisse', P, 466, 13, D2A.sub, { w: 600 });
+  d2_u(g, 'Fiyat · Günlük', sw - P, 466, 13, D2A.sub, { w: 600, a: 'right' });
+  d2_acard(g, P - 8, 480, sw - 2 * P + 16, sh - 480 + 30, 18, '#FFFFFF', 0.05);
+  D2_STOCKS.slice(0, 6).forEach(([t, n, p, c], i) => {
+    const y = 480 + 33 + i * 62;
+    if (i) { g.fillStyle = D2A.line; g.fillRect(P + 4, y - 31, sw - 2 * P - 8, 1); }
+    d2_tickI(g, P + 20, y, 19, t);
+    d2_u(g, t, P + 48, y - 3, 15, D2A.ink, { w: 700 });
+    const tx = P + 48 + d2_uw(g, t, 15, 700) + 6;
+    rr(g, tx, y - 15, d2_uw(g, 'NASDAQ', 8.5, 700) + 10, 14, 4); g.fillStyle = D2A.lav; g.fill();
+    d2_u(g, 'NASDAQ', tx + 5, y - 5, 8.5, D2A.cnt, { w: 700 });
+    d2_u(g, n, P + 48, y + 15, 12, D2A.sub, { w: 500, max: 128 });
+    d2_spark(g, 200, y - 12, 58, 22, 50 + i * 7, c[0] !== '−', { lw: 1.5, n: 22, vol: 0.012 });
+    d2_u(g, p, 340, y + 5, 15, D2A.ink, { w: 700, a: 'right' });
+    d2_chg(g, c, sw - P, y, 12, { minW: 70 });
+  });
+  d2_nav(g, 0, sh - 88, sw, 88);
+}
+// Altın screen: the cream gold card
+function d2_goldCard(g, x, y, w, h) {
+  d2_acard(g, x, y, w, h, 30, D2A.cream);
+  const P = 44;
+  const cg = g.createLinearGradient(x + P, y + 34, x + P + 56, y + 90); cg.addColorStop(0, D2A.gold2); cg.addColorStop(1, D2A.gold1);
+  g.fillStyle = cg; g.beginPath(); g.arc(x + P + 28, y + 62, 28, 0, TAU); g.fill();
+  d2_u(g, 'Au', x + P + 28, y + 70, 21, '#FFFFFF', { w: 700, a: 'center' });
+  d2_u(g, 'Altın', x + P + 72, y + 58, 30, D2A.ink, { w: 700 });
+  g.fillStyle = D2A.live; g.beginPath(); g.arc(x + P + 78, y + 81, 5, 0, TAU); g.fill();
+  d2_u(g, 'Kapalıçarşı · canlı', x + P + 92, y + 87, 17, D2A.sub, { w: 600 });
+  d2_seg(g, x + w - P - 230, y + 37, 230, 52, [['₺ TL'], ['$ USD']], 0, { s: 18, track: D2A.creamTrack, selGrad: [D2A.gold2, D2A.gold1], selInk: '#FFFFFF', ink: '#8A7440' });
+  const tw = (w - 2 * P - 20) / 2, ty = y + 120, th = 178;
+  [['Gram Altın', '₺6.510,83', '+0,40%'], ['Ons Altın', '$4.033,60', '+0,40%']].forEach(([n, v, c], i) => {
+    const tx = x + P + i * (tw + 20);
+    d2_acard(g, tx, ty, tw, th, 20, '#FFFFFF', 0.06);
+    d2_u(g, n, tx + 24, ty + 40, 18, D2A.sub, { w: 600 });
+    d2_chg(g, c, tx + tw - 22, ty + 34, 16);
+    d2_u(g, v, tx + 24, ty + 98, 42, D2A.ink, { w: 700 });
+    if (i === 0) {
+      d2_u(g, 'Alış', tx + 24, ty + 146, 16, D2A.sub, { w: 500 });
+      d2_u(g, '6.422', tx + 24 + d2_uw(g, 'Alış ', 16, 500), ty + 146, 16, D2A.ink, { w: 700 });
+      d2_u(g, 'Satış', tx + 170, ty + 146, 16, D2A.sub, { w: 500 });
+      d2_u(g, '6.511', tx + 170 + d2_uw(g, 'Satış ', 16, 500), ty + 146, 16, D2A.ink, { w: 700 });
+    } else d2_spark(g, tx + 24, ty + 116, tw - 48, 40, 88, true, { col: D2A.gold1, lw: 2.2, fill: true });
+  });
+  d2_u(g, 'ALTIN FİYATLARI', x + P, y + 352, 16, D2A.sub, { w: 700, ls: 2 });
+  d2_seg(g, x + w - P - 300, y + 324, 300, 46, [['Yeni basım'], ['Eski basım']], 1, { s: 15, track: D2A.creamTrack, ink: '#8A7440' });
+  const px = x + P, py = y + 392, pw = w - 2 * P, ph = h - 392 - P;
+  rr(g, px, py, pw, ph, 20); g.fillStyle = '#FFFFFF'; g.fill();
+  const cA = px + pw * 0.56, cS = px + pw * 0.77, hy = py + 36;
+  d2_u(g, 'Ürün', px + 24, hy, 15, D2A.sub, { w: 600 });
+  d2_u(g, 'Alış', cA, hy, 15, D2A.sub, { w: 600, a: 'right' });
+  d2_u(g, 'Satış', cS, hy, 15, D2A.sub, { w: 600, a: 'right' });
+  d2_u(g, 'Değişim', px + pw - 24, hy, 15, D2A.sub, { w: 600, a: 'right' });
+  const rh = (ph - 56) / D2_GOLD.length;
+  D2_GOLD.forEach(([n, sub, a, s, c], i) => {
+    const top = py + 52 + i * rh, my = top + rh / 2;
+    g.fillStyle = D2A.line; g.fillRect(px + 20, top, pw - 40, 1.5);
+    d2_u(g, n, px + 24, my - 2, 18, D2A.ink, { w: 700 });
+    d2_u(g, sub, px + 24, my + 16, 13, D2A.sub, { w: 500 });
+    d2_u(g, a, cA, my + 6, 18, D2A.ink, { w: 600, a: 'right' });
+    d2_u(g, s, cS, my + 6, 18, D2A.ink, { w: 700, a: 'right' });
+    d2_chg(g, c, px + pw - 24, my, 14, { minW: 86 });
+  });
+}
+
+/* ── init: the stars ── */
 function d2_init() {
   const r = mulberry32(2724), st = [];
   for (let i = 0; i < 320; i++) {
@@ -394,73 +754,66 @@ function d2_init() {
     st.push({ x: r() * W, y: Math.pow(r(), 1.3) * H, r: [0.9, 1.45, 2.1][l] * (0.75 + r() * 0.5), a: 0.3 + r() * 0.7, l, sp: l === 2 && r() < 0.45 });
   }
   D2_ST.stars = st;
-  const m = mulberry32(1724), n = 420, steps = 120, mu = 0.07 / 12, sg = 0.15 / Math.sqrt(12), paths = [];
-  for (let i = 0; i < n; i++) { const p = [0]; for (let k = 1; k <= steps; k++) p.push(p[k - 1] + mu - sg * sg / 2 + sg * gauss(m)); paths.push(p); }
-  const pct = q => Array.from({ length: steps + 1 }, (_, k) => { const c = paths.map(p => p[k]).sort((a, b) => a - b); return c[Math.floor(q * (n - 1))]; });
-  D2_ST.mc = { paths, steps, p5: pct(0.05), p50: pct(0.5), p95: pct(0.95) };
 }
 
 /* ── scenes ── */
 const D2_SCENES = [
   {
     time: '0–4 sn', title: 'Kanca: Gece 03:00',
-    desc: 'Gece 03:00. Aracı kurum, kripto borsası ve tablo pencereleri farklı derinliklerde süzülür; yıldızlar yavaşça kayar, başlık iki satırda yerleşir.',
+    desc: 'Gece 03:00. Kripto uygulaması, borsa sitesi ve altın ekranı farklı derinliklerde süzülür; yıldızlar kayar, başlık iki satırda yerleşir: "Piyasa hiç durmuyor."',
     draw(g) {
       d2_sky(g, 0, { px: -30 });
-      // far bokeh windows
       g.save(); g.filter = 'blur(10px)';
       [[1560, 92, 150, 96, D2.lilac], [60, 640, 120, 80, D2.coral], [960, 96, 120, 74, D2.teal], [1270, 1010, 160, 90, D2.peri]].forEach(([x, y, w, h, c]) => {
         rr(g, x - w / 2, y - h / 2, w, h, 12); g.fillStyle = hexA(c, 0.18); g.fill();
       });
       g.restore();
       d2_moon(g, 1800, 118, 40, 1);
-      // a bank notification, slightly out of focus
+      // a gold quote, slightly out of focus
       g.save(); g.filter = 'blur(1.2px)'; g.translate(250, 405); g.rotate(-0.07);
       d2_card(g, -150, -46, 300, 92, 22, { fill: 'rgba(16,22,56,0.85)' });
-      g.fillStyle = hexA(D2.peri, 0.25); rr(g, -132, -26, 52, 52, 14); g.fill();
-      d2_t(g, '₺', -106, 12, 28, D2.peri, { w: 800, a: 'center' });
-      d2_t(g, 'Banka · vadeli hesap', -64, -6, 17, D2.soft, { w: 600 });
-      d2_t(g, '₺412.000', -64, 24, 24, D2.ink, { w: 800 });
+      const cg = g.createLinearGradient(-132, -26, -80, 26); cg.addColorStop(0, D2A.gold2); cg.addColorStop(1, D2A.gold1);
+      g.fillStyle = cg; rr(g, -132, -26, 52, 52, 14); g.fill();
+      d2_t(g, 'Au', -106, 8, 20, '#5A3F00', { w: 800, a: 'center' });
+      d2_t(g, 'Ons altın · başka sekme', -64, -6, 16, D2.soft, { w: 600 });
+      d2_t(g, '$4.033,60', -64, 24, 24, D2.ink, { w: 800 });
       g.restore();
       addGlow(g, '#B9B4FF', 690, 330, 440, 0.1);
-      addGlow(g, D2.coral, 1150, 330, 540, 0.09);
-      addGlow(g, D2.teal, 1600, 600, 600, 0.12);
-      d2_float(g, d2_texSheet(), 690, 330, 560, [0.1, 0.34, -0.05], { blur: 1.6, a: 0.9 });
+      addGlow(g, D2.orange, 1150, 330, 540, 0.08);
+      addGlow(g, D2.teal, 1600, 600, 600, 0.1);
+      d2_float(g, d2_texStock(), 690, 330, 560, [0.1, 0.34, -0.05], { blur: 1.6, a: 0.9 });
       d2_float(g, d2_texCrypto(), 1150, 338, 200, [0.08, -0.26, 0.035], { blur: 0.7 });
-      d2_float(g, d2_texPhone(), 1604, 560, -130, [0.05, -0.42, 0.07]);
-      d2_pill(g, 470, 548, 'Son güncelleme: 12 gün önce', { s: 20, dot: D2.coral, fill: 'rgba(10,14,38,0.85)' });
-      // legibility shade under the headline
+      d2_float(g, d2_texGold(), 1604, 560, -130, [0.05, -0.42, 0.07]);
+      d2_pill(g, 470, 548, 'Hangisi güncel?', { s: 20, dot: D2.coral, fill: 'rgba(10,14,38,0.85)' });
       const sh = g.createLinearGradient(0, 600, 0, H); sh.addColorStop(0, 'rgba(3,5,18,0)'); sh.addColorStop(1, 'rgba(3,5,18,0.8)');
       g.fillStyle = sh; g.fillRect(0, 600, W, H - 600);
-      // the small clock
       d2_dial(g, 160, 128, 60, { bw: 13, minor: false, tickW: 0.8 });
       d2_hand(g, 160, 128, 60, 3, { bw: 13, len: 18, lw: 3, orb: 5.5, over: 7 });
       text(g, '03:00', 246, 150, { f: D2F, w: 800, s: 66, a: 'left', c: D2.ink, ls: -1 });
       d2_t(g, 'İstanbul · gece', 250, 188, 22, D2.soft);
-      // headline
-      d2_kick(g, 'Piyasalar hiç uyumaz', 114, 712, D2.amber);
-      d2_h(g, 'Kripto 7/24 açık.', 106, 822, 100, D2.ink, { w: 800 });
-      d2_grad(g, 'Hesapların dağınık.', 106, 940, 100);
+      d2_kick(g, 'Kripto · borsa · altın', 114, 712, D2.orange);
+      d2_h(g, 'Piyasa hiç durmuyor.', 106, 822, 100, D2.ink, { w: 800 });
+      d2_grad(g, 'Fiyatlar her yerde dağınık.', 106, 940, 88, { max: 1220 });
     },
   },
   {
-    time: '4–8 sn', title: 'Vaat: Kadran kurulur',
-    desc: 'Pencereler ışık izlerine dönüşüp merkeze çekilir; 24 saatlik kadran çizgi çizgi tamamlanır, ibre 03:30\'a süpürür. Ortada vaat ve Kripto724.',
+    time: '4–8 sn', title: 'Vaat: Kadran ve logo',
+    desc: 'Üç ekran ışık izine dönüşüp merkeze çekilir; turuncu ibre 24 saati tek turda süpürür, kadran tamamlanır ve ortasına resmî kripto724 logosu oturur.',
     draw(g) {
       d2_sky(g, 0.08, { px: -70 });
-      d2_stamp(g, '03:30', 0.08);
-      const x = CX, y = 548, R = 400;
-      // the scattered windows of scene 1, pulled into the dial as light
+      d2_stamp(g, '03:15', 0.08);
+      const x = CX, y = 470, R = 362;
       const r = mulberry32(42);
       g.save(); g.globalCompositeOperation = 'lighter'; g.lineCap = 'round';
       for (let i = 0; i < 54; i++) {
-        const a = r() * TAU, d0 = R + 80 + r() * 560, len = 60 + r() * 220, c = [D2.teal, D2.coral, D2.lilac, D2.amber][i % 4];
+        const a = r() * TAU, d0 = R + 80 + r() * 560, len = 60 + r() * 220, c = [D2.teal, D2.coral, D2.lilac, D2.orange][i % 4];
         const x0 = x + Math.cos(a) * d0, y0 = y + Math.sin(a) * d0, x1 = x + Math.cos(a) * (d0 - len), y1 = y + Math.sin(a) * (d0 - len);
         const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, hexA(c, 0)); gr.addColorStop(1, hexA(c, 0.55));
         g.strokeStyle = gr; g.lineWidth = 1.2 + r() * 2.4; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
       }
       g.restore();
-      [[250, 300, 300, 190, D2.lilac, -0.05], [1700, 640, 170, 330, D2.teal, 0.1], [300, 850, 300, 196, D2.coral, 0.05]].forEach(([gx, gy, w, h, c, rot]) => {
+      // the three screens of scene 1, pulled into the dial as light
+      [[250, 250, 300, 190, D2.teal, -0.05, 'Borsa'], [1690, 520, 170, 320, D2A.gold2, 0.1, 'Altın'], [270, 700, 300, 196, D2.orange, 0.05, 'Kripto']].forEach(([gx, gy, w, h, c, rot, lab]) => {
         const dx = x - gx, dy = y - gy, l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l;
         g.save(); g.globalCompositeOperation = 'lighter';
         for (let k = -3; k <= 3; k++) {
@@ -470,449 +823,386 @@ const D2_SCENES = [
         }
         g.restore();
         g.save(); g.translate(gx, gy); g.rotate(rot);
-        rr(g, -w / 2, -h / 2, w, h, 18); g.fillStyle = hexA(c, 0.07); g.fill(); g.strokeStyle = hexA(c, 0.4); g.lineWidth = 1.5; g.stroke();
-        g.fillStyle = hexA(c, 0.25); g.fillRect(-w / 2 + 18, -h / 2 + 22, w * 0.4, 6); g.fillRect(-w / 2 + 18, -h / 2 + 40, w * 0.25, 6);
+        rr(g, -w / 2, -h / 2, w, h, 18); g.fillStyle = hexA(c, 0.07); g.fill(); g.strokeStyle = hexA(c, 0.42); g.lineWidth = 1.5; g.stroke();
+        d2_t(g, lab, -w / 2 + 20, -h / 2 + 38, 20, hexA(c, 0.9), { w: 800 });
+        g.fillStyle = hexA(c, 0.25); g.fillRect(-w / 2 + 20, -h / 2 + 56, w * 0.42, 6); g.fillRect(-w / 2 + 20, -h / 2 + 74, w * 0.26, 6);
         g.restore();
       });
-      d2_dial(g, x, y, R, { nums: true, p: 0.93, numS: 26, numR: 34 });
-      d2_hand(g, x, y, R, 3.5, { from: 2.1 });
-      const [fx, fy] = d2_pt(x, y, R - 15, 0.93 * 24);
-      addGlow(g, D2.amber, fx, fy, 80, 0.7); sparkle(g, fx, fy, 16, '#FFF6E0');
-      d2_kick(g, 'Tek görünüm', x, y - 196, D2.teal, { a: 'center' });
-      d2_h(g, 'Tüm yatırımların,', x, y - 98, 60, D2.ink, { a: 'center', w: 700 });
-      d2_grad(g, 'tek ekranda.', x, y + 10, 94, { a: 'center' });
-      g.fillStyle = 'rgba(255,255,255,0.2)'; g.fillRect(x - 110, y + 62, 220, 1.5);
-      wordmark(g, x, y + 150, 64, null, { f: D2F, w: 800, grad: D2_DAWN });
+      d2_dial(g, x, y, R, { nums: true, numS: 24, numR: 32 });
+      d2_hand(g, x, y, R, 3.25, { from: 3.25 - 21, trailA: 0.55 });
+      addGlow(g, D2.orange, x, y, 300, 0.16);
+      logo(g, x, y, 250, { ink: '#FFFFFF' });
+      d2_two(g, 'Kripto, borsa ve emtia ', 'tek uygulamada.', x, 1002, 58);
     },
   },
   {
-    time: '8–13 sn', title: 'Panel: Kadranda portföy',
-    desc: 'Kadranın halkası varlık dağılımına dönüşür, ortada toplam değer döner. Cam kartta portföy çizgisi S&P 500\'ü geçerek çizilir, varlıklar sıralanır.',
+    time: '8–12 sn', title: 'Kripto: Canlı, 7/24',
+    desc: 'Uygulamanın kripto tablosu camın arkasından yükselir; satırlar sırayla dolar, fiyatlar sayaçla döner. Kadranın dış halkasında kripto hiç sönmeyen bir ışık gibi akar.',
     draw(g) {
       d2_sky(g, 0.18, { px: -110 });
-      d2_stamp(g, '04:00', 0.18);
-      d2_h(g, 'Portföyünün tamamı, bir bakışta.', 108, 146, 56, D2.ink, { w: 700 });
-      d2_t(g, 'Son senkron: bu gece 03:00  ·  Baz para birimi: TRY', 112, 196, 23, D2.soft, { w: 500 });
-      // allocation dial
-      const x = 590, y = 588, R = 272, bw = 42;
-      d2_dial(g, x, y, R + 32, { bw: 16, bezel: false, face: false, nums: 'card', numR: 26, numS: 22 });
-      g.save(); g.shadowColor = 'rgba(2,4,16,0.7)'; g.shadowBlur = 80; g.shadowOffsetY = 30;
-      const fg = g.createRadialGradient(x - 70, y - 140, 10, x, y, R);
-      fg.addColorStop(0, 'rgba(44,60,128,0.55)'); fg.addColorStop(1, 'rgba(8,12,36,0.85)');
-      g.fillStyle = fg; g.beginPath(); g.arc(x, y, R, 0, TAU); g.fill(); g.restore();
-      const segs = [['Hisse', 44, D2.teal], ['ETF', 22, D2.peri], ['Kripto', 12, D2.amber], ['Tahvil', 10, D2.coral], ['Gayrimenkul', 7, D2.lilac], ['Nakit', 5, D2.ink]];
-      let acc = 0;
-      segs.forEach(([l, v, c]) => {
-        const a0 = -Math.PI / 2 + acc / 100 * TAU + 0.02, a1 = -Math.PI / 2 + (acc + v) / 100 * TAU - 0.02, am = (a0 + a1) / 2;
-        g.save(); g.shadowColor = c; g.shadowBlur = 18;
-        g.strokeStyle = c; g.lineWidth = bw; g.beginPath(); g.arc(x, y, R - bw / 2 - 2, a0, a1); g.stroke(); g.restore();
-        const rm = R - bw / 2 - 2;
-        text(g, '%' + v, x + Math.cos(am) * rm, y + Math.sin(am) * rm + 7, { f: D2T, w: 800, s: 19, a: 'center', c: '#0B1026' });
-        acc += v;
-      });
-      d2_hand(g, x, y, R + 32, 4, { bw: 16, from: 3.1, len: 2, over: 8, lw: 3.5, orb: 8, trailA: 0.7 });
-      d2_kick(g, 'Toplam değer', x, y - 70, D2.soft, { a: 'center', s: 19 });
-      d2_t(g, '₺9.482.150,36', x, y + 4, 60, D2.ink, { w: 800, a: 'center', max: 420 });
-      d2_t(g, '+₺64.218,40  ·  +%0,68', x, y + 52, 25, D2.teal, { w: 700, a: 'center' });
-      d2_t(g, 'bugün', x, y + 86, 20, D2.soft, { w: 500, a: 'center' });
-      segs.forEach(([l, v, c], i) => {
-        const lx = 150 + (i % 3) * 230, ly = 984 + Math.floor(i / 3) * 44;
-        g.fillStyle = c; g.beginPath(); g.arc(lx, ly - 7, 7, 0, TAU); g.fill();
-        d2_t(g, l, lx + 18, ly, 21, D2.ink, { w: 600 });
-        d2_t(g, '%' + v, lx + 18 + d2_tw(g, l, 21) + 10, ly, 21, D2.soft, { w: 700 });
-      });
-      // performance card
-      const X0 = 1010, X1 = 1830;
-      d2_card(g, X0, 248, X1 - X0, 418);
-      d2_h(g, 'Performans', X0 + 40, 306, 30, D2.ink);
-      ['1A', '6A', '1Y', '5Y'].forEach((s, i) => {
-        const bx = X1 - 40 - (4 - i) * 66;
-        if (s === '1Y') { rr(g, bx, 280, 58, 36, 18); g.fillStyle = hexA(D2.amber, 0.95); g.fill(); }
-        d2_t(g, s, bx + 29, 305, 18, s === '1Y' ? D2.night : D2.soft, { w: 800, a: 'center' });
-      });
-      g.fillStyle = D2.teal; g.beginPath(); g.arc(X0 + 48, 344, 6, 0, TAU); g.fill();
-      d2_t(g, 'Portföy  +%18,4', X0 + 64, 351, 21, D2.ink, { w: 700 });
-      g.strokeStyle = D2.peri; g.lineWidth = 3; g.setLineDash([7, 6]); g.beginPath(); g.moveTo(X0 + 290, 344); g.lineTo(X0 + 322, 344); g.stroke(); g.setLineDash([]);
-      d2_t(g, 'S&P 500 (SPY)  +%12,1', X0 + 334, 351, 21, D2.soft, { w: 700 });
-      const cx0 = X0 + 40, cx1 = X1 - 40, cy0 = 392, cy1 = 598;
-      const you = d2_shape(walk(902, 90, 0.002, 0.011), 1.184), spy = d2_shape(walk(337, 90, 0.0012, 0.0085), 1.121);
-      const all = you.concat(spy), lo = Math.min(...all) - 0.01, hi = Math.max(...all) + 0.01;
-      const map = s => s.map((v, i) => [lerp(cx0, cx1, i / (s.length - 1)), cy1 - (v - lo) / (hi - lo) * (cy1 - cy0)]);
-      g.strokeStyle = 'rgba(255,255,255,0.06)'; g.lineWidth = 1;
-      for (let k = 0; k < 4; k++) { const yy = lerp(cy0, cy1, k / 3); g.beginPath(); g.moveTo(cx0, yy); g.lineTo(cx1, yy); g.stroke(); }
-      const P = map(you), S = map(spy);
-      const ag = g.createLinearGradient(0, cy0, 0, cy1); ag.addColorStop(0, hexA(D2.teal, 0.3)); ag.addColorStop(1, hexA(D2.teal, 0));
-      g.beginPath(); smoothPath(g, P); g.lineTo(cx1, cy1); g.lineTo(cx0, cy1); g.closePath(); g.fillStyle = ag; g.fill();
-      g.strokeStyle = D2.peri; g.lineWidth = 2.5; g.setLineDash([8, 7]); g.beginPath(); smoothPath(g, S); g.stroke(); g.setLineDash([]);
-      g.save(); g.shadowColor = D2.teal; g.shadowBlur = 16; g.strokeStyle = D2.teal; g.lineWidth = 4; g.lineJoin = 'round'; g.beginPath(); smoothPath(g, P); g.stroke(); g.restore();
-      const e = P[P.length - 1]; addGlow(g, D2.teal, e[0], e[1], 50, 0.8); g.fillStyle = '#fff'; g.beginPath(); g.arc(e[0], e[1], 6, 0, TAU); g.fill();
-      ['Kas', 'Oca', 'Mar', 'May', 'Tem', 'Eyl', 'Eki'].forEach((m, i) => d2_t(g, m, lerp(cx0 + 10, cx1 - 10, i / 6), 636, 18, D2.dim, { w: 600, a: 'center' }));
-      // holdings card
-      d2_card(g, X0, 690, X1 - X0, 318);
-      d2_h(g, 'Varlıklar', X0 + 40, 744, 26, D2.ink);
-      d2_t(g, '8 varlık sınıfı · 42 varlık', X1 - 40, 742, 19, D2.soft, { w: 500, a: 'right' });
-      [['VOO', 'Vanguard S&P 500', 'ETF', '₺2.058.904', '+%0,58', D2.peri], ['AAPL', 'Apple', 'Hisse', '₺1.402.180', '+%1,24', D2.teal], ['BTC', 'Bitcoin', 'Kripto', '₺778.415', '−%2,10', D2.amber]].forEach(([t, n, cl, v, ch, c], i) => {
-        const yy = 812 + i * 64;
-        g.fillStyle = 'rgba(255,255,255,0.07)'; g.fillRect(X0 + 40, yy - 40, X1 - X0 - 80, 1);
-        g.fillStyle = hexA(c, 0.16); g.beginPath(); g.arc(X0 + 62, yy - 8, 20, 0, TAU); g.fill();
-        g.fillStyle = c; g.beginPath(); g.arc(X0 + 62, yy - 8, 6, 0, TAU); g.fill();
-        d2_h(g, t, X0 + 100, yy, 23, D2.ink);
-        d2_t(g, n, X0 + 100 + d2_tw(g, t, 23, { f: D2F, w: 700 }) + 14, yy, 19, D2.soft, { w: 500 });
-        d2_pill(g, X0 + 392, yy - 8, cl, { s: 16, h: 30, padX: 14, c, fill: hexA(c, 0.1), stroke: hexA(c, 0.35) });
-        d2_t(g, v, X1 - 170, yy, 23, D2.ink, { w: 700, a: 'right' });
-        d2_t(g, ch, X1 - 40, yy, 21, ch[0] === '−' ? D2.coral : D2.teal, { w: 700, a: 'right' });
-      });
+      d2_stamp(g, '03:30', 0.18);
+      d2_kick(g, 'Kripto · canlı', 114, 176, D2.orange);
+      d2_h(g, 'Canlı fiyatlar,', 106, 276, 78, D2.ink, { w: 800 });
+      d2_grad(g, '7/24.', 98, 440, 176);
+      const x = 405, y = 762, R = 178;
+      d2_dial(g, x, y, R, { nums: 'card', numR: 54, numS: 22, bw: 20 });
+      d2_cryptoRing(g, x, y, R + 20, 20.4, { lw: 3.5 });
+      d2_hand(g, x, y, R, 3.5, { bw: 20, from: 3.0, len: 10, lw: 4, orb: 8 });
+      d2_h(g, '03:30', x, y + 4, 60, D2.ink, { w: 800, a: 'center', ls: -1 });
+      d2_pill(g, x, y + 58, 'Kripto canlı', { a: 'center', s: 19, c: D2.ink, dot: D2A.live, fill: 'rgba(10,16,44,0.85)', stroke: 'rgba(255,255,255,0.22)' });
+      const [lx, ly] = d2_pt(x, y, R + 20, 21.2);
+      d2_pill(g, lx + 18, ly + 18, 'Kripto · 7/24', { a: 'left', s: 18, c: D2.orange, fill: 'rgba(14,12,34,0.88)', stroke: hexA(D2.orange, 0.5) });
+      addGlow(g, D2.orange, 1360, 520, 560, 0.14);
+      d2_cryptoCard(g, 880, 128, 950, 878, '03:30');
     },
   },
   {
-    time: '13–17 sn', title: 'Her varlık, her saat dilimi',
-    desc: 'Kadranın çevresinde borsa saatleri yörüngeye oturur, her biri kendi açılışını gösterir. Varlık çipleri tek tek yanar; dış halkada kripto hiç durmaz.',
+    time: '12–16 sn', title: 'Borsa: BIST ve Nasdaq',
+    desc: 'Kadranda BIST (10:00–18:00) ve Nasdaq (16:30–23:00) seansları çizilir. Telefondaki BIST 100 ve Nasdaq 100 kartları dışarı süzülür, filtreler sırayla yanar.',
     draw(g) {
       d2_sky(g, 0.3, { px: -150 });
-      d2_stamp(g, '04:30', 0.3);
-      d2_kick(g, '8 varlık sınıfı · 60+ piyasa', 112, 168, D2.teal);
-      d2_h(g, 'Her varlık,', 106, 258, 84, D2.ink, { w: 800 });
-      d2_grad(g, 'her piyasa.', 106, 350, 84);
-      const chips = [['Hisse senedi', D2.teal], ['ETF', D2.peri], ['Tahvil', D2.coral], ['Opsiyon', D2.lilac], ['Kripto', D2.amber], ['Gayrimenkul', D2.teal], ['Yatırım fonu', D2.peri], ['Nakit', D2.ink]];
-      chips.forEach(([s, c], i) => {
-        const cx = 110 + (i % 2) * 302, cy = 456 + Math.floor(i / 2) * 70;
-        rr(g, cx, cy - 27, 284, 54, 27); g.fillStyle = 'rgba(12,18,48,0.9)'; g.fill();
-        g.strokeStyle = hexA(c, 0.42); g.lineWidth = 1.5; g.stroke();
-        addGlow(g, c, cx + 30, cy, 26, 0.5);
-        g.fillStyle = c; g.beginPath(); g.arc(cx + 30, cy, 7, 0, TAU); g.fill();
-        d2_t(g, s, cx + 52, cy + 8, 22, D2.ink, { w: 700 });
+      d2_kick(g, 'Borsa · BIST ve Nasdaq', 114, 164, D2.orange);
+      d2_h(g, '210 hisse,', 106, 258, 84, D2.ink, { w: 800 });
+      d2_grad(g, 'tek listede.', 106, 350, 84);
+      // the market day on the dial
+      const x = 405, y = 682, R = 186, bw = 20;
+      d2_dial(g, x, y, R, { nums: 'card', numR: 60, numS: 22, bw });
+      d2_cryptoRing(g, x, y, R + 36, 5.2, { lw: 3, base: 0.32, span: 1.2 });
+      d2_arc(g, x, y, R - bw / 2, 10, 18, D2.teal, 14, { glow: 16 });
+      d2_arc(g, x, y, R + 15, 16.5, 23, D2.coral, 9, { glow: 14 });
+      const [ox, oy] = d2_pt(x, y, R - bw / 2, 14.38);
+      addGlow(g, D2.teal, ox, oy, 46, 0.9); g.fillStyle = '#EFFFFC'; g.beginPath(); g.arc(ox, oy, 7, 0, TAU); g.fill();
+      d2_t(g, 'BIST', x, y - 72, 19, D2.teal, { w: 800, a: 'center', ls: 2 });
+      d2_h(g, '108', x, y - 18, 50, D2.ink, { w: 800, a: 'center' });
+      g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(x - 54, y + 6, 108, 1.5);
+      d2_t(g, 'NASDAQ', x, y + 40, 19, D2.coral, { w: 800, a: 'center', ls: 2 });
+      d2_h(g, '102', x, y + 94, 50, D2.ink, { w: 800, a: 'center' });
+      d2_legend(g, [[D2.teal, 'BIST 10:00–18:00'], [D2.coral, 'Nasdaq 16:30–23:00'], [D2.orange, 'Kripto 7/24']], 110, 1010, 19);
+      // phone with the Borsa screen
+      const PX = 880, PY = 46, PW = 470, PH = 990;
+      addGlow(g, D2.teal, PX + PW / 2, 520, 520, 0.12);
+      d2_phone(g, PX, PY, PW, PH, d2_borsaScreen);
+      // index cards lifted out of the phone
+      const CX0 = 1418, CW0 = 440;
+      D2_IDX.forEach(([n, v, c, seed], i) => {
+        const cy = 128 + i * 222, fy = PY + 12 + 154 + 56;
+        g.save(); g.setLineDash([4, 7]); g.strokeStyle = hexA(D2.orange, 0.6); g.lineWidth = 1.8;
+        g.beginPath(); g.moveTo(PX + PW + 4, fy); g.bezierCurveTo(PX + PW + 40, fy, CX0 - 36, cy + 95, CX0, cy + 95); g.stroke(); g.restore();
+        if (!i) { addGlow(g, D2.orange, PX + PW + 4, fy, 30, 0.9); g.fillStyle = '#FFF4E2'; g.beginPath(); g.arc(PX + PW + 4, fy, 5, 0, TAU); g.fill(); }
+        d2_acard(g, CX0, cy, CW0, 190, 24);
+        d2_u(g, n, CX0 + 30, cy + 52, 24, D2A.ink, { w: 700 });
+        d2_chg(g, c, CX0 + CW0 - 28, cy + 44, 19);
+        d2_u(g, v, CX0 + 30, cy + 116, 50, D2A.ink, { w: 700 });
+        d2_spark(g, CX0 + 30, cy + 132, CW0 - 60, 40, seed, true, { lw: 2.4, fill: true });
       });
-      d2_card(g, 110, 760, 586, 132, 24);
-      ['₺', '$', '€', '£', '¥'].forEach((s, i) => {
-        const bx = 160 + i * 34;
-        g.fillStyle = ['#1C2A5E', '#21306A', '#263674', '#2B3C7E', '#304288'][i]; g.beginPath(); g.arc(bx, 826, 26, 0, TAU); g.fill();
-        g.strokeStyle = 'rgba(255,255,255,0.3)'; g.lineWidth = 1.5; g.stroke();
-        d2_t(g, s, bx, 835, 24, i === 0 ? D2.amber : D2.ink, { w: 800, a: 'center' });
+      // filters and search
+      const chips = [['Favoriler', 'star'], ['Popüler', 'sel'], ['Yükselenler'], ['Düşenler']];
+      chips.forEach(([l, k], i) => {
+        const cx = CX0 + (i % 2) * 226, cy = 628 + Math.floor(i / 2) * 76, w = 214, h = 58;
+        rr(g, cx, cy - h / 2, w, h, h / 2);
+        g.fillStyle = k === 'sel' ? '#FFFFFF' : 'rgba(12,18,48,0.82)'; g.fill();
+        if (k !== 'sel') { g.strokeStyle = 'rgba(255,255,255,0.22)'; g.lineWidth = 1.5; g.stroke(); }
+        const tw = d2_uw(g, l, 21, 700) + (k === 'star' ? 30 : 0), tx = cx + w / 2 - tw / 2;
+        if (k === 'star') d2_star(g, tx + 11, cy - 1, 12, D2.orange);
+        d2_u(g, l, tx + (k === 'star' ? 30 : 0), cy + 8, 21, k === 'sel' ? D2A.ink : D2.ink, { w: 700 });
       });
-      d2_t(g, 'Her işlem, kendi', 344, 816, 23, D2.ink, { w: 700 });
-      d2_t(g, 'tarihindeki kurla çevrilir.', 344, 848, 23, D2.ink, { w: 700 });
-      d2_t(g, '50+ para birimi', 344, 876, 18, D2.soft, { w: 600 });
-      // world clocks orbiting the 24-hour dial (İstanbul time on the dial)
-      const x = 1330, y = 578, R = 214, Ro = 398;
-      // crypto never stops: the orbit itself
-      g.save(); g.strokeStyle = hexA(D2.teal, 0.35); g.lineWidth = 1.5; g.beginPath(); g.arc(x, y, Ro, 0, TAU); g.stroke(); g.restore();
-      const ca = 0.6 * Math.PI / 2 + 0.25, cg = g.createConicGradient(ca - 1.4, x, y);
-      cg.addColorStop(0, hexA(D2.teal, 0)); cg.addColorStop(1.4 / TAU, hexA(D2.teal, 0.95)); cg.addColorStop(1.4 / TAU + 0.001, hexA(D2.teal, 0));
-      g.strokeStyle = cg; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.arc(x, y, Ro, ca - 1.4, ca); g.stroke();
-      addGlow(g, D2.teal, x + Math.cos(ca) * Ro, y + Math.sin(ca) * Ro, 60, 0.9);
-      g.fillStyle = '#E9FFFB'; g.beginPath(); g.arc(x + Math.cos(ca) * Ro, y + Math.sin(ca) * Ro, 6, 0, TAU); g.fill();
-      d2_pill(g, x + Math.cos(0.95) * Ro, y + Math.sin(0.95) * Ro + 4, 'Kripto · 7/24 açık', { a: 'center', s: 20, c: D2.teal, dot: D2.teal, fill: 'rgba(8,24,40,0.9)', stroke: hexA(D2.teal, 0.5) });
-      d2_dial(g, x, y, R, { nums: 'card', numR: 24, numS: 22, bw: 22 });
-      const cities = [['Tokyo', 9, 0, 3, 128], ['Hong Kong', 9, 30, 4.5, 168], ['İstanbul', 10, 0, 10, 218], ['Londra', 8, 0, 11, 258], ['Frankfurt', 9, 0, 11, 298], ['New York', 9, 30, 17.5, 352]];
-      cities.forEach(([nm, hh, mm, tr, deg]) => {
-        const a = deg * Math.PI / 180, mx = x + Math.cos(a) * Ro, my = y + Math.sin(a) * Ro;
-        const [dx, dy] = d2_pt(x, y, R - 11, tr);
-        g.save(); g.setLineDash([4, 6]); g.strokeStyle = hexA(D2.lilac, 0.45); g.lineWidth = 1.5;
-        g.beginPath(); g.moveTo(mx - Math.cos(a) * 58, my - Math.sin(a) * 58); g.lineTo(dx, dy); g.stroke(); g.restore();
-        addGlow(g, D2.amber, dx, dy, 26, 0.6); g.fillStyle = D2.amber; g.beginPath(); g.arc(dx, dy, 5, 0, TAU); g.fill();
-        d2_disc(g, mx, my, 54);
-        for (let i = 0; i < 12; i++) {
-          const ta = i / 12 * TAU, l = i % 3 ? 5 : 10;
-          g.strokeStyle = i % 3 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.8)'; g.lineWidth = i % 3 ? 1.4 : 2.4;
-          g.beginPath(); g.moveTo(mx + Math.cos(ta) * 46, my + Math.sin(ta) * 46); g.lineTo(mx + Math.cos(ta) * (46 - l), my + Math.sin(ta) * (46 - l)); g.stroke();
-        }
-        const ha = ((hh % 12) + mm / 60) / 12 * TAU - Math.PI / 2, ma = mm / 60 * TAU - Math.PI / 2;
-        g.lineCap = 'round';
-        g.strokeStyle = D2.ink; g.lineWidth = 4.5; g.beginPath(); g.moveTo(mx, my); g.lineTo(mx + Math.cos(ha) * 24, my + Math.sin(ha) * 24); g.stroke();
-        g.strokeStyle = D2.amber; g.lineWidth = 2.5; g.beginPath(); g.moveTo(mx, my); g.lineTo(mx + Math.cos(ma) * 36, my + Math.sin(ma) * 36); g.stroke();
-        g.fillStyle = D2.amber; g.beginPath(); g.arc(mx, my, 4.5, 0, TAU); g.fill();
-        const up = Math.sin(a) < -0.3, ly = up ? my - 96 : my + 86;
-        d2_h(g, nm, mx, ly, 22, D2.ink, { a: 'center', w: 600, ls: 0 });
-        d2_t(g, `açılış ${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`, mx, ly + 27, 19, D2.amber, { w: 700, a: 'center' });
-      });
-      d2_hand(g, x, y, R, 4.5, { bw: 22, from: 3.6, len: 10, lw: 4, orb: 9 });
-      d2_h(g, '60+', x, y + 18, 100, D2.ink, { w: 800, a: 'center' });
-      d2_t(g, 'piyasa', x, y + 58, 24, D2.soft, { w: 600, a: 'center' });
-      g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(x - 60, y + 80, 120, 1.5);
-      d2_t(g, '50+ para birimi', x, y + 118, 24, D2.amber, { w: 800, a: 'center' });
+      d2_card(g, CX0, 760, CW0, 64, 32, { fill: 'rgba(12,18,48,0.82)' });
+      d2_mag(g, CX0 + 36, 790, 24, D2.soft);
+      d2_u(g, 'Hisse adı ya da kodu ara…', CX0 + 66, 799, 20, D2.soft, { w: 500 });
     },
   },
   {
-    time: '17–21 sn', title: 'Gece senkronu',
-    desc: 'Ay yükselir; aracı kurumlar takımyıldız gibi parlar, ışık hatları kadranda 03:00 noktasında birleşir. İbre sabaha ilerlerken "tüm hesaplar güncel" yanar.',
+    time: '16–20 sn', title: 'Altın: Kapalıçarşı',
+    desc: 'Kadranın gündüz yayı altın rengine döner: Kapalıçarşı. Krem kartta gram, çeyrek, ata… alış ve satış satırları akar; ₺ TL / $ USD düğmesi geçiş yapar.',
     draw(g) {
-      d2_sky(g, 0.42, { px: -190 });
-      d2_stamp(g, '05:00', 0.42);
-      d2_moon(g, 1716, 226, 46, 1.2);
-      d2_kick(g, 'Gece senkronu', 112, 164, D2.teal);
-      d2_h(g, 'Sen uyurken,', 106, 254, 68, D2.ink, { w: 800 });
-      d2_h(g, 'hesapların her gece', 106, 334, 68, D2.ink, { w: 800, max: 860 });
-      d2_grad(g, 'senkronlanır.', 106, 414, 68);
-      const x = 1420, y = 592, R = 282, bw = 24;
-      const node = d2_pt(x, y, R - bw / 2, 3);
-      const stars = [['Interactive Brokers', 210, 548], ['Charles Schwab', 540, 520], ['Fidelity', 860, 566], ['Robinhood', 330, 668], ['Trading 212', 650, 650], ['DEGIRO', 930, 712],
-        ['eToro', 170, 820], ['Coinbase', 450, 792], ['Wealthsimple', 730, 842], ['Public', 980, 912]];
-      // constellation lines
-      g.save(); g.strokeStyle = hexA(D2.lilac, 0.3); g.lineWidth = 1.3; g.setLineDash([2, 6]);
-      [[0, 3], [3, 1], [1, 4], [4, 2], [3, 6], [6, 7], [7, 4], [7, 8], [8, 5], [5, 2], [8, 9]].forEach(([a, b]) => {
-        g.beginPath(); g.moveTo(stars[a][1], stars[a][2]); g.lineTo(stars[b][1], stars[b][2]); g.stroke();
+      d2_sky(g, 0.44, { px: -190 });
+      d2_kick(g, 'Emtia · Kapalıçarşı canlı', 114, 164, D2.orange);
+      d2_h(g, 'Kapalıçarşı', 106, 258, 84, D2.ink, { w: 800 });
+      d2_grad(g, 'cebinde.', 106, 350, 84);
+      // commodities chips
+      let cx = 110;
+      [['Au', 'Altın', [D2A.gold2, D2A.gold1]], ['Ag', 'Gümüş', ['#E9ECF5', '#A9B0C4']], ['', 'Petrol', ['#3A3F55', '#14161F']], ['+', 've fazlası', [D2.navy, '#3A4A92']]].forEach(([sym, l, gc]) => {
+        const tw = d2_tw(g, l, 21, { w: 700 }), w = tw + 92, cy = 436;
+        rr(g, cx, cy - 29, w, 58, 29); g.fillStyle = 'rgba(12,18,48,0.86)'; g.fill(); g.strokeStyle = 'rgba(255,255,255,0.2)'; g.lineWidth = 1.5; g.stroke();
+        const ig = g.createLinearGradient(cx + 10, cy - 20, cx + 50, cy + 20); ig.addColorStop(0, gc[0]); ig.addColorStop(1, gc[1]);
+        g.fillStyle = ig; g.beginPath(); g.arc(cx + 31, cy, 20, 0, TAU); g.fill();
+        if (sym) d2_u(g, sym, cx + 31, cy + 6, sym === '+' ? 22 : 15, sym === 'Au' ? '#5A3F00' : sym === 'Ag' ? '#3A3F55' : '#FFFFFF', { w: 700, a: 'center' });
+        else { g.fillStyle = '#FFFFFF'; g.beginPath(); g.moveTo(cx + 31, cy - 11); g.quadraticCurveTo(cx + 41, cy + 2, cx + 38, cy + 6); g.arc(cx + 31, cy + 5, 7, 0.1, Math.PI - 0.1); g.quadraticCurveTo(cx + 21, cy + 2, cx + 31, cy - 11); g.fill(); }
+        d2_t(g, l, cx + 62, cy + 8, 21, D2.ink, { w: 700 });
+        cx += w + 14;
       });
-      g.restore();
-      // beams into 03:00
-      g.save(); g.globalCompositeOperation = 'lighter';
-      stars.forEach(([nm, sx, sy], i) => {
-        const mx = (sx + node[0]) / 2, my = Math.min(sy, node[1]) - 60 - (i % 3) * 30;
-        const gr = g.createLinearGradient(sx, sy, node[0], node[1]); gr.addColorStop(0, hexA(D2.teal, 0.05)); gr.addColorStop(1, hexA(D2.teal, 0.55));
-        g.strokeStyle = gr; g.lineWidth = 1.8; g.beginPath(); g.moveTo(sx, sy); g.quadraticCurveTo(mx, my, node[0], node[1]); g.stroke();
-        const t = 0.45 + (i * 0.137) % 0.45, u = 1 - t;
-        const px = u * u * sx + 2 * u * t * mx + t * t * node[0], py = u * u * sy + 2 * u * t * my + t * t * node[1];
-        addGlow(g, D2.teal, px, py, 22, 0.8);
-      });
-      g.restore();
-      stars.forEach(([nm, sx, sy], i) => {
-        addGlow(g, '#DCE2FF', sx, sy, 40, 0.55);
-        sparkle(g, sx, sy, i % 3 === 0 ? 13 : 10, '#FFFFFF');
-        g.save(); g.shadowColor = 'rgba(4,6,22,0.95)'; g.shadowBlur = 10;
-        d2_t(g, nm, sx, sy + 38, 21, D2.ink, { w: 600, a: 'center' }); d2_t(g, nm, sx, sy + 38, 21, D2.ink, { w: 600, a: 'center' });
-        g.restore();
-      });
-      d2_dial(g, x, y, R, { nums: 'card', numR: 30, numS: 24, bw });
-      // the night window 00–06 on the bezel
-      g.save(); g.strokeStyle = hexA(D2.lilac, 0.22); g.lineWidth = bw; g.beginPath(); g.arc(x, y, R - bw / 2, d2_ang(0), d2_ang(6)); g.stroke(); g.restore();
-      d2_hand(g, x, y, R, 5, { bw, from: 3, len: 12, trailA: 0.75 });
-      [46, 30, 18].forEach((r, i) => { g.strokeStyle = hexA(D2.teal, [0.18, 0.35, 0.7][i]); g.lineWidth = 2; g.beginPath(); g.arc(node[0], node[1], r, 0, TAU); g.stroke(); });
-      addGlow(g, D2.teal, node[0], node[1], 90, 0.9);
-      g.fillStyle = '#E9FFFB'; g.beginPath(); g.arc(node[0], node[1], 8, 0, TAU); g.fill();
-      d2_kick(g, 'Son senkron', x, y - 86, D2.soft, { a: 'center', s: 19 });
-      d2_h(g, '03:00', x, y + 24, 104, D2.ink, { w: 800, a: 'center', ls: -2 });
-      const lab = 'Tüm hesaplar güncel', lw = d2_tw(g, lab, 24, { w: 700 });
-      check(g, x - lw / 2 - 10, y + 72, 20, D2.teal, 4);
-      d2_t(g, lab, x - lw / 2 + 16, y + 80, 24, D2.teal, { w: 700 });
-      const facts = ['25+ aracı kurum', 'salt-okunur', 'her gece senkron'];
-      const ws = facts.map(s => d2_tw(g, s, 21, { w: 700 }) + 2 * 20 + 19), tot = ws.reduce((a, b) => a + b, 0) + 24;
-      let fx = x - tot / 2;
-      facts.forEach((s, i) => { fx += d2_pill(g, fx, 1012, s, { s: 21, dot: [D2.amber, D2.teal, D2.lilac][i], fill: 'rgba(10,14,40,0.7)' }) + 12; });
+      // the dial: Kapalıçarşı by day, crypto all around
+      const x = 405, y = 718, R = 162, bw = 20;
+      d2_dial(g, x, y, R, { nums: 'card', numR: 54, numS: 22, bw, cardCol: D2A.gold2 });
+      d2_cryptoRing(g, x, y, R + 32, 2.2, { lw: 3, base: 0.3, span: 1.0 });
+      const ag = g.createConicGradient(d2_ang(9), x, y); ag.addColorStop(0, D2A.gold1); ag.addColorStop(10 / 24, D2A.gold2); ag.addColorStop(10 / 24 + 0.01, D2A.gold1);
+      d2_arc(g, x, y, R - bw / 2, 9, 19, ag, 14, { glow: 18 });
+      d2_t(g, 'Gram Altın', x, y - 54, 19, D2.soft, { w: 700, a: 'center' });
+      d2_t(g, '₺6.510,83', x, y + 6, 44, D2.ink, { w: 800, a: 'center' });
+      d2_t(g, '+0,40%', x, y + 50, 22, D2.teal, { w: 800, a: 'center' });
+      d2_legend(g, [[D2A.gold2, 'Kapalıçarşı · gündüz'], [D2.orange, 'Kripto · 7/24']], 110, 1022, 19);
+      addGlow(g, D2A.gold2, 1350, 520, 600, 0.12);
+      d2_goldCard(g, 870, 64, 970, 952);
     },
   },
   {
-    time: '21–25 sn', title: 'Temettü takvimi',
-    desc: 'Kadran 12 aylık takvime döner: alınan temettüler altın sikkelerle dolar, gelecek aylar kesikli çizilir. İbre bugünü gösterir, yıllık tahmin sayacı yükselir.',
+    time: '20–24 sn', title: 'Kasam: Kadran kasaya döner',
+    desc: 'Kadranın çevresine kilit cıvataları dizilir, ibre bir şifre çarkı gibi döner ve kasa açılır: ortada ₺1.250.430. Uygulamanın Kasam kartı sağdan yükselir.',
     draw(g) {
-      d2_sky(g, 0.58, { px: -230, gx: 650 });
+      d2_sky(g, 0.58, { px: -230, gx: 600 });
       d2_stamp(g, '05:30', 0.58);
-      const x = 650, y = 572, Rf = 246;
-      const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
-      const vals = [42, 24, 91, 45, 26, 95, 47, 28, 100, 51, 30, 106], now = 8;
-      d2_dial(g, x, y, Rf, { bezel: false, nums: false, minor: false, bw: 18, tickW: 0.01 });
-      // month separators + progress of the year
-      for (let i = 0; i < 12; i++) {
-        const [ax, ay] = d2_pt(x, y, Rf - 2, 12 + 2 * i), [bx, by] = d2_pt(x, y, Rf - 24, 12 + 2 * i);
-        g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 2; g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.stroke();
+      const x = 600, y = 566, R = 318, bw = 26;
+      // vault door ring with bolts
+      g.save(); g.shadowColor = 'rgba(2,4,18,0.6)'; g.shadowBlur = 80; g.shadowOffsetY = 30;
+      g.beginPath(); g.arc(x, y, R + 46, 0, TAU); g.fillStyle = 'rgba(10,14,40,0.82)'; g.fill(); g.restore();
+      const rg = g.createLinearGradient(x - R, y - R, x + R, y + R); rg.addColorStop(0, 'rgba(255,255,255,0.45)'); rg.addColorStop(1, 'rgba(255,255,255,0.08)');
+      g.strokeStyle = rg; g.lineWidth = 1.6; g.beginPath(); g.arc(x, y, R + 46, 0, TAU); g.stroke();
+      for (let i = 0; i < 24; i++) {
+        const a = i / 24 * TAU + TAU / 48, bx = x + Math.cos(a) * (R + 24), by = y + Math.sin(a) * (R + 24);
+        const bg = g.createRadialGradient(bx - 3, by - 3, 1, bx, by, 9); bg.addColorStop(0, 'rgba(255,255,255,0.7)'); bg.addColorStop(1, 'rgba(160,170,220,0.18)');
+        g.fillStyle = bg; g.beginPath(); g.arc(bx, by, 7.5, 0, TAU); g.fill();
       }
-      g.save(); g.strokeStyle = 'rgba(255,255,255,0.08)'; g.lineWidth = 6; g.beginPath(); g.arc(x, y, Rf - 12, 0, TAU); g.stroke(); g.restore();
-      months.forEach((m, i) => {
-        const hc = 12 + 2 * i + 1, a = d2_ang(hc), v = vals[i], len = 18 + v * 0.95, paid = i < now;
-        const r0 = Rf + 62;
-        g.save(); g.translate(x, y); g.rotate(a);
-        rr(g, r0, -13, len, 26, 13);
-        if (paid) {
-          const gr = g.createLinearGradient(r0, 0, r0 + len, 0); gr.addColorStop(0, D2.coral); gr.addColorStop(1, D2.amber);
-          g.shadowColor = hexA(D2.coral, 0.6); g.shadowBlur = 18; g.fillStyle = gr; g.fill();
-        } else {
-          g.fillStyle = hexA(D2.peri, 0.1); g.fill(); g.setLineDash([6, 5]); g.strokeStyle = hexA(D2.peri, 0.9); g.lineWidth = 2; g.stroke();
-        }
-        g.restore();
-        if (paid && v > 40) { const [qx, qy] = d2_pt(x, y, r0 + len + 24, hc); d2_coin(g, qx, qy, 16); }
-        else if (paid) { const [qx, qy] = d2_pt(x, y, r0 + len + 16, hc); d2_coin(g, qx, qy, 10); }
-        const [lx, ly] = d2_pt(x, y, Rf + 32, hc);
-        d2_t(g, m, lx, ly + 7, 20, paid ? D2.ink : D2.peri, { a: 'center', w: 800 });
-      });
-      d2_hand(g, x, y, Rf, 12 + 2 * now, { bw: 24, from: 12, len: 6, over: 50, trailA: 0.32, lw: 4, orb: 9 });
-      d2_kick(g, 'Yıllık tahmin', x, y - 92, D2.soft, { a: 'center', s: 19 });
-      d2_t(g, '₺218.400', x, y + 2, 80, D2.ink, { w: 800, a: 'center' });
-      d2_t(g, 'Maliyete göre getiri', x, y + 54, 22, D2.soft, { w: 600, a: 'center' });
-      d2_h(g, '%4,1', x, y + 112, 48, D2.teal, { w: 700, a: 'center' });
+      d2_dial(g, x, y, R, { bw, nums: false });
+      d2_hand(g, x, y, R, 5.5, { bw, from: 3.4, len: 10, trailA: 0.7 });
+      d2_lock(g, x, y - 120, 56, D2.orange, '#121A46');
+      d2_t(g, '₺1.250.430', x, y + 22, 78, D2.ink, { w: 800, a: 'center' });
+      g.fillStyle = 'rgba(255,255,255,0.2)'; g.fillRect(x - 70, y + 62, 140, 1.5);
+      d2_t(g, 'tek ekranda, güvenle', x, y + 104, 23, D2.orange, { w: 700, a: 'center' });
       // right column
-      const X = 1160;
-      d2_kick(g, 'Temettü takvimi', X + 2, 196, D2.amber);
-      d2_h(g, 'Hiçbir temettüyü', X - 4, 290, 76, D2.ink, { w: 800, max: 680 });
-      d2_grad(g, 'kaçırma.', X - 4, 378, 76);
-      d2_card(g, X, 448, 670, 460, 28);
-      d2_t(g, 'Bu yıl alınan', X + 40, 504, 20, D2.soft, { w: 600 });
-      d2_t(g, '₺146.820', X + 40, 566, 54, D2.ink, { w: 800 });
-      d2_pill(g, X + 630, 548, '8 ayda 23 ödeme', { a: 'right', s: 18, c: D2.amber, fill: hexA(D2.amber, 0.1), stroke: hexA(D2.amber, 0.35) });
-      [['VOO', '14 Ağu', '+₺3.124,10'], ['MSFT', '12 Ağu', '+₺1.010,00'], ['KO', '01 Ağu', '+₺1.240,80']].forEach(([t, d, v], i) => {
-        const yy = 646 + i * 68;
-        g.fillStyle = 'rgba(255,255,255,0.08)'; g.fillRect(X + 40, yy - 42, 590, 1);
-        d2_coin(g, X + 58, yy - 8, 14);
-        d2_h(g, t, X + 88, yy, 24, D2.ink);
-        d2_t(g, d, X + 200, yy, 20, D2.soft, { w: 500 });
-        d2_t(g, v, X + 630, yy, 24, D2.teal, { w: 700, a: 'right' });
-      });
-      rr(g, X + 40, 858, 34, 14, 7); g.fillStyle = D2.amber; g.fill();
-      d2_t(g, 'Alınan', X + 86, 872, 19, D2.ink, { w: 600 });
-      rr(g, X + 200, 858, 34, 14, 7); g.setLineDash([5, 4]); g.strokeStyle = D2.peri; g.lineWidth = 2; g.stroke(); g.setLineDash([]);
-      d2_t(g, 'Tahmini', X + 246, 872, 19, D2.ink, { w: 600 });
+      const X = 1086;
+      d2_kick(g, 'Kasam', X + 4, 190, D2.orange);
+      d2_h(g, 'Tüm varlıkların,', X - 4, 282, 74, D2.ink, { w: 800, max: 760 });
+      d2_grad(g, 'tek kasada.', X - 4, 366, 74);
+      // the app's Kasam banner
+      const bx = X, by = 450, bwid = 756, bh = 340;
+      d2_acard(g, bx, by, bwid, bh, 30);
+      d2_u(g, 'Kasam', bx + 40, by + 70, 38, D2A.ink, { w: 700 });
+      const L1 = 'Altın, döviz ve kişisel', L2 = 'varlıklarını tek ekranda', L3a = 'güvenle', L3b = ' takip et.';
+      d2_u(g, L1, bx + 40, by + 118, 23, '#3A3E4C', { w: 500 });
+      d2_u(g, L2, bx + 40, by + 150, 23, '#3A3E4C', { w: 500 });
+      d2_u(g, L3a, bx + 40, by + 182, 23, '#B07A0C', { w: 700 });
+      d2_u(g, L3b, bx + 40 + d2_uw(g, L3a, 23, 700), by + 182, 23, '#3A3E4C', { w: 500 });
+      const btw = d2_uw(g, 'Kasamı Gör', 21, 700) + 64, btg = g.createLinearGradient(bx + 40, 0, bx + 40 + btw, 0);
+      btg.addColorStop(0, D2A.gold2); btg.addColorStop(1, D2A.gold1);
+      rr(g, bx + 40, by + 232, btw, 60, 30); g.fillStyle = btg; g.fill();
+      d2_u(g, 'Kasamı Gör', bx + 40 + btw / 2, by + 270, 21, '#FFFFFF', { w: 700, a: 'center' });
+      // banner art: a small vault and a phone with the total
+      const vx = bx + 486, vy = by + 206, vr = 88;
+      const vg = g.createLinearGradient(vx - vr, vy - vr, vx + vr, vy + vr); vg.addColorStop(0, '#F8E3A6'); vg.addColorStop(1, D2A.gold1);
+      g.fillStyle = vg; g.beginPath(); g.arc(vx, vy, vr, 0, TAU); g.fill();
+      g.fillStyle = '#FFF4D6'; g.beginPath(); g.arc(vx, vy, vr * 0.7, 0, TAU); g.fill();
+      g.strokeStyle = D2A.gold1; g.lineWidth = 6; g.lineCap = 'round';
+      for (let i = 0; i < 3; i++) { const a = -Math.PI / 2 + i * TAU / 3; g.beginPath(); g.moveTo(vx, vy); g.lineTo(vx + Math.cos(a) * vr * 0.5, vy + Math.sin(a) * vr * 0.5); g.stroke(); }
+      g.fillStyle = D2A.gold1; g.beginPath(); g.arc(vx, vy, 12, 0, TAU); g.fill();
+      d2_phone(g, bx + 596, by - 40, 150, 300, (p, sw, sh) => {
+        d2_u(p, 'Kasam', 14, 52, 13, D2A.sub, { w: 600 });
+        d2_u(p, '₺1.250.430', 14, 80, 20, D2A.ink, { w: 700 });
+        [[D2A.gold2, 'Altın'], [D2.teal, 'Döviz'], [D2.coral, 'Kişisel']].forEach(([c, l], i) => {
+          const yy = 112 + i * 40;
+          rr(p, 10, yy - 16, sw - 20, 32, 9); p.fillStyle = '#FFFFFF'; p.fill();
+          p.fillStyle = c; p.beginPath(); p.arc(26, yy, 7, 0, TAU); p.fill();
+          d2_u(p, l, 40, yy + 4, 11, D2A.ink, { w: 600 });
+          rr(p, sw - 52, yy - 3, 32, 6, 3); p.fillStyle = '#E3E5EC'; p.fill();
+        });
+      }, { page: '#F6F7FB' });
+      // what goes in
+      let cx = X;
+      [['Altın', D2A.gold2], ['Döviz', D2.teal], ['Kişisel varlıklar', D2.coral]].forEach(([l, c]) => { cx += d2_pill(g, cx, 862, l, { s: 21, dot: c, fill: 'rgba(12,18,48,0.7)' }) + 14; });
     },
   },
   {
-    time: '25–31 sn', title: 'Risk: Gün doğumu',
-    desc: 'Güneş ufuktan doğarken 1.000 senaryo ışın gibi yayılır; yarıçap zamanı (1–10 yıl), açı değeri gösterir. %5, medyan ve %95 kilitlenir, ölçüler sırayla gelir.',
+    time: '24–29 sn', title: 'Alarm ve analiz',
+    desc: 'İbre 06:00\'ya varınca alarm çalar, bildirim yukarıdan düşer. Dört alt kadran sırayla açılır: hisse analizi, teknik analiz, fiyat tahmini, sinyal alarmları.',
     draw(g) {
-      const HZ = 905, ox = 800, oy = HZ, r0 = 96, R1 = 610, th0 = -118 * Math.PI / 180, K = 1.0;
-      d2_sky(g, 0.75, { hz: HZ, gx: ox, px: -260 });
-      d2_stamp(g, '06:00', 0.75);
-      // soft god rays
-      g.save(); g.globalCompositeOperation = 'lighter';
-      for (let i = 0; i < 11; i++) {
-        const a = -Math.PI + 0.15 + i * (Math.PI - 0.3) / 10, w = 0.035;
-        const gr = g.createRadialGradient(ox, oy, r0, ox, oy, 1100); gr.addColorStop(0, hexA(D2.amber, 0.09)); gr.addColorStop(1, hexA(D2.amber, 0));
-        g.fillStyle = gr; g.beginPath(); g.moveTo(ox, oy); g.arc(ox, oy, 1100, a - w, a + w); g.closePath(); g.fill();
-      }
-      g.restore();
-      const { paths, steps, p5, p50, p95 } = D2_ST.mc;
-      const P = (k, lv) => { const r = r0 + (R1 - r0) * k / steps, th = th0 + K * lv; return [ox + Math.cos(th) * r, oy + Math.sin(th) * r]; };
-      // time rings (the dial again)
-      [1, 3, 5, 10].forEach(t => {
-        const r = r0 + (R1 - r0) * t / 10;
-        g.strokeStyle = 'rgba(255,240,225,0.22)'; g.lineWidth = 1.4; g.setLineDash([3, 8]);
-        g.beginPath(); g.arc(ox, oy, r, -Math.PI + 0.04, -0.04); g.stroke(); g.setLineDash([]);
-        d2_t(g, `${t} yıl`, ox + r, HZ - 14, 19, 'rgba(255,244,232,0.85)', { w: 700, a: 'center' });
-      });
-      g.save(); g.beginPath(); g.rect(0, 0, W, HZ); g.clip();
-      g.globalCompositeOperation = 'lighter'; g.lineWidth = 1.3;
-      paths.forEach(p => {
-        g.strokeStyle = rgb(ramp([D2.coral, D2.amber, '#FFE9B8'], (p[steps] + 0.3) / 2.0), 0.085);
-        const pts = []; for (let k = 0; k <= steps; k += 4) pts.push(P(k, p[k]));
-        g.beginPath(); smoothPath(g, pts); g.stroke();
-      });
-      g.restore();
-      const lines = [[p95, D2.amber, '%95'], [p50, '#FFFFFF', 'Medyan'], [p5, D2.coral, '%5']];
-      lines.forEach(([s, c]) => {
-        const pts = []; for (let k = 0; k <= steps; k += 4) pts.push(P(k, s[k]));
-        g.save(); g.shadowColor = c; g.shadowBlur = 16; g.strokeStyle = c; g.lineWidth = 3.5; g.lineJoin = 'round';
-        g.beginPath(); smoothPath(g, pts); g.stroke(); g.restore();
-      });
-      d2_sun(g, ox, oy, r0 - 14, HZ);
-      d2_sea(g, HZ, 0.75, ox);
-      lines.forEach(([s, c, l], i) => {
-        const [ex, ey] = P(steps, s[steps]);
-        addGlow(g, c, ex, ey, 40, 0.8); g.fillStyle = '#fff'; g.beginPath(); g.arc(ex, ey, 6.5, 0, TAU); g.fill();
-        const right = i < 2, tx = right ? ex + 22 : ex - 22, a = right ? 'left' : 'right';
-        d2_h(g, l, tx, ey + 8, 28, c, { w: 700, a });
-      });
-      d2_t(g, 'BUGÜN', ox, HZ + 62, 21, D2.ink, { w: 800, a: 'center', ls: 2 });
-      // headline
-      d2_kick(g, 'Risk laboratuvarı · Monte Carlo', 112, 128, D2.amber);
-      d2_h(g, '1.000 olası gelecek.', 106, 212, 74, D2.ink, { w: 800 });
-      d2_t(g, '1–10 yıl ufuk  ·  %5–%95 aralığı', 110, 260, 23, 'rgba(246,242,251,0.82)', { w: 600 });
-      // metrics
-      [['Sharpe', '1,24', D2.teal, 0.62], ['Beta', '0,92', D2.ink, 0.46], ['VaR (%95)', '−%2,1', D2.coral, 0.21], ['Maks. düşüş', '−%18,6', D2.coral, 0.37]].forEach(([l, v, c, f], i) => {
-        const tx = 1492, ty = 196 + i * 170, tw = 350, th = 150;
-        d2_card(g, tx, ty, tw, th, 24, { fill: 'rgba(14,16,46,0.66)' });
-        d2_t(g, d2_up(l).replace('VAR', 'VaR'), tx + 28, ty + 46, 17, D2.soft, { w: 800, ls: 2.4 });
-        d2_h(g, v, tx + 28, ty + 116, 50, c, { w: 700 });
-        const gx = tx + tw - 64, gy = ty + th / 2 + 6, gr = 34, a0 = 0.75 * Math.PI, a1 = 2.25 * Math.PI;
-        g.lineCap = 'round'; g.lineWidth = 7;
-        g.strokeStyle = 'rgba(255,255,255,0.1)'; g.beginPath(); g.arc(gx, gy, gr, a0, a1); g.stroke();
-        g.strokeStyle = c; g.beginPath(); g.arc(gx, gy, gr, a0, a0 + (a1 - a0) * f); g.stroke();
-        const [nx, ny] = [gx + Math.cos(a0 + (a1 - a0) * f) * gr, gy + Math.sin(a0 + (a1 - a0) * f) * gr];
-        addGlow(g, c, nx, ny, 22, 0.7);
-      });
-    },
-  },
-  {
-    time: '31–35 sn', title: 'Dört komplikasyon',
-    desc: 'İbre 07:00\'ye süpürür; dört alt kadran saat komplikasyonu gibi sırayla açılır: endeksle kıyasla, vergi yöntemi, YZ ile içe aktar ve kriz testi.',
-    draw(g) {
-      const HZ = 968;
-      d2_sky(g, 0.88, { px: -300, gx: 330, hz: HZ });
-      d2_sun(g, 330, HZ, 92, HZ);
-      d2_sea(g, HZ, 0.88, 330);
-      d2_stamp(g, '07:00', 0.88);
-      d2_kick(g, 'Hızlı özellikler', 112, 392, D2.amber);
-      d2_h(g, 'Dört araç,', 106, 482, 74, D2.ink, { w: 800 });
-      d2_grad(g, 'tek kadran.', 106, 566, 74, { max: 520 });
-      d2_t(g, 'Endeksle kıyasla · Vergi raporu', 110, 638, 23, 'rgba(246,242,251,0.85)', { w: 600 });
-      d2_t(g, 'YZ ile içe aktar · Kriz testi', 110, 672, 23, 'rgba(246,242,251,0.85)', { w: 600 });
-      const mx = 1150, my = 545, R = 480, bw = 34;
+      const HZ = 968, mx = 1330, my = 512, R = 410, bw = 30;
+      d2_sky(g, 0.76, { px: -260, gx: mx, hz: HZ });
+      d2_sun(g, mx, HZ + 52, 92, HZ);
+      d2_sea(g, HZ, 0.6, mx);
+      d2_stamp(g, '06:00', 0.76);
       d2_dial(g, mx, my, R, { bw, faceA: 1.15 });
-      d2_hand(g, mx, my, R, 7, { bw, from: 5.4, len: 8, trailA: 0.7 });
-      const sr = 142, subs = [[mx, my - 262], [mx + 280, my], [mx, my + 262], [mx - 280, my]];
-      subs.forEach(([cx, cy], i) => {
-        d2_disc(g, cx, cy, sr, { fill: 'rgba(7,10,32,0.86)' });
+      d2_hand(g, mx, my, R, 6, { bw, from: 4.6, len: 8, trailA: 0.7 });
+      // the alarm rings at 06:00
+      const [ax, ay] = d2_pt(mx, my, R - bw / 2, 6);
+      [64, 48, 34].forEach((rad, i) => { g.strokeStyle = hexA(D2.orange, [0.22, 0.4, 0.7][i]); g.lineWidth = 2.5; g.beginPath(); g.arc(ax, ay, rad, -1.1, 1.1); g.stroke(); g.beginPath(); g.arc(ax, ay, rad, Math.PI - 1.1, Math.PI + 1.1); g.stroke(); });
+      d2_bell(g, ax, ay - 44, 30, D2.orange);
+      const sr = 128, subs = [[mx, my - 236], [mx + 236, my], [mx, my + 236], [mx - 236, my]];
+      subs.forEach(([cx, cy]) => {
+        d2_disc(g, cx, cy, sr, { fill: 'rgba(7,10,32,0.88)' });
         for (let t = 0; t < 60; t++) {
           const a = t / 60 * TAU, l = t % 5 ? 4 : 8;
           g.strokeStyle = t % 5 ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.4)'; g.lineWidth = 1.3;
           g.beginPath(); g.moveTo(cx + Math.cos(a) * (sr - 6), cy + Math.sin(a) * (sr - 6)); g.lineTo(cx + Math.cos(a) * (sr - 6 - l), cy + Math.sin(a) * (sr - 6 - l)); g.stroke();
         }
       });
-      const title = (s, cx, cy, c = D2.amber) => d2_t(g, d2_up(s), cx, cy, 16, c, { w: 800, a: 'center', ls: 2.4, max: 200 });
-      // 1 · benchmark
-      {
+      const title = (s, cx, cy) => d2_t(g, d2_up(s), cx, cy, 15, D2.orange, { w: 800, a: 'center', ls: 2, max: 196 });
+      { // hisse analizi: bars
         const [cx, cy] = subs[0];
-        title('Kıyasla', cx, cy - 82);
-        const you = d2_shape(walk(71, 50, 0.004, 0.016), 1.184), spy = d2_shape(walk(72, 50, 0.0025, 0.011), 1.121);
-        const all = you.concat(spy), lo = Math.min(...all), hi = Math.max(...all);
-        const mp = s => s.map((v, k) => [cx - 104 + k / 49 * 208, cy + 24 - (v - lo) / (hi - lo) * 76]);
-        g.strokeStyle = D2.peri; g.lineWidth = 2; g.setLineDash([5, 5]); g.beginPath(); smoothPath(g, mp(spy)); g.stroke(); g.setLineDash([]);
-        g.save(); g.shadowColor = D2.teal; g.shadowBlur = 10; g.strokeStyle = D2.teal; g.lineWidth = 3; g.beginPath(); smoothPath(g, mp(you)); g.stroke(); g.restore();
-        d2_t(g, 'Portföy +%18,4', cx, cy + 64, 19, D2.teal, { w: 800, a: 'center' });
-        d2_t(g, 'SPY +%12,1', cx, cy + 90, 17, D2.peri, { w: 700, a: 'center' });
-      }
-      // 2 · tax method
-      {
-        const [cx, cy] = subs[1];
-        title('Vergi', cx, cy - 82);
-        ['FIFO', 'LIFO', 'Ort. maliyet'].forEach((s, k) => {
-          const py = cy - 40 + k * 42, on = k === 0;
-          rr(g, cx - 86, py - 17, 172, 34, 17);
-          g.fillStyle = on ? D2.amber : 'rgba(255,255,255,0.05)'; g.fill();
-          if (!on) { g.strokeStyle = 'rgba(255,255,255,0.18)'; g.lineWidth = 1.2; g.stroke(); }
-          d2_t(g, s, cx, py + 6, 17, on ? D2.night : D2.ink, { w: 800, a: 'center' });
+        title('Hisse analizi', cx, cy - 66);
+        [0.45, 0.62, 0.5, 0.74, 0.68, 0.9].forEach((v, k) => {
+          const bx = cx - 78 + k * 28, bh = v * 84;
+          rr(g, bx, cy + 52 - bh, 18, bh, 5); g.fillStyle = k === 5 ? D2.teal : hexA(D2.teal, 0.45); g.fill();
         });
-        check(g, cx - 54, cy + 86, 16, D2.teal, 3.5);
-        d2_t(g, 'rapor hazır', cx - 36, cy + 92, 17, D2.teal, { w: 700 });
+        g.fillStyle = 'rgba(255,255,255,0.2)'; g.fillRect(cx - 84, cy + 54, 168, 1.5);
       }
-      // 3 · AI import
-      {
+      { // teknik analiz: candles with an average line
+        const [cx, cy] = subs[1];
+        title('Teknik analiz', cx, cy - 66);
+        const q = [0.3, 0.46, 0.38, 0.58, 0.5, 0.68, 0.6, 0.78, 0.72, 0.86]; const mids = [];
+        for (let k = 0; k < 9; k++) {
+          const o = q[k], v = q[k + 1];
+          const px = cx - 84 + k * 21, Y = q => cy + 56 - q * 100, up = v >= o;
+          g.fillStyle = up ? D2.teal : D2.coral;
+          g.fillRect(px - 1, Y(Math.max(o, v) + 0.06), 2, Y(Math.min(o, v) - 0.06) - Y(Math.max(o, v) + 0.06));
+          g.fillRect(px - 6, Y(Math.max(o, v)), 12, Math.max(3, Math.abs(Y(o) - Y(v))));
+          mids.push([px, Y((o + v) / 2)]);
+        }
+        g.save(); g.shadowColor = D2.orange; g.shadowBlur = 8; g.strokeStyle = D2.orange; g.lineWidth = 2.5; g.beginPath(); smoothPath(g, mids); g.stroke(); g.restore();
+      }
+      { // fiyat tahmini: line, then a dashed projection in a soft cone
         const [cx, cy] = subs[2];
-        g.lineCap = 'round'; g.lineWidth = 6;
-        g.strokeStyle = 'rgba(255,255,255,0.08)'; g.beginPath(); g.arc(cx, cy, sr - 24, 0, TAU); g.stroke();
-        g.save(); g.shadowColor = D2.teal; g.shadowBlur = 12; g.strokeStyle = D2.teal; g.beginPath(); g.arc(cx, cy, sr - 24, -Math.PI / 2, -Math.PI / 2 + TAU * 0.82); g.stroke(); g.restore();
-        title('YZ ile içe aktar', cx, cy - 60, D2.amber);
-        g.save(); g.strokeStyle = D2.ink; g.lineWidth = 2.5; g.lineJoin = 'round';
-        g.beginPath(); g.moveTo(cx - 44, cy - 38); g.lineTo(cx - 20, cy - 38); g.lineTo(cx - 8, cy - 26); g.lineTo(cx - 8, cy + 6); g.lineTo(cx - 44, cy + 6); g.closePath(); g.stroke();
-        g.fillStyle = 'rgba(255,255,255,0.35)'; g.fillRect(cx - 38, cy - 20, 22, 3); g.fillRect(cx - 38, cy - 11, 24, 3); g.fillRect(cx - 38, cy - 2, 16, 3);
-        g.restore();
-        sparkle(g, cx + 18, cy - 22, 14, D2.amber); sparkle(g, cx + 38, cy - 2, 8, D2.teal);
-        d2_h(g, '128 işlem', cx, cy + 44, 28, D2.ink, { w: 700, a: 'center' });
-        d2_t(g, 'CSV · yapay zekâ', cx, cy + 72, 16, D2.soft, { w: 600, a: 'center' });
+        title('Fiyat tahmini', cx, cy - 66);
+        const s = [0.2, 0.34, 0.28, 0.46, 0.4, 0.58, 0.52, 0.66];
+        const pts = s.map((v, k) => [cx - 96 + k * 16, cy + 44 - v * 90]);
+        const e = pts[pts.length - 1];
+        g.fillStyle = hexA(D2.peri, 0.18); g.beginPath(); g.moveTo(e[0], e[1]); g.lineTo(cx + 92, e[1] - 46); g.lineTo(cx + 92, e[1] + 30); g.closePath(); g.fill();
+        g.strokeStyle = D2.ink; g.lineWidth = 2.6; g.lineJoin = 'round'; g.beginPath(); smoothPath(g, pts); g.stroke();
+        g.setLineDash([6, 6]); g.strokeStyle = D2.peri; g.beginPath(); g.moveTo(e[0], e[1]); g.lineTo(cx + 92, e[1] - 8); g.stroke(); g.setLineDash([]);
+        addGlow(g, D2.peri, e[0], e[1], 26, 0.8); g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(e[0], e[1], 4.5, 0, TAU); g.fill();
       }
-      // 4 · crisis test
-      {
+      { // sinyal alarmları: a bell with signal waves
         const [cx, cy] = subs[3];
-        title('Kriz testi', cx, cy - 82);
-        const pts = [];
-        for (let k = 0; k <= 40; k++) { const u = k / 40; pts.push([cx - 106 + u * 212, cy - 30 + 64 * Math.exp(-Math.pow((u - 0.42) / 0.13, 2)) - 18 * u]); }
-        g.save(); g.beginPath(); g.arc(cx, cy, sr - 14, 0, TAU); g.clip();
-        g.fillStyle = hexA(D2.coral, 0.2); g.beginPath(); g.moveTo(pts[8][0], cy - 30 - 18 * 0.2); for (let k = 8; k <= 30; k++) g.lineTo(pts[k][0], pts[k][1]); g.closePath(); g.fill();
-        g.save(); g.shadowColor = D2.coral; g.shadowBlur = 10; g.strokeStyle = D2.coral; g.lineWidth = 3; g.beginPath(); smoothPath(g, pts); g.stroke(); g.restore();
-        g.restore();
-        d2_h(g, '−%24,3', cx, cy + 70, 30, D2.coral, { w: 700, a: 'center' });
-        d2_t(g, '4 gerçek kriz senaryosu', cx, cy + 96, 15, D2.soft, { w: 600, a: 'center' });
+        title('Sinyal alarmları', cx, cy - 66);
+        d2_bell(g, cx, cy + 6, 70, D2.ink);
+        g.strokeStyle = D2.orange; g.lineWidth = 3; g.lineCap = 'round';
+        [40, 56].forEach(rad => { g.beginPath(); g.arc(cx, cy + 2, rad, -0.6, 0.6); g.stroke(); g.beginPath(); g.arc(cx, cy + 2, rad, Math.PI - 0.6, Math.PI + 0.6); g.stroke(); });
       }
-      drawMark(g, mx, my, 42, { col: D2.coral, col2: D2.amber, arrow: D2.teal });
+      d2_appIcon(g, mx, my, 96, { rim: 'rgba(255,255,255,0.25)' });
+      // left column: the notification, the headline, news and the app's nav
+      const nx = 100, ny = 92, nw = 740, nh = 136;
+      g.save(); g.shadowColor = 'rgba(2,4,18,0.45)'; g.shadowBlur = 40; g.shadowOffsetY = 16;
+      rr(g, nx, ny, nw, nh, 30); g.fillStyle = 'rgba(248,247,252,0.94)'; g.fill(); g.restore();
+      d2_appIcon(g, nx + 64, ny + nh / 2, 72, { shadow: false });
+      d2_u(g, 'Kripto724', nx + 122, ny + 40, 19, D2A.sub, { w: 600 });
+      d2_u(g, 'şimdi', nx + nw - 30, ny + 40, 17, D2A.sub, { w: 500, a: 'right' });
+      d2_u(g, 'Fiyat alarmı', nx + 122, ny + 76, 23, D2A.ink, { w: 700 });
+      d2_u(g, 'BTC/USDT $80.000 seviyesine ulaştı.', nx + 122, ny + 108, 21, '#3A3E4C', { w: 500 });
+      d2_kick(g, 'Alarm · analiz · haber', 114, 330, D2.orange);
+      d2_h(g, 'Sen uyurken,', 106, 420, 78, D2.ink, { w: 800 });
+      d2_grad(g, 'alarmın nöbette.', 106, 508, 78, { max: 760 });
+      // a news card from Haberler
+      const kx = 100, ky = 586, kw = 740, kh = 150;
+      d2_acard(g, kx, ky, kw, kh, 26);
+      const tg = g.createLinearGradient(kx + 20, ky + 20, kx + 190, ky + kh - 20); tg.addColorStop(0, D2.navy); tg.addColorStop(1, '#3B3F84');
+      rr(g, kx + 20, ky + 20, 170, kh - 40, 16); g.fillStyle = tg; g.fill();
+      g.save(); rr(g, kx + 20, ky + 20, 170, kh - 40, 16); g.clip();
+      const np = d2_shape(walk(9, 16, 0, 0.04), 1.06), nlo = Math.min(...np), nhi = Math.max(...np);
+      g.strokeStyle = D2.orange; g.lineWidth = 3; g.beginPath(); smoothPath(g, np.map((v, k) => [kx + 34 + k * 9.5, ky + kh - 40 - (v - nlo) / (nhi - nlo) * 60])); g.stroke();
+      g.restore();
+      rr(g, kx + 214, ky + 26, d2_uw(g, 'Haberler', 15, 700) + 22, 28, 14); g.fillStyle = D2A.cntBg; g.fill();
+      d2_u(g, 'Haberler', kx + 225, ky + 45, 15, D2A.cnt, { w: 700 });
+      d2_u(g, 'Günün piyasa özeti', kx + 214, ky + 92, 25, D2A.ink, { w: 700 });
+      rr(g, kx + 214, ky + 108, 380, 10, 5); g.fillStyle = '#E6E8EF'; g.fill();
+      rr(g, kx + 214, ky + 126, 250, 10, 5); g.fill();
+      d2_nav(g, 100, 776, 740, 104, 2, { card: true, r: 30, s: 14, icon: 64, badge: true });
     },
   },
   {
-    time: '35–40 sn', title: 'Kapanış: Günaydın',
-    desc: 'Güneş doğar, kadranın çizgileri ışınlara dönüşür. Kripto724, "Ücretsiz başla" düğmesi ve adres belirir; denizin üstünde küçük yasal not.',
+    time: '29–34 sn', title: 'Bağla, indirimini seç',
+    desc: 'Binance, Bitget ve MEXC\'den ışık hatları kadrana bağlanır, "%10 indirim" etiketi parlar. Uygulamanın "Hesabını Bağla" ve "Kripto Hakkında Her Şey" kartları kayar.',
     draw(g) {
-      const HZ = 880, sx = CX;
+      const HZ = 968;
+      d2_sky(g, 0.88, { px: -300, gx: 360, hz: HZ });
+      d2_sun(g, 360, HZ, 96, HZ);
+      d2_sea(g, HZ, 0.88, 360);
+      d2_stamp(g, '06:30', 0.88);
+      d2_kick(g, 'Bağla · indirim · öğren', 114, 156, D2.orange);
+      d2_h(g, 'Hesabını bağla,', 106, 244, 74, D2.ink, { w: 800 });
+      d2_grad(g, 'indirimini seç.', 106, 328, 74);
+      // hub: the dial with the app icon, three exchanges wired in
+      const x = 680, y = 640, R = 190, bw = 20;
+      const ex = [['Binance', 210, 480], ['Bitget', 168, 640], ['MEXC', 210, 800]];
+      d2_dial(g, x, y, R, { bw, nums: false });
+      d2_hand(g, x, y, R, 6.5, { bw, from: 5.2, len: 6, lw: 4, orb: 8 });
+      g.save(); g.globalCompositeOperation = 'lighter';
+      ex.forEach(([n, sx, sy], i) => {
+        const tx = x - 72, ty = y + (i - 1) * 36, mx = (sx + 80 + tx) / 2, myy = (sy + ty) / 2 + (1 - i) * 30;
+        const gr = g.createLinearGradient(sx, sy, tx, ty); gr.addColorStop(0, hexA(D2.teal, 0.25)); gr.addColorStop(1, hexA(D2.orange, 0.95));
+        g.strokeStyle = gr; g.lineWidth = 3; g.beginPath(); g.moveTo(sx + 80, sy); g.quadraticCurveTo(mx, myy, tx, ty); g.stroke();
+        const t = 0.42, u = 1 - t, px = u * u * (sx + 80) + 2 * u * t * mx + t * t * tx, py = u * u * sy + 2 * u * t * myy + t * t * ty;
+        addGlow(g, D2.orange, px, py, 28, 0.9);
+      });
+      g.restore();
+      ex.forEach(([n, sx, sy]) => {
+        d2_pill(g, sx, sy, n, { a: 'center', s: 26, f: D2F, w: 700, h: 66, padX: 30, fill: 'rgba(12,18,48,0.88)', stroke: 'rgba(255,255,255,0.3)' });
+      });
+      // %10 tag on Binance
+      d2_pill(g, 290, 418, '%10 indirim', { a: 'center', s: 20, w: 800, c: '#0A0A0A', fill: D2.orange, stroke: false, h: 42 });
+      addGlow(g, D2.orange, 290, 418, 90, 0.35);
+      d2_appIcon(g, x, y, 132, { rim: 'rgba(255,255,255,0.28)' });
+      // right column: the app's banners
+      const bx = 1010, bwid = 830;
+      d2_acard(g, bx, 130, bwid, 250, 30);
+      d2_u(g, 'Kripto Hesabını Bağla', bx + 40, 194, 34, D2A.ink, { w: 700 });
+      d2_u(g, 'Binance, Bitget ve MEXC hesaplarını', bx + 40, 238, 22, '#3A3E4C', { w: 500 });
+      d2_u(g, 'Kripto724\'e kolayca bağla', bx + 40, 268, 22, '#3A3E4C', { w: 500 });
+      const b1 = d2_uw(g, 'Bağla', 21, 700) + 92;
+      rr(g, bx + 40, 296, b1, 58, 29); g.fillStyle = D2A.ink; g.fill();
+      d2_u(g, 'Bağla', bx + 72, 332, 21, '#FFFFFF', { w: 700 });
+      d2_arrow(g, bx + 40 + b1 - 34, 325, 10, '#FFFFFF', 3.4);
+      { // link icon
+        const lx = bx + bwid - 130, ly = 255;
+        addGlow(g, D2.orange, lx, ly, 120, 0.16);
+        g.save(); g.translate(lx, ly); g.rotate(-Math.PI / 4); g.lineWidth = 14; g.strokeStyle = D2.orange;
+        rr(g, -78, -26, 92, 52, 26); g.stroke(); g.strokeStyle = D2A.ink; rr(g, -14, -26, 92, 52, 26); g.stroke(); g.restore();
+      }
+      // marquee strip
+      g.save(); rr(g, bx, 402, bwid, 70, 35); g.fillStyle = '#FFFFFF'; g.fill(); g.clip();
+      let mxq = bx + 30;
+      for (let rep = 0; rep < 2; rep++) {
+        mxq += logoH(g, mxq, 447, 26) + 20;
+        d2_u(g, 'Komisyon İndirimi Seç', mxq, 446, 21, D2A.ink, { w: 700 }); mxq += d2_uw(g, 'Komisyon İndirimi Seç', 21, 700) + 18;
+        g.fillStyle = D2A.sub; g.beginPath(); g.arc(mxq, 438, 3.5, 0, TAU); g.fill(); mxq += 18;
+        const cw2 = d2_uw(g, 'BINANCE %10 indirim', 19, 700) + 30;
+        rr(g, mxq, 419, cw2, 36, 18); g.fillStyle = D2.orange; g.fill();
+        d2_u(g, 'BINANCE %10 indirim', mxq + 15, 444, 19, '#0A0A0A', { w: 700 }); mxq += cw2 + 18;
+        g.fillStyle = D2A.sub; g.beginPath(); g.arc(mxq, 438, 3.5, 0, TAU); g.fill(); mxq += 18;
+        d2_u(g, 'Bitget…', mxq, 446, 21, D2A.ink, { w: 700 }); mxq += d2_uw(g, 'Bitget…', 21, 700) + 40;
+      }
+      const fg = g.createLinearGradient(bx + bwid - 110, 0, bx + bwid, 0); fg.addColorStop(0, 'rgba(255,255,255,0)'); fg.addColorStop(1, '#FFFFFF');
+      g.fillStyle = fg; g.fillRect(bx + bwid - 110, 402, 110, 70);
+      g.restore();
+      // Kripto Hakkında Her Şey
+      d2_acard(g, bx, 496, bwid, 380, 30);
+      d2_u(g, 'Kripto Hakkında Her Şey', bx + 40, 558, 34, D2A.ink, { w: 700 });
+      [[['#24346E', '#3B3F84'], 'coin'], [['#1B2D55', '#2B6F78'], 'chart'], [['#3A2450', '#B4566A'], 'shield']].forEach(([gc, kind], i) => {
+        const tx = bx + 40 + i * 258, ty = 586, tw = 238, th = 160;
+        const tg = g.createLinearGradient(tx, ty, tx + tw, ty + th); tg.addColorStop(0, gc[0]); tg.addColorStop(1, gc[1]);
+        rr(g, tx, ty, tw, th, 18); g.fillStyle = tg; g.fill();
+        g.save(); rr(g, tx, ty, tw, th, 18); g.clip();
+        if (kind === 'coin') { d2_coinI(g, tx + 70, ty + 80, 40, 'BTC'); d2_coinI(g, tx + 130, ty + 104, 30, 'ETH'); }
+        else if (kind === 'chart') { g.strokeStyle = D2.teal; g.lineWidth = 4; g.beginPath(); smoothPath(g, d2_shape(walk(4, 12, 0, 0.05), 1.15).map((v, k) => [tx + 24 + k * 17, ty + 130 - (v - 0.85) * 220])); g.stroke(); }
+        else { g.fillStyle = 'rgba(255,255,255,0.85)'; g.beginPath(); g.moveTo(tx + 96, ty + 44); g.lineTo(tx + 140, ty + 60); g.lineTo(tx + 136, ty + 104); g.quadraticCurveTo(tx + 124, ty + 132, tx + 96, ty + 144); g.quadraticCurveTo(tx + 68, ty + 132, tx + 56, ty + 104); g.lineTo(tx + 52, ty + 60); g.closePath(); g.fill(); check(g, tx + 96, ty + 94, 24, D2.night, 5); }
+        g.restore();
+        d2_play(g, tx + tw - 40, ty + th - 38, 20);
+      });
+      const b2 = d2_uw(g, 'Şimdi Keşfet', 21, 700) + 92;
+      rr(g, bx + 40, 776, b2, 58, 29); g.fillStyle = D2A.ink; g.fill();
+      d2_u(g, 'Şimdi Keşfet', bx + 72, 812, 21, '#FFFFFF', { w: 700 });
+      d2_arrow(g, bx + 40 + b2 - 34, 805, 10, '#FFFFFF', 3.4);
+    },
+  },
+  {
+    time: '34–40 sn', title: 'Kapanış: Günaydın',
+    desc: 'Güneş doğar, kadranın çizgileri ışınlara dönüşür. Resmî logo, "Ücretsiz ailemize katılın!" ve kripto724.com belirir; denizin üstünde küçük yasal not.',
+    draw(g) {
+      const HZ = 900, sx = CX;
       d2_sky(g, 1, { hz: HZ, px: -330 });
-      d2_stamp(g, '08:00', 1, 'Günaydın');
-      // rays: the dial's hour ticks around the sun
+      d2_stamp(g, '07:00', 1, 'Günaydın');
       g.save(); g.beginPath(); g.rect(0, 0, W, HZ); g.clip();
       g.globalCompositeOperation = 'lighter';
       for (let i = 0; i < 9; i++) {
         const a = -Math.PI + 0.2 + i * (Math.PI - 0.4) / 8, w = 0.05;
-        const gr = g.createRadialGradient(sx, HZ, 120, sx, HZ, 1000); gr.addColorStop(0, hexA('#FFE7B0', 0.16)); gr.addColorStop(1, hexA('#FFE7B0', 0));
+        const gr = g.createRadialGradient(sx, HZ, 120, sx, HZ, 1000); gr.addColorStop(0, hexA('#FFE2B8', 0.16)); gr.addColorStop(1, hexA('#FFE2B8', 0));
         g.fillStyle = gr; g.beginPath(); g.moveTo(sx, HZ); g.arc(sx, HZ, 1000, a - w, a + w); g.closePath(); g.fill();
       }
       g.restore();
@@ -920,28 +1210,25 @@ const D2_SCENES = [
         const a = Math.PI + i / 48 * Math.PI, big = i % 4 === 0;
         if (a <= Math.PI + 0.01 || a >= TAU - 0.01) continue;
         g.strokeStyle = big ? 'rgba(255,248,232,0.85)' : 'rgba(255,248,232,0.4)'; g.lineWidth = big ? 3 : 1.6; g.lineCap = 'round';
-        const r0 = 168, r1 = big ? 206 : 190;
+        const r0 = 160, r1 = big ? 196 : 180;
         g.beginPath(); g.moveTo(sx + Math.cos(a) * r0, HZ + Math.sin(a) * r0); g.lineTo(sx + Math.cos(a) * r1, HZ + Math.sin(a) * r1); g.stroke();
       }
-      d2_sun(g, sx, HZ, 128, HZ);
+      d2_sun(g, sx, HZ, 122, HZ);
       d2_sea(g, HZ, 1, sx);
-      drawMark(g, CX, 150, 62, { glow: 0.6, col: D2.coral, col2: D2.amber, arrow: D2.teal });
-      g.save(); g.shadowColor = 'rgba(10,12,40,0.45)'; g.shadowBlur = 30; wordmark(g, CX, 318, 120, null, { f: D2F, w: 800, grad: D2_DAWN }); g.restore();
-      d2_h(g, 'Tüm yatırımların, tek ekranda.', CX, 384, 38, D2.ink, { w: 600, a: 'center', ls: 0 });
-      // button
-      const lab = 'Ücretsiz başla — kredi kartı gerekmez', bf = { f: D2T, w: 800, s: 33 };
-      const tw = measure(g, lab, bf), bwid = tw + 56 + 30 + 64 + 16, bx = CX - bwid / 2, by = 434, bh = 94;
-      addGlow(g, D2.amber, CX, by + bh / 2, 520, 0.35);
+      // the official logo, white on the night-blue top of the sky
+      addGlow(g, '#0B1026', CX, 236, 360, 0.5);
+      logo(g, CX, 236, 262, { ink: '#FFFFFF' });
+      d2_two(g, 'Ücretsiz ailemize ', 'katılın!', CX, 500, 74, { shadow: 'rgba(20,10,40,0.45)', w: 800 });
+      // address button
+      const lab = 'kripto724.com', bf = { f: D2F, w: 700, s: 44, ls: -0.5 };
+      const tw = measure(g, lab, bf), bwid = tw + 52 + 24 + 64 + 14, bx = CX - bwid / 2, by = 560, bh = 92;
+      addGlow(g, D2.orange, CX, by + bh / 2, 520, 0.3);
       g.save(); g.shadowColor = 'rgba(40,10,40,0.45)'; g.shadowBlur = 40; g.shadowOffsetY = 14;
-      rr(g, bx, by, bwid, bh, bh / 2); g.fillStyle = '#FFF7EE'; g.fill(); g.restore();
-      text(g, lab, bx + 56, by + bh / 2 + 12, { ...bf, a: 'left', c: D2.night });
-      g.fillStyle = D2.teal; g.beginPath(); g.arc(bx + bwid - 16 - 32, by + bh / 2, 32, 0, TAU); g.fill();
-      d2_arrow(g, bx + bwid - 48, by + bh / 2, 13, D2.night, 4);
-      g.save(); g.shadowColor = 'rgba(30,10,40,0.5)'; g.shadowBlur = 24;
-      d2_h(g, 'kripto724.com', CX, 628, 60, '#FFFFFF', { w: 700, a: 'center', ls: -1 });
-      g.restore();
-      g.fillStyle = hexA('#FFFFFF', 0.6); g.fillRect(CX - 60, 652, 120, 3);
-      d2_t(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1042, 20, 'rgba(246,242,251,0.72)', { w: 500, a: 'center' });
+      rr(g, bx, by, bwid, bh, bh / 2); g.fillStyle = '#FFF8F0'; g.fill(); g.restore();
+      text(g, lab, bx + 52, by + bh / 2 + 15, { ...bf, a: 'left', c: D2.night });
+      g.fillStyle = D2.orange; g.beginPath(); g.arc(bx + bwid - 14 - 32, by + bh / 2, 32, 0, TAU); g.fill();
+      d2_arrow(g, bx + bwid - 46, by + bh / 2, 13, '#0A0A0A', 4);
+      d2_t(g, 'Yatırım tavsiyesi değildir. Fiyatlar örnektir.', CX, 1040, 20, 'rgba(246,242,251,0.74)', { w: 500, a: 'center' });
     },
   },
 ];
@@ -950,7 +1237,7 @@ function d2_paper(g, bw, bh) {
   const gr = g.createLinearGradient(0, 0, 0, bh); gr.addColorStop(0, '#0A0F24'); gr.addColorStop(1, '#0D1230');
   g.fillStyle = gr; g.fillRect(0, 0, bw, bh);
   const rg = g.createRadialGradient(bw * 0.8, bh + 200, 0, bw * 0.8, bh + 200, 1600);
-  rg.addColorStop(0, hexA(D2.coral, 0.1)); rg.addColorStop(1, hexA(D2.coral, 0));
+  rg.addColorStop(0, hexA(D2.orange, 0.1)); rg.addColorStop(1, hexA(D2.orange, 0));
   g.fillStyle = rg; g.fillRect(0, 0, bw, bh);
   const r = mulberry32(99);
   for (let i = 0; i < 220; i++) {
@@ -961,12 +1248,13 @@ function d2_paper(g, bw, bh) {
 
 window.DESIGN = {
   id: 2, name: '7/24 Saat',
-  concept: 'Piyasalar hiç uyumaz. Film 24 saatlik dev bir kadranın etrafında akar: ibre her sahnede ilerler, gökyüzü gece lacivertinden şafak mercanına ve gün ışığına döner. Sakin, zarif ve premium.',
-  board: { bg: '#0A0F24', ink: '#F6F2FB', soft: '#A9A6CC', accent: '#FFC15E', line: 'rgba(169,166,204,0.22)', display: { f: D2F, w: 800, ls: -3 }, text: { f: D2T, w: 500 }, badgeInk: '#0A0F24', paper: d2_paper },
-  palette: [['#0B1026', 'Gece'], ['#24346E', 'Lacivert'], ['#FF7A59', 'Şafak'], ['#FFC15E', 'Gün ışığı'], ['#3DD9C1', 'Turkuaz']],
-  fonts: ['Sora 700 / 800', 'Manrope 500–700'],
-  motion: ['Saat ibresi geçişleri', 'Gökyüzü renk dönüşü', 'Yumuşak parallax, yıldızlar'],
-  music: 'ambient pop, 120 BPM, saat tıkırtısı ritmi',
+  concept: 'Piyasa hiç durmuyor, kripto724 de. Film tek bir 24 saatlik kadranın etrafında akar: turuncu ibre gece 03:00\'ten gün doğumuna ilerler, kadran sırayla kripto, BIST, Nasdaq ve Kapalıçarşı saatlerini gösterir; gökyüzü lacivertten şafağa döner.',
+  board: { bg: '#0A0F24', ink: '#F6F2FB', soft: '#A9A6CC', accent: '#F7931A', line: 'rgba(169,166,204,0.22)', display: { f: D2F, w: 800, ls: -3 }, text: { f: D2T, w: 500 }, badgeInk: '#0A0F24', paper: d2_paper },
+  extraFonts: ['Inter', 'Poppins'],
+  palette: [['#0B1026', 'Gece'], ['#24346E', 'Lacivert'], ['#F7931A', 'Turuncu'], ['#FF7A59', 'Şafak'], ['#3DD9C1', 'Turkuaz']],
+  fonts: ['Sora 700 / 800', 'Manrope · Inter (uygulama)'],
+  motion: ['İbre süpürmesi her 2 sn\'lik vuruşta kesme', 'Geceden şafağa gökyüzü, yıldız parallax', 'Uygulama kartları camın arkasından yükselir'],
+  music: 'ambient pop, 120 BPM, saat tıkırtısı ritmi; kapanışta sıcak synth akoru',
   format: '16:9 · 1920×1080 · 40 sn',
   init: d2_init,
   scenes: D2_SCENES,

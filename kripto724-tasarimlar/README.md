@@ -7,31 +7,37 @@ notlarıyla birlikte aynı görselde yer alıyor. Seçilen tasarım, aynı çizi
 
 | # | Tasarım | Pano |
 |---|---|---|
-| 01 | **Neon Terminal**: gece borsası, neon yeşil, monospace, glitch | [`out/tasarim_1.jpg`](out/tasarim_1.jpg) |
-| 02 | **7/24 Saat**: 24 saatlik kadran, geceden şafağa renk geçişi | [`out/tasarim_2.jpg`](out/tasarim_2.jpg) |
-| 03 | **Altın Seri**: siyah-altın, serif, lüks dergi estetiği | [`out/tasarim_3.jpg`](out/tasarim_3.jpg) |
-| 04 | **Cesur Tipografi**: dev harfler, sarı-siyah renk blokları, sert kesmeler | [`out/tasarim_4.jpg`](out/tasarim_4.jpg) |
-| 05 | **Cam & Hologram**: yüzen cam kartlar, yanardöner 3B | [`out/tasarim_5.jpg`](out/tasarim_5.jpg) |
-| 06 | **İstanbul Gecesi**: Boğaz silueti, şehir ışıkları veriye dönüşüyor | [`out/tasarim_6.jpg`](out/tasarim_6.jpg) |
+| 01 | **Neon Terminal**: gece hiç kapanmayan bir piyasa terminali; marka turuncusu neon, kayan fiyat bandı, glitch | [`out/tasarim_1.jpg`](out/tasarim_1.jpg) |
+| 02 | **7/24 Saat**: tek bir 24 saatlik kadran; kripto 7/24, BIST, Nasdaq ve Kapalıçarşı saatleri, geceden şafağa | [`out/tasarim_2.jpg`](out/tasarim_2.jpg) |
+| 03 | **Altın Seri**: siyah-altın lüks dergi estetiği; gravürlü Kapalıçarşı levhası, açılan Kasam kapısı | [`out/tasarim_3.jpg`](out/tasarim_3.jpg) |
+| 04 | **Cesur Tipografi**: turuncu-siyah-beyaz renk blokları, dev rakamlar, sert kesmeler | [`out/tasarim_4.jpg`](out/tasarim_4.jpg) |
+| 05 | **Cam & Hologram**: derin morda cam kartlar ve telefonlar, parlak turuncu jetonlar | [`out/tasarim_5.jpg`](out/tasarim_5.jpg) |
+| 06 | **İstanbul Gecesi**: Boğaz, köprü, Galata, Kız Kulesi ve Kapalıçarşı; şehir ışıkları canlı veriye dönüşür | [`out/tasarim_6.jpg`](out/tasarim_6.jpg) |
 
 Altısı yan yana: [`out/tasarimlar_genel_bakis.jpg`](out/tasarimlar_genel_bakis.jpg)
 
 ## Ortak kurgu
 
-Hikâye her tasarımda aynı: dağınık yatırımlar → "Tüm yatırımların, tek ekranda." → panel → her varlık
-ve piyasa → otomatik senkron → temettü → risk laboratuvarı → hızlı özellikler → "Ücretsiz başla — kredi
-kartı gerekmez" ve kripto724.com. Ekrandaki özellik iddiaları [`BRIEF.md`](BRIEF.md) içindeki onaylı listeyle
-sınırlıdır. Takip gerçek zamanlı değil, senkron her gece yapılıyor;
-bu yüzden "canlı" ya da "7/24 takip" denmiyor. Ekrandaki tüm rakamlar örnek veridir.
+Hikâye her tasarımda aynı ve uygulamanın kendi ekranlarına dayanıyor: dağınık piyasalar → "Kripto, borsa
+ve emtia tek uygulamada." → canlı kripto tablosu → BIST ve Nasdaq (210 hisse) → Kapalıçarşı canlı altın
+fiyatları → Kasam → alarm ve analizler → Binance, Bitget, MEXC hesabını bağla, komisyon indirimi,
+"Kripto hakkında her şey" → "Ücretsiz ailemize katılın!" ve kripto724.com. Ekrandaki veriler uygulamanın
+ekran görüntülerinden alındı ve örnek amaçlıdır; kapanışta "Yatırım tavsiyesi değildir." notu var.
+Onaylı iddialar ve uygulama ekranlarının ayrıntılı tarifi: [`BRIEF.md`](BRIEF.md).
 
-kripto724.com sitesine bu ortamdan erişilemedi; resmî logo görülemediği için panolarda tipografik bir
-Kripto724 logosu kullanıldı (`lib/core.js` → `drawMark`, `wordmark`): 24 saatlik bir halkanın içinde
-yukarı ok kolu olan bir "K" ve "Kripto**724**" yazısı. Resmî logo gelirse seçilen tasarımda bununla değiştirilir.
+## Logo
+
+Resmî kripto724 logosu [`assets/kripto724-logo.png`](assets/kripto724-logo.png) dosyasından
+`tools/make_logo.py` ile iki saydam katmana ayrıldı (`lib/k724logo.js`). Böylece logo koyu zeminlerde beyaz,
+açık zeminlerde siyah yazılabiliyor; turuncu çizgi (#F7931A) her zaman aynı kalıyor ve oranlar asla
+değişmiyor. Uygulamanın kendi bannerlarındaki yatay "kripto | 724" kullanımı `logoH()` ile çiziliyor
+(Poppins Bold).
 
 ## Yeniden üretmek
 
 ```bash
 python3 tools/get_fonts.py                       # yazı tipleri (npm @fontsource, SIL OFL)
+python3 tools/make_logo.py                       # resmî logodan lib/k724logo.js
 NODE_PATH="$(npm root -g)" node render.cjs       # → out/tasarim_1..6.png/.jpg
 D=3 S=1,7 NODE_PATH="$(npm root -g)" node render.cjs   # tek sahneler, 1920×1080 → build/
 python3 tools/overview.py                        # → out/tasarimlar_genel_bakis.jpg
@@ -40,7 +46,8 @@ python3 tools/overview.py                        # → out/tasarimlar_genel_baki
 | Dosya | Görevi |
 |---|---|
 | `designs/d1.js` … `d6.js` | Her tasarımın 9 anahtar karesi ve pano bilgileri (`window.DESIGN`) |
-| `lib/core.js` | Ortak çizim araçları: yazı, sayaç, cam kart, 3B düzlem, Kripto724 logosu |
+| `lib/core.js` | Ortak çizim araçları: yazı, sayaç, cam kart, 3B düzlem, yatay logo (`logoH`) |
+| `lib/k724logo.js` | Resmî logo (`logo`, `logoW`), `tools/make_logo.py` üretir |
 | `lib/board.js` | Pano yerleşimi; `index.html?d=N` pano, `&s=K` tek sahne |
 | `render.cjs` | Headless Chromium ile PNG/JPEG üretimi |
-| `fonts/` | Anton, Space Grotesk, JetBrains Mono, Playfair Display, Sora, Unbounded, DM Serif Display, Manrope, Inter (hepsi SIL OFL) |
+| `fonts/` | Poppins, Anton, Space Grotesk, JetBrains Mono, Playfair Display, Sora, Unbounded, DM Serif Display, Manrope, Inter (hepsi SIL OFL) |

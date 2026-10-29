@@ -2,7 +2,7 @@
 /* Shared drawing toolkit for the kripto724 design boards (copied from
  * allinvestview-showreel/src/core.js so the chosen design can go straight to video).
  * Frames are 1920×1080. Constants, easing, colour, text, sprites, UI primitives,
- * odometer, the Kripto724 mark and wordmark, plane3d() (true 3D panels in 2D canvas).
+ * odometer, logoH() (horizontal kripto | 724 lockup), plane3d() (true 3D panels in 2D canvas).
  *
  * Fonts: o.f is a CSS family name ('Anton', 'Space Grotesk', 'JetBrains Mono',
  * 'Playfair Display', 'Sora', 'Unbounded', 'DM Serif Display', 'Manrope', 'Inter',
@@ -402,81 +402,21 @@ function quadShadow(g, P, w, h, a = 0.55, blur = 50, dy = 30, inset = 40) {
   g.fillStyle = 'rgba(6,10,24,1)'; g.fill(); g.restore();
 }
 
-/* ───────────────────────── brand: Kripto724 ─────────────────────────
- * Mark: a 24-segment clock ring (7/24) around a "K" whose upper arm is a rising
- * arrow. kripto724.com's own logo could not be seen from the build environment,
- * so this is a typographic stand-in; swap it for the official logo when available.
- *   o.segs 0..6 ring drawn (6 = full), o.chart 0..1 the K draws on, o.rot rotation,
- *   o.col / o.col2 ring colours (gradient round the ring), o.ink K stem colour,
- *   o.arrow arrow colour, o.disc false = no inner disc, o.discFill disc colour. */
-function drawMark(g, x, y, r, o = {}) {
-  const prog = o.segs == null ? 1 : clamp(o.segs / 6), rot = o.rot || 0, th = r * (o.th || 0.2), n = 24, gap = 0.07;
-  const c1 = hex2rgb(o.col || C.cyan), c2 = hex2rgb(o.col2 || C.mint);
-  g.save();
-  g.translate(x, y);
-  if (o.glow) addGlow(g, o.col2 || C.cyan, 0, 0, r * 2.4, 0.35 * o.glow);
-  if (o.disc !== false) {
-    g.save(); g.globalAlpha *= o.discA == null ? 1 : o.discA;
-    if (o.discFill) g.fillStyle = o.discFill;
-    else { const gr = g.createRadialGradient(0, -r * 0.4, 0, 0, 0, r * 0.9); gr.addColorStop(0, '#1B2C58'); gr.addColorStop(1, '#0A1430'); g.fillStyle = gr; }
-    g.beginPath(); g.arc(0, 0, r - th * 0.5, 0, TAU); g.fill(); g.restore();
-  }
-  // 24 hour segments; 00 / 06 / 12 / 18 a touch longer
-  g.lineCap = 'butt';
-  for (let i = 0; i < n; i++) {
-    const p = clamp(prog * n - i);
-    if (p <= 0) continue;
-    const a0 = -Math.PI / 2 + rot + i * TAU / n + gap / 2;
-    const a1 = a0 + (TAU / n - gap) * E.outCubic(p);
-    const k = i % 6 === 0 ? 1.35 : 1;
-    g.strokeStyle = rgb(mix(c1, c2, (Math.cos(i / n * TAU) + 1) / 2));
-    g.lineWidth = th * k * (o.thMul ? o.thMul(Math.floor(i / 4)) : 1);
-    g.beginPath(); g.arc(0, 0, r + (k - 1) * th * 0.5, a0, a1); g.stroke();
-  }
-  // K: stem + lower leg in ink, upper arm as a rising arrow
-  const cp = o.chart == null ? 1 : o.chart;
-  if (cp > 0) {
-    const lw = r * 0.15, ink = o.ink || '#FFFFFF', arrow = o.arrow || o.col2 || C.mint;
-    g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = lw;
-    const sp = clamp(cp * 3), lp = clamp(cp * 3 - 1), ap = clamp(cp * 3 - 1.4);
-    g.strokeStyle = ink;
-    g.beginPath(); g.moveTo(-0.3 * r, -0.4 * r); g.lineTo(-0.3 * r, lerp(-0.4, 0.4, sp) * r); g.stroke();
-    if (lp > 0) { g.beginPath(); g.moveTo(-0.22 * r, 0.04 * r); g.lineTo(lerp(-0.22, 0.32, lp) * r, lerp(0.04, 0.4, lp) * r); g.stroke(); }
-    if (ap > 0) {
-      const pts = [[-0.22, 0.04], [0.0, -0.12], [0.08, -0.04], [0.3, -0.3]].map(([a, b]) => [a * r, b * r]);
-      const cut = cutAt(pts, clamp(ap / 0.6));
-      g.strokeStyle = arrow;
-      g.beginPath(); cut.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.stroke();
-      const e = cut[cut.length - 1], b = cut[Math.max(0, cut.length - 2)];
-      const an = Math.atan2(e[1] - b[1], e[0] - b[0]), hs = r * 0.2 * clamp(ap / 0.6);
-      if (hs > 0.5) {
-        g.fillStyle = arrow; g.beginPath();
-        g.moveTo(e[0] + Math.cos(an) * hs, e[1] + Math.sin(an) * hs);
-        g.lineTo(e[0] + Math.cos(an + 2.3) * hs, e[1] + Math.sin(an + 2.3) * hs);
-        g.lineTo(e[0] + Math.cos(an - 2.3) * hs, e[1] + Math.sin(an - 2.3) * hs);
-        g.closePath(); g.fill();
-      }
-    }
-  }
-  g.restore();
-}
-// "Kripto724" wordmark: "Kripto" in o.c, "724" in o.accent (a colour) or o.grad (gradient stops).
-// fn(i, 9, ch) animates letters as in letters(). Returns the width.
-const BRAND = 'Kripto724';
-const BRAND_GRAD = [[0, '#38C8FF'], [1, '#2EF2A6']];
-function wordmarkWidth(g, size, extra = {}) {
-  return measure(g, BRAND, { s: size, w: 900, ls: -size * 0.02, ...extra });
-}
-function wordmark(g, x, y, size, fn, extra = {}) {
-  const o = { s: size, w: 900, ls: -size * 0.02, c: C.ink, ...extra, a: 'left' };
-  setFont(g, o);
-  const total = g.measureText(BRAND).width, wK = g.measureText('Kripto').width;
-  g.letterSpacing = '0px';
-  const al = extra.a || 'center';
-  const x0 = al === 'left' ? x : al === 'right' ? x - total : x - total / 2;
-  const opts = { ...o, sweepX0: x0, sweepX1: x0 + total };
-  if (extra.accent) opts.colors = (i) => i >= 6 ? extra.accent : null;
-  else Object.assign(opts, { grad: extra.grad || BRAND_GRAD, gradFrom: 6, gradX0: x0 + wK, gradX1: x0 + total });
-  letters(g, BRAND, x0, y, opts, fn ? (i, n, ch) => fn(i, 9, ch) : null);
+/* ───────────────────────── brand: kripto724 ─────────────────────────
+ * The stacked logo is the official artwork: logo(g, cx, cy, h, o) in lib/k724logo.js.
+ * logoH() is the horizontal lockup the app's own banners use: "kripto" | "724" in
+ * Poppins Bold with an orange vertical bar between them. (x, y) = left end of the
+ * baseline unless o.a is 'center' / 'right'. o.ink letter colour, o.bar bar colour.
+ * Returns the width. */
+function logoH(g, x, y, size, o = {}) {
+  const f = { f: 'Poppins', w: 700, s: size, ls: -size * 0.01 };
+  const wk = measure(g, 'kripto', f), w7 = measure(g, '724', f), gap = size * 0.16, bw = Math.max(2, size * 0.075);
+  const total = wk + gap * 2 + bw + w7;
+  const x0 = o.a === 'center' ? x - total / 2 : o.a === 'right' ? x - total : x;
+  const ink = o.ink || '#0A0A0A';
+  text(g, 'kripto', x0, y, { ...f, a: 'left', c: ink });
+  g.fillStyle = o.bar || '#F7931A';
+  rr(g, x0 + wk + gap, y - size * 0.74, bw, size * 0.84, bw / 2); g.fill();
+  text(g, '724', x0 + wk + gap * 2 + bw, y, { ...f, a: 'left', c: ink });
   return total;
 }

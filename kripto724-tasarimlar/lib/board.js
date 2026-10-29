@@ -105,7 +105,7 @@ window.READY = (async () => {
     document.head.appendChild(sc);
   });
   const D = window.DESIGN;
-  const fams = new Set([D.board.display.f, D.board.text.f, ...(D.extraFonts || []), 'Inter', 'Inter Display', 'Manrope']);
+  const fams = new Set([D.board.display.f, D.board.text.f, ...(D.extraFonts || []), 'Inter', 'Inter Display', 'Manrope', 'Poppins']);
   const loads = [];
   for (const f of fams) for (const w of [400, 500, 600, 700, 800, 900]) {
     loads.push(document.fonts.load(`${w} 40px "${f}"`, 'AaĞğŞşİıÇçÖöÜü₺0123'));
@@ -113,6 +113,7 @@ window.READY = (async () => {
   }
   await Promise.all(loads.map(p => p.catch(() => null)));
   await document.fonts.ready;
+  await K724.ready;
   const c = document.getElementById('c');
   if (D.init) D.init();
   if (qs.has('s')) {
