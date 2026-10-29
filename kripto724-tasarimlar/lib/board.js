@@ -93,7 +93,7 @@ function drawBoard(g, D) {
   // footer
   text(g, `${D.format}  ·  Görseller kodla çizildi, video bu karelerden canlandırılır  ·  Ekrandaki tüm rakamlar örnek veridir`,
     60, BH - 44, { ...T, s: 24, c: B.soft });
-  text(g, 'www.kripto724.com/app', BW - 60, BH - 44, { ...T, a: 'right', s: 26, w: 700, c: B.accent });
+  text(g, 'kripto724.com', BW - 60, BH - 44, { ...T, a: 'right', s: 26, w: 700, c: B.accent });
 }
 
 window.READY = (async () => {

@@ -231,7 +231,7 @@ const D4_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Tek ekran',
-    desc: 'Siyah blok soldan silerek gelir, "TEK EKRANDA." sarı harflerle dolar. AllInvestView etiketi köşeye yapışır, kalın ok onu gösterir.',
+    desc: 'Siyah blok soldan silerek gelir, "TEK EKRANDA." sarı harflerle dolar. Kripto724 etiketi köşeye yapışır, kalın ok onu gösterir.',
     draw(g) {
       g.fillStyle = D4.Y; g.fillRect(0, 0, W, H);
       d4_chrome(g, 2, D4.K, 0.6);
@@ -249,10 +249,10 @@ const D4_SCENES = [
       d4_big(g, 'TEK NET GÖRÜNÜM', 56, 990, 104, D4.K);
       d4_arrow(g, 790, 942, 320, 30, D4.K);
       g.save(); g.translate(1530, 902); g.rotate(-0.05);
-      const wm = measure(g, 'AllInvestView', { f: D4_AN, w: 400, s: 112 }) + 112 * 0.3;
+      const wm = wordmarkWidth(g, 112, { f: D4_AN, w: 400, ls: 0 });
       g.fillStyle = D4.K; g.fillRect(-wm / 2 - 44 + 14, -88 + 14, wm + 88, 176);
       g.fillStyle = D4.W; g.fillRect(-wm / 2 - 44, -88, wm + 88, 176);
-      wordmark(g, 0, 48, 112, i => i >= 9 ? { c: D4.B } : null, { f: D4_AN, w: 400, ls: 0, c: D4.K });
+      wordmark(g, 0, 48, 112, null, { f: D4_AN, w: 400, ls: 0, c: D4.K, accent: D4.B });
       g.restore();
     },
   },
@@ -571,14 +571,14 @@ const D4_SCENES = [
     draw(g) {
       g.fillStyle = D4.Y; g.fillRect(0, 0, W, H);
       d4_chrome(g, 9, D4.K, 1);
-      wordmark(g, 60, 232, 118, i => i >= 9 ? { c: D4.B } : null, { f: D4_AN, w: 400, ls: 0, c: D4.K, a: 'left' });
+      wordmark(g, 60, 232, 118, null, { f: D4_AN, w: 400, ls: 0, c: D4.K, accent: D4.B, a: 'left' });
       d4_sticker(g, 'KREDİ KARTI GEREKMEZ', 1500, 200, { s: 66, fill: D4.R, ink: D4.W, rot: -0.06, off: 11 });
       const S = d4_fitS(g, 'ÜCRETSİZ BAŞLA', 1806);
       d4_big(g, 'ÜCRETSİZ BAŞLA', 54, 640, S, D4.K);
       // URL bar (full bleed) with a graphic arrow
       g.fillStyle = D4.K; g.fillRect(0, 752, W, 176);
       d4_arrow(g, 60, 840, 250, 40, D4.Y);
-      text(g, 'www.kripto724.com/app', 1864, 896, { f: D4_AN, w: 400, s: 136, a: 'right', c: D4.Y, ls: 1 });
+      text(g, 'kripto724.com', 1864, 896, { f: D4_AN, w: 400, s: 136, a: 'right', c: D4.Y, ls: 1 });
       text(g, 'Tüm yatırımların, tek ekranda.', 60, 1000, { f: D4_SG, w: 700, s: 36, a: 'left', c: D4.K });
       text(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', 60, 1046, { f: D4_SG, w: 500, s: 22, a: 'left', c: hexA(D4.K, 0.75) });
       // print colour bar

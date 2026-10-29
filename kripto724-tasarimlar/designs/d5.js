@@ -545,9 +545,9 @@ const D5_APPS = {
   toastB: [(x, w, h) => d5_toast(x, w, h, 'Oturum süresi doldu', 'Kripto borsasına tekrar giriş yapın'), 390, 100],
 };
 function d5_heroCard(x, w, h) {
-  const ww = measure(x, 'AllInvestView', { f: 'Disp', w: 900, s: 58 }) + 4, gx = w / 2 - (ww + 84) / 2;
-  drawMark(x, gx + 32, 96, 30, { th: 0.28, disc: false });
-  wordmark(x, gx + 84, 117, 58, null, { a: 'left' });
+  const ww = wordmarkWidth(x, 58, { f: D5U, w: 800 }) + 4, gx = w / 2 - (ww + 84) / 2;
+  drawMark(x, gx + 32, 96, 30, { th: 0.24, disc: false, col: D5.teal, col2: D5.pink, arrow: D5.teal2 });
+  wordmark(x, gx + 84, 117, 58, null, { a: 'left', f: D5U, w: 800, grad: [[0, '#8EF1E7'], [1, '#FFC4E7']] });
   x.fillStyle = d5_holo(x, w / 2 - 330, 0, w / 2 - 150, 0, 0.7); x.fillRect(w / 2 - 330, 176, 170, 2);
   x.fillStyle = d5_holo(x, w / 2 + 150, 0, w / 2 + 330, 0, 0.7); x.fillRect(w / 2 + 160, 176, 170, 2);
   d5_k(x, 'TEK NET GÖRÜNÜM', w / 2, 183, 17, D5.soft, { a: 'center' });
@@ -563,8 +563,8 @@ function d5_heroCard(x, w, h) {
 function d5_dash(x, w, h) {
   const panel = (px, py, pw, ph) => { rr(x, px, py, pw, ph, 22); x.fillStyle = 'rgba(245,243,255,0.045)'; x.fill(); x.lineWidth = 1.2; x.strokeStyle = 'rgba(245,243,255,0.13)'; x.stroke(); };
   // top bar
-  drawMark(x, 50, 44, 19, { th: 0.3, gap: 0.16, disc: false });
-  wordmark(x, 82, 54, 27, null, { a: 'left' });
+  drawMark(x, 50, 44, 19, { th: 0.26, disc: false, col: D5.teal, col2: D5.pink, arrow: D5.teal2 });
+  wordmark(x, 82, 54, 27, null, { a: 'left', f: D5U, w: 800, grad: [[0, '#8EF1E7'], [1, '#FFC4E7']] });
   let nx = 452;
   ['Genel bakış', 'Varlıklar', 'Temettü', 'Risk', 'Vergi'].forEach((s, i) => {
     const o = { f: D5M, w: 700, s: 18 }, tw = measure(x, s, o);
@@ -731,8 +731,8 @@ function d5_tile(x, w, h, name) {
 }
 function d5_hubTex(x, w, h) {
   addGlow(x, D5.lav, w / 2, 118, 130, 0.6);
-  drawMark(x, w / 2, 118, 58, { th: 0.26, disc: false });
-  wordmark(x, w / 2, 230, 34);
+  drawMark(x, w / 2, 118, 58, { th: 0.22, disc: false, col: D5.teal, col2: D5.pink, arrow: D5.teal2 });
+  wordmark(x, w / 2, 230, 34, null, { f: D5U, w: 800, grad: [[0, '#8EF1E7'], [1, '#FFC4E7']] });
   rr(x, w / 2 - 98, 254, 196, 36, 18); x.fillStyle = 'rgba(25,211,197,0.16)'; x.fill();
   check(x, w / 2 - 74, 272, 12, D5.teal2, 2.6);
   d5_t(x, '10 hesap güncel', w / 2 - 58, 278, 15, D5.teal2, { w: 700 });
@@ -947,7 +947,7 @@ const D5_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Tek cam',
-    desc: 'Kartlar ışık izleriyle merkeze akar ve tek bir büyük cam karta birleşir; yanardöner halka döner, AllInvestView belirir.',
+    desc: 'Kartlar ışık izleriyle merkeze akar ve tek bir büyük cam karta birleşir; yanardöner halka döner, Kripto724 belirir.',
     draw(g) {
       d5_bg(g, [[CX, 520, 1000, D5.lav, 0.62, 0.65], [260, 980, 750, D5.teal, 0.32, 0.7], [1700, 160, 750, D5.pink, 0.36, 0.7], [CX, 560, 430, '#B8A8FF', 0.32, 0.6]], { seed: 21, bokeh: 40 });
       // converging light streaks
@@ -1256,13 +1256,13 @@ const D5_SCENES = [
       d5_snap(g);
       const path = () => { g.beginPath(); g.arc(lx, ly, LR, 0, TAU); }, bx = [lx - LR, ly - LR, lx + LR, ly + LR];
       d5_body(g, path, bx, { dark: 0.3, rim: 12, sheen: 0.22 });
-      drawMark(g, lx, ly, 64, { glow: 0.8, disc: false });
+      drawMark(g, lx, ly, 64, { glow: 0.8, disc: false, col: D5.teal, col2: D5.pink, arrow: D5.teal2 });
       d5_edge(g, path, bx, { lw: 2.4 });
       d5_ring(g, lx, ly + 10, 330, 92, -0.12, 0, Math.PI, 3.5, 0.9);
       d5_coin(g, 1400, 214, 50, { col: 'lav', tilt: 0.5, rot: -0.4, mark: 'hex' });
       d5_coin(g, 470, 470, 30, { col: 'pink', tilt: 0.62, rot: 0.3, mark: 'dia' });
       g.save(); g.shadowColor = hexA(D5.lav, 0.8); g.shadowBlur = 40;
-      wordmark(g, CX, 560, 112, null, { sweep: 0.66, sweepA: 0.55 });
+      wordmark(g, CX, 560, 112, null, { sweep: 0.66, sweepA: 0.55, f: D5U, w: 800, grad: [[0, '#8EF1E7'], [1, '#FFC4E7']] });
       g.restore();
       d5_t(g, 'Tüm yatırımların, tek ekranda.', CX, 628, 36, D5.soft, { a: 'center', w: 600 });
       // holographic pill button
@@ -1278,7 +1278,7 @@ const D5_SCENES = [
       d5_t(g, 'Ücretsiz başla — kredi kartı gerekmez', bxx + 56, byy + 63, 34, D5.deep, { w: 800 });
       g.fillStyle = D5.deep; g.beginPath(); g.arc(bxx + bw - 52, byy + bh / 2, 34, 0, TAU); g.fill();
       d5_arrow(g, bxx + bw - 66, byy + bh / 2, bxx + bw - 38, byy + bh / 2, D5.milk, 4, 11);
-      d5_head(g, [['www.kripto724.com/app', 'holo']], CX, 900, 52, { a: 'center', w: 600, glow: 0.45 });
+      d5_head(g, [['kripto724.com', 'holo']], CX, 900, 52, { a: 'center', w: 600, glow: 0.45 });
       d5_t(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1034, 22, D5.dim, { a: 'center', w: 500 });
       d5_finish(g, 0.5);
     },

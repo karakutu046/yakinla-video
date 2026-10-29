@@ -120,13 +120,13 @@ const D1_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Tek komut',
-    desc: 'Ekran temizlenir, komut satırı yazılır. "Tüm yatırımların, tek ekranda." neon parlamayla yanar; AllInvestView belirir.',
+    desc: 'Ekran temizlenir, komut satırı yazılır. "Tüm yatırımların, tek ekranda." neon parlamayla yanar; Kripto724 belirir.',
     draw(g) {
       d1_bg(g);
-      d1_mono(g, 'kripto724@app:~$', 120, 150, 34, D1.c, { w: 700 });
-      const px = 120 + measure(g, 'kripto724@app:~$', { f: JB, w: 700, s: 34 });
-      d1_mono(g, ' allinvestview --hepsi --tek-ekran', px, 150, 34, D1.ink);
-      g.fillStyle = D1.g; g.fillRect(px + measure(g, ' allinvestview --hepsi --tek-ekran', { f: JB, s: 34 }) + 8, 118, 18, 40);
+      d1_mono(g, 'sen@kripto724:~$', 120, 150, 34, D1.c, { w: 700 });
+      const px = 120 + measure(g, 'sen@kripto724:~$', { f: JB, w: 700, s: 34 });
+      d1_mono(g, ' portfoy --hepsi --tek-ekran', px, 150, 34, D1.ink);
+      g.fillStyle = D1.g; g.fillRect(px + measure(g, ' portfoy --hepsi --tek-ekran', { f: JB, s: 34 }) + 8, 118, 18, 40);
       d1_mono(g, '[OK] 8 varlık sınıfı  ·  60+ piyasa  ·  50+ para birimi  ·  25+ aracı kurum', 120, 205, 24, D1.dim);
       text(g, 'Tüm yatırımların,', CX, 500, { f: SG, w: 700, s: 150, ls: -4, c: D1.ink });
       d1_neon(g, 'tek ekranda.', CX, 660, { f: SG, w: 700, s: 170, ls: -5 }, D1.g, 40);
@@ -144,7 +144,7 @@ const D1_SCENES = [
     draw(g) {
       d1_bg(g);
       g.fillStyle = hexA(D1.g, 0.12); g.fillRect(0, 0, W, 54);
-      d1_mono(g, 'ALLINVESTVIEW // PORTFÖY      BAZ: TRY      SON SENKRON 03:00      DURUM: GÜNCEL', 40, 36, 22, D1.g, { w: 700 });
+      d1_mono(g, 'KRİPTO724 // PORTFÖY      BAZ: TRY      SON SENKRON 03:00      DURUM: GÜNCEL', 40, 36, 22, D1.g, { w: 700 });
       d1_win(g, 40, 80, 1180, 600, 'toplam_deger', D1.g);
       d1_mono(g, 'TOPLAM PORTFÖY DEĞERİ', 80, 170, 22, D1.dim, { w: 700, ls: 2 });
       d1_neon(g, '₺9.482.150,36', 76, 290, { f: SG, w: 700, s: 112, a: 'left', ls: -3 }, D1.g, 26);
@@ -253,8 +253,8 @@ const D1_SCENES = [
       g.save(); g.shadowColor = D1.g; g.shadowBlur = 40;
       g.fillStyle = '#031A10'; g.fillRect(hub[0] - 150, hub[1] - 90, 300, 180);
       g.strokeStyle = D1.g; g.lineWidth = 4; g.strokeRect(hub[0] - 150, hub[1] - 90, 300, 180); g.restore();
-      drawMark(g, hub[0], hub[1] - 20, 46, { th: 0.26 });
-      d1_mono(g, 'ALLINVESTVIEW', hub[0], hub[1] + 62, 20, D1.g, { w: 800, a: 'center', ls: 2 });
+      drawMark(g, hub[0], hub[1] - 20, 46, { th: 0.22, col: D1.c, col2: D1.g, discFill: '#031A10' });
+      d1_mono(g, 'KRİPTO724', hub[0], hub[1] + 62, 22, D1.g, { w: 800, a: 'center', ls: 3 });
       d1_win(g, 1380, 360, 500, 560, 'senkron.log', D1.g);
       ['[03:00:01] başladı · salt-okunur', '[03:00:03] Interactive Brokers  OK', '[03:00:04]   12 işlem eklendi', '[03:00:06] Coinbase           OK', '[03:00:06]   4 işlem eklendi', '[03:00:08] DEGIRO             OK', '[03:00:09] Trading 212        OK', '[03:00:11] eToro              OK', '', '[03:00:12] TÜM HESAPLAR GÜNCEL'].forEach((s, i) =>
         d1_mono(g, s, 1404, 430 + i * 44, 19, i === 9 ? D1.g : s.includes('OK') ? D1.ink : D1.dim, { w: i === 9 ? 800 : 400 }));
@@ -385,17 +385,17 @@ const D1_SCENES = [
   },
   {
     time: '35–40 sn', title: 'Kapanış',
-    desc: 'Tüm pencereler tek noktaya çöker; AllInvestView neonla yanar, komut satırına "ücretsiz başla" yazılır, adres imleçle tamamlanır.',
+    desc: 'Tüm pencereler tek noktaya çöker; Kripto724 neonla yanar, komut satırına "ücretsiz başla" yazılır, adres imleçle tamamlanır.',
     draw(g) {
       d1_bg(g);
       addGlow(g, D1.g, CX, 420, 700, 0.18);
-      drawMark(g, CX, 260, 105, { glow: 1 });
+      drawMark(g, CX, 260, 105, { glow: 1, col: D1.c, col2: D1.g, discFill: '#06120E' });
       g.save(); g.shadowColor = D1.c; g.shadowBlur = 30; wordmark(g, CX, 520, 150); g.restore();
       text(g, 'Tüm yatırımların, tek ekranda.', CX, 600, { f: SG, w: 500, s: 46, c: D1.ink });
       g.fillStyle = D1.g; g.fillRect(CX - 420, 660, 840, 104);
       d1_mono(g, '> ücretsiz başla — kredi kartı gerekmez', CX, 725, 34, D1.bg, { a: 'center', w: 800 });
-      d1_neon(g, 'www.kripto724.com/app', CX - 22, 880, { f: JB, w: 800, s: 64 }, D1.g, 24);
-      g.fillStyle = D1.g; g.fillRect(CX + measure(g, 'www.kripto724.com/app', { f: JB, w: 800, s: 64 }) / 2 - 10, 832, 26, 60);
+      d1_neon(g, 'kripto724.com', CX - 22, 880, { f: JB, w: 800, s: 64 }, D1.g, 24);
+      g.fillStyle = D1.g; g.fillRect(CX + measure(g, 'kripto724.com', { f: JB, w: 800, s: 64 }) / 2 - 10, 832, 26, 60);
       d1_mono(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1035, 22, D1.dim, { a: 'center' });
       d1_scan(g);
     },

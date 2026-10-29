@@ -2,7 +2,7 @@
 /* Shared drawing toolkit for the kripto724 design boards (copied from
  * allinvestview-showreel/src/core.js so the chosen design can go straight to video).
  * Frames are 1920×1080. Constants, easing, colour, text, sprites, UI primitives,
- * odometer, the AllInvestView wordmark and plane3d() (true 3D panels in 2D canvas).
+ * odometer, the Kripto724 mark and wordmark, plane3d() (true 3D panels in 2D canvas).
  *
  * Fonts: o.f is a CSS family name ('Anton', 'Space Grotesk', 'JetBrains Mono',
  * 'Playfair Display', 'Sora', 'Unbounded', 'DM Serif Display', 'Manrope', 'Inter',
@@ -402,76 +402,81 @@ function quadShadow(g, P, w, h, a = 0.55, blur = 50, dy = 30, inset = 40) {
   g.fillStyle = 'rgba(6,10,24,1)'; g.fill(); g.restore();
 }
 
-/* ───────────────────────── brand mark ─────────────────────────
- * Motion motif: an allocation ring of six colours (every asset) around a rising
- * line (the view). o.segs: 0..6 segments drawn, o.chart: 0..1, o.rot: rotation. */
+/* ───────────────────────── brand: Kripto724 ─────────────────────────
+ * Mark: a 24-segment clock ring (7/24) around a "K" whose upper arm is a rising
+ * arrow. kripto724.com's own logo could not be seen from the build environment,
+ * so this is a typographic stand-in; swap it for the official logo when available.
+ *   o.segs 0..6 ring drawn (6 = full), o.chart 0..1 the K draws on, o.rot rotation,
+ *   o.col / o.col2 ring colours (gradient round the ring), o.ink K stem colour,
+ *   o.arrow arrow colour, o.disc false = no inner disc, o.discFill disc colour. */
 function drawMark(g, x, y, r, o = {}) {
-  const segs = o.segs == null ? 6 : o.segs, rot = o.rot || 0, th = r * (o.th || 0.24);
-  const gap = o.gap == null ? 0.12 : o.gap;
+  const prog = o.segs == null ? 1 : clamp(o.segs / 6), rot = o.rot || 0, th = r * (o.th || 0.2), n = 24, gap = 0.07;
+  const c1 = hex2rgb(o.col || C.cyan), c2 = hex2rgb(o.col2 || C.mint);
   g.save();
   g.translate(x, y);
-  if (o.glow) addGlow(g, C.cyan, 0, 0, r * 2.4, 0.35 * o.glow);
-  // inner disc
+  if (o.glow) addGlow(g, o.col2 || C.cyan, 0, 0, r * 2.4, 0.35 * o.glow);
   if (o.disc !== false) {
-    const gr = g.createRadialGradient(0, -r * 0.4, 0, 0, 0, r * 0.9);
-    gr.addColorStop(0, '#1B2C58'); gr.addColorStop(1, '#0A1430');
-    g.save(); g.fillStyle = gr; g.globalAlpha *= o.discA == null ? 1 : o.discA;
+    g.save(); g.globalAlpha *= o.discA == null ? 1 : o.discA;
+    if (o.discFill) g.fillStyle = o.discFill;
+    else { const gr = g.createRadialGradient(0, -r * 0.4, 0, 0, 0, r * 0.9); gr.addColorStop(0, '#1B2C58'); gr.addColorStop(1, '#0A1430'); g.fillStyle = gr; }
     g.beginPath(); g.arc(0, 0, r - th * 0.5, 0, TAU); g.fill(); g.restore();
   }
+  // 24 hour segments; 00 / 06 / 12 / 18 a touch longer
   g.lineCap = 'butt';
-  for (let i = 0; i < 6; i++) {
-    const p = clamp(segs - i);
+  for (let i = 0; i < n; i++) {
+    const p = clamp(prog * n - i);
     if (p <= 0) continue;
-    const a0 = -Math.PI / 2 + rot + i * TAU / 6 + gap / 2;
-    const a1 = a0 + (TAU / 6 - gap) * E.outCubic(p);
-    g.strokeStyle = SEG[i]; g.lineWidth = th * (o.thMul ? o.thMul(i) : 1);
-    g.beginPath(); g.arc(0, 0, r, a0, a1); g.stroke();
+    const a0 = -Math.PI / 2 + rot + i * TAU / n + gap / 2;
+    const a1 = a0 + (TAU / n - gap) * E.outCubic(p);
+    const k = i % 6 === 0 ? 1.35 : 1;
+    g.strokeStyle = rgb(mix(c1, c2, (Math.cos(i / n * TAU) + 1) / 2));
+    g.lineWidth = th * k * (o.thMul ? o.thMul(Math.floor(i / 4)) : 1);
+    g.beginPath(); g.arc(0, 0, r + (k - 1) * th * 0.5, a0, a1); g.stroke();
   }
-  // rising line
+  // K: stem + lower leg in ink, upper arm as a rising arrow
   const cp = o.chart == null ? 1 : o.chart;
   if (cp > 0) {
-    const pts = [[-0.46, 0.2], [-0.16, -0.06], [0.06, 0.12], [0.44, -0.3]].map(([a, b]) => [a * r, b * r]);
-    const cut = cutAt(pts, cp);
-    g.strokeStyle = '#FFFFFF'; g.lineWidth = r * 0.1; g.lineCap = 'round'; g.lineJoin = 'round';
-    g.beginPath(); cut.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
-    const end = cut[cut.length - 1];
-    g.fillStyle = C.mint; g.beginPath(); g.arc(end[0], end[1], r * 0.11 * (0.6 + 0.4 * cp), 0, TAU); g.fill();
+    const lw = r * 0.15, ink = o.ink || '#FFFFFF', arrow = o.arrow || o.col2 || C.mint;
+    g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = lw;
+    const sp = clamp(cp * 3), lp = clamp(cp * 3 - 1), ap = clamp(cp * 3 - 1.4);
+    g.strokeStyle = ink;
+    g.beginPath(); g.moveTo(-0.3 * r, -0.4 * r); g.lineTo(-0.3 * r, lerp(-0.4, 0.4, sp) * r); g.stroke();
+    if (lp > 0) { g.beginPath(); g.moveTo(-0.22 * r, 0.04 * r); g.lineTo(lerp(-0.22, 0.32, lp) * r, lerp(0.04, 0.4, lp) * r); g.stroke(); }
+    if (ap > 0) {
+      const pts = [[-0.22, 0.04], [0.0, -0.12], [0.08, -0.04], [0.3, -0.3]].map(([a, b]) => [a * r, b * r]);
+      const cut = cutAt(pts, clamp(ap / 0.6));
+      g.strokeStyle = arrow;
+      g.beginPath(); cut.forEach((q, i) => i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])); g.stroke();
+      const e = cut[cut.length - 1], b = cut[Math.max(0, cut.length - 2)];
+      const an = Math.atan2(e[1] - b[1], e[0] - b[0]), hs = r * 0.2 * clamp(ap / 0.6);
+      if (hs > 0.5) {
+        g.fillStyle = arrow; g.beginPath();
+        g.moveTo(e[0] + Math.cos(an) * hs, e[1] + Math.sin(an) * hs);
+        g.lineTo(e[0] + Math.cos(an + 2.3) * hs, e[1] + Math.sin(an + 2.3) * hs);
+        g.lineTo(e[0] + Math.cos(an - 2.3) * hs, e[1] + Math.sin(an - 2.3) * hs);
+        g.closePath(); g.fill();
+      }
+    }
   }
   g.restore();
 }
-// "AllInvestView" wordmark: "View" in the brand gradient. In a sans-serif the
-// "llI" run reads as three identical bars, so the capital I gets serifs.
-const BRAND_GRAD = [[0, '#38C8FF'], [0.5, '#5B8CFF'], [1, '#A77BFF']];
+// "Kripto724" wordmark: "Kripto" in o.c, "724" in o.accent (a colour) or o.grad (gradient stops).
+// fn(i, 9, ch) animates letters as in letters(). Returns the width.
+const BRAND = 'Kripto724';
+const BRAND_GRAD = [[0, '#38C8FF'], [1, '#2EF2A6']];
+function wordmarkWidth(g, size, extra = {}) {
+  return measure(g, BRAND, { s: size, w: 900, ls: -size * 0.02, ...extra });
+}
 function wordmark(g, x, y, size, fn, extra = {}) {
   const o = { s: size, w: 900, ls: -size * 0.02, c: C.ink, ...extra, a: 'left' };
   setFont(g, o);
-  const mI = g.measureText('I');
-  const stem = mI.actualBoundingBoxLeft + mI.actualBoundingBoxRight, cap = mI.actualBoundingBoxAscent;
-  const half = stem * 1.32, bar = stem * 0.66, sb = size * 0.045;
-  const wA = g.measureText('All').width, wN = g.measureText('nvest').width, wR = g.measureText('nvestView').width;
+  const total = g.measureText(BRAND).width, wK = g.measureText('Kripto').width;
   g.letterSpacing = '0px';
-  const wI = half * 2 + sb * 2, total = wA + wI + wR;
   const al = extra.a || 'center';
   const x0 = al === 'left' ? x : al === 'right' ? x - total : x - total / 2;
-  const sw = { sweepX0: x0, sweepX1: x0 + total };
-  const sub = off => fn ? (i, n, ch) => fn(i + off, 13, ch) : null;
-  letters(g, 'All', x0, y, { ...o, ...sw }, sub(0));
-  const r = fn ? fn(3, 13, 'I') || {} : {};
-  const a = r.al == null ? 1 : r.al, sc = r.sc == null ? 1 : r.sc;
-  if (a > 0.002) {
-    const ix = x0 + wA + wI / 2 + (r.dx || 0), iy = y + (r.dy || 0);
-    g.save(); g.globalAlpha *= a; g.translate(ix, iy); if (r.rot) g.rotate(r.rot); g.scale(sc, sc);
-    const glyph = () => { g.beginPath(); g.rect(-stem / 2, -cap, stem, cap); g.rect(-half, -cap, half * 2, bar); g.rect(-half, -bar, half * 2, bar); };
-    g.fillStyle = r.c || o.c; glyph(); g.fill();
-    if (o.sweep != null && o.sweep > -0.5 && o.sweep < 1.5) {
-      const bx = lerp(x0 - 300, x0 + total + 300, o.sweep) - ix;
-      const gr = g.createLinearGradient((bx - 160) / sc, -size * 0.3, (bx + 160) / sc, size * 0.3);
-      gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, `rgba(255,255,255,${o.sweepA || 0.85})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
-      g.fillStyle = gr; glyph(); g.fill();
-    }
-    g.restore();
-  }
-  const xr = x0 + wA + wI;
-  letters(g, 'nvestView', xr, y, { ...o, ...sw, grad: BRAND_GRAD, gradFrom: 5, gradX0: xr + wN, gradX1: xr + wR }, sub(4));
+  const opts = { ...o, sweepX0: x0, sweepX1: x0 + total };
+  if (extra.accent) opts.colors = (i) => i >= 6 ? extra.accent : null;
+  else Object.assign(opts, { grad: extra.grad || BRAND_GRAD, gradFrom: 6, gradX0: x0 + wK, gradX1: x0 + total });
+  letters(g, BRAND, x0, y, opts, fn ? (i, n, ch) => fn(i, 9, ch) : null);
   return total;
 }

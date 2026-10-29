@@ -445,7 +445,7 @@ const D2_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Kadran kurulur',
-    desc: 'Pencereler ışık izlerine dönüşüp merkeze çekilir; 24 saatlik kadran çizgi çizgi tamamlanır, ibre 03:30\'a süpürür. Ortada vaat ve AllInvestView.',
+    desc: 'Pencereler ışık izlerine dönüşüp merkeze çekilir; 24 saatlik kadran çizgi çizgi tamamlanır, ibre 03:30\'a süpürür. Ortada vaat ve Kripto724.',
     draw(g) {
       d2_sky(g, 0.08, { px: -70 });
       d2_stamp(g, '03:30', 0.08);
@@ -482,7 +482,7 @@ const D2_SCENES = [
       d2_h(g, 'Tüm yatırımların,', x, y - 98, 60, D2.ink, { a: 'center', w: 700 });
       d2_grad(g, 'tek ekranda.', x, y + 10, 94, { a: 'center' });
       g.fillStyle = 'rgba(255,255,255,0.2)'; g.fillRect(x - 110, y + 62, 220, 1.5);
-      wordmark(g, x, y + 150, 58);
+      wordmark(g, x, y + 150, 64, null, { f: D2F, w: 800, grad: D2_DAWN });
     },
   },
   {
@@ -897,12 +897,12 @@ const D2_SCENES = [
         d2_h(g, '−%24,3', cx, cy + 70, 30, D2.coral, { w: 700, a: 'center' });
         d2_t(g, '4 gerçek kriz senaryosu', cx, cy + 96, 15, D2.soft, { w: 600, a: 'center' });
       }
-      drawMark(g, mx, my, 42, {});
+      drawMark(g, mx, my, 42, { col: D2.coral, col2: D2.amber, arrow: D2.teal });
     },
   },
   {
     time: '35–40 sn', title: 'Kapanış: Günaydın',
-    desc: 'Güneş doğar, kadranın çizgileri ışınlara dönüşür. AllInvestView, "Ücretsiz başla" düğmesi ve adres belirir; denizin üstünde küçük yasal not.',
+    desc: 'Güneş doğar, kadranın çizgileri ışınlara dönüşür. Kripto724, "Ücretsiz başla" düğmesi ve adres belirir; denizin üstünde küçük yasal not.',
     draw(g) {
       const HZ = 880, sx = CX;
       d2_sky(g, 1, { hz: HZ, px: -330 });
@@ -925,8 +925,8 @@ const D2_SCENES = [
       }
       d2_sun(g, sx, HZ, 128, HZ);
       d2_sea(g, HZ, 1, sx);
-      drawMark(g, CX, 150, 62, { glow: 0.6 });
-      g.save(); g.shadowColor = 'rgba(10,12,40,0.45)'; g.shadowBlur = 30; wordmark(g, CX, 318, 112); g.restore();
+      drawMark(g, CX, 150, 62, { glow: 0.6, col: D2.coral, col2: D2.amber, arrow: D2.teal });
+      g.save(); g.shadowColor = 'rgba(10,12,40,0.45)'; g.shadowBlur = 30; wordmark(g, CX, 318, 120, null, { f: D2F, w: 800, grad: D2_DAWN }); g.restore();
       d2_h(g, 'Tüm yatırımların, tek ekranda.', CX, 384, 38, D2.ink, { w: 600, a: 'center', ls: 0 });
       // button
       const lab = 'Ücretsiz başla — kredi kartı gerekmez', bf = { f: D2T, w: 800, s: 33 };
@@ -938,7 +938,7 @@ const D2_SCENES = [
       g.fillStyle = D2.teal; g.beginPath(); g.arc(bx + bwid - 16 - 32, by + bh / 2, 32, 0, TAU); g.fill();
       d2_arrow(g, bx + bwid - 48, by + bh / 2, 13, D2.night, 4);
       g.save(); g.shadowColor = 'rgba(30,10,40,0.5)'; g.shadowBlur = 24;
-      d2_h(g, 'www.kripto724.com/app', CX, 628, 60, '#FFFFFF', { w: 700, a: 'center', ls: -1 });
+      d2_h(g, 'kripto724.com', CX, 628, 60, '#FFFFFF', { w: 700, a: 'center', ls: -1 });
       g.restore();
       g.fillStyle = hexA('#FFFFFF', 0.6); g.fillRect(CX - 60, 652, 120, 3);
       d2_t(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1042, 20, 'rgba(246,242,251,0.72)', { w: 500, a: 'center' });

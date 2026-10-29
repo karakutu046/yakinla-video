@@ -1,6 +1,6 @@
 # kripto724 · Video tasarım panoları
 
-**www.kripto724.com/app** için hazırlanan ~40 saniyelik AllInvestView tanıtım filmi altı farklı görsel
+**Kripto724** (kripto724.com) için hazırlanan ~40 saniyelik tanıtım filmi altı farklı görsel
 yönde tasarlandı. Her tasarım tek bir panoda; filmin 9 sahnesinin tamamı süreleri, hareket ve ses
 notlarıyla birlikte aynı görselde yer alıyor. Seçilen tasarım, aynı çizim motoruyla
 (`../allinvestview-showreel/`) hareketli videoya dönüştürülecek.
@@ -20,12 +20,13 @@ Altısı yan yana: [`out/tasarimlar_genel_bakis.jpg`](out/tasarimlar_genel_bakis
 
 Hikâye her tasarımda aynı: dağınık yatırımlar → "Tüm yatırımların, tek ekranda." → panel → her varlık
 ve piyasa → otomatik senkron → temettü → risk laboratuvarı → hızlı özellikler → "Ücretsiz başla — kredi
-kartı gerekmez" ve www.kripto724.com/app. Ekrandaki iddialar yalnızca AllInvestView'un yayımladığı
-özelliklerden alındı ([`BRIEF.md`](BRIEF.md)). Takip gerçek zamanlı değil, senkron her gece yapılıyor;
+kartı gerekmez" ve kripto724.com. Ekrandaki özellik iddiaları [`BRIEF.md`](BRIEF.md) içindeki onaylı listeyle
+sınırlıdır. Takip gerçek zamanlı değil, senkron her gece yapılıyor;
 bu yüzden "canlı" ya da "7/24 takip" denmiyor. Ekrandaki tüm rakamlar örnek veridir.
 
-kripto724.com sitesine bu ortamdan erişilemedi. Bu nedenle panolarda kripto724'e ait bir logo ya da
-kurumsal renk yok; adres düz metin olarak geçiyor. Logo ve renkler gelirse seçilen tasarıma eklenir.
+kripto724.com sitesine bu ortamdan erişilemedi; resmî logo görülemediği için panolarda tipografik bir
+Kripto724 logosu kullanıldı (`lib/core.js` → `drawMark`, `wordmark`): 24 saatlik bir halkanın içinde
+yukarı ok kolu olan bir "K" ve "Kripto**724**" yazısı. Resmî logo gelirse seçilen tasarımda bununla değiştirilir.
 
 ## Yeniden üretmek
 
@@ -39,7 +40,7 @@ python3 tools/overview.py                        # → out/tasarimlar_genel_baki
 | Dosya | Görevi |
 |---|---|
 | `designs/d1.js` … `d6.js` | Her tasarımın 9 anahtar karesi ve pano bilgileri (`window.DESIGN`) |
-| `lib/core.js` | Ortak çizim araçları: yazı, sayaç, cam kart, 3B düzlem, AllInvestView wordmark |
+| `lib/core.js` | Ortak çizim araçları: yazı, sayaç, cam kart, 3B düzlem, Kripto724 logosu |
 | `lib/board.js` | Pano yerleşimi; `index.html?d=N` pano, `&s=K` tek sahne |
 | `render.cjs` | Headless Chromium ile PNG/JPEG üretimi |
 | `fonts/` | Anton, Space Grotesk, JetBrains Mono, Playfair Display, Sora, Unbounded, DM Serif Display, Manrope, Inter (hepsi SIL OFL) |

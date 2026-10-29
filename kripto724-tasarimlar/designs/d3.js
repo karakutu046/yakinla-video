@@ -149,7 +149,7 @@ function d3_folio(g, num, label, brand = true) {
   const nw = measure(g, num, no);
   d3_hair(g, fx + nw + 20, 80, fx + nw + 76, 80, 0.8, 1.2, false);
   d3_kick(g, label, fx + nw + 94, 88, { s: 17, c: D3.soft, ls: 6 });
-  if (brand) text(g, 'AllInvestView', W - 110, 90, { f: D3_PF, w: 400, it: true, s: 28, a: 'right', c: hexA(D3.iv, 0.5) });
+  if (brand) text(g, 'Kripto724', W - 110, 90, { f: D3_PF, w: 400, it: true, s: 28, a: 'right', c: hexA(D3.iv, 0.5) });
 }
 // deep black with a warm key-light pool
 function d3_bg(g, o = {}) {
@@ -227,7 +227,7 @@ function d3_series(seed, n, end, vol) {
   const w = walk(seed, n, 0, vol), k = Math.pow(end / (w[n - 1] / w[0]), 1 / (n - 1));
   return w.map((v, i) => v / w[0] * Math.pow(k, i));
 }
-// the AllInvestView mark re-cut in gold: engraved disc, guilloché rosette, segmented ring, rising line
+// the Kripto724 mark cut in gold: engraved disc, guilloché rosette, 24-hour foil ring, K with a rising arrow
 function d3_mark(g, x, y, r, o = {}) {
   g.save(); g.translate(x, y);
   if (o.disc !== false) {
@@ -239,25 +239,34 @@ function d3_mark(g, x, y, r, o = {}) {
   g.strokeStyle = hexA(D3.au, 0.17); g.lineWidth = Math.max(0.6, r * 0.008);
   for (let k = 0; k < 36; k++) { g.beginPath(); g.ellipse(0, 0, r * 0.84, r * 0.3, k * Math.PI / 36, 0, TAU); g.stroke(); }
   g.restore();
-  const th = r * 0.13, gap = 0.12;
-  g.strokeStyle = d3_foil(g, -r, -r, r, r); g.lineWidth = th; g.lineCap = 'butt';
-  for (let i = 0; i < 6; i++) { const a0 = -Math.PI / 2 + i * TAU / 6 + gap / 2; g.beginPath(); g.arc(0, 0, r, a0, a0 + TAU / 6 - gap); g.stroke(); }
+  const th = r * 0.13, gap = 0.07;
+  g.strokeStyle = d3_foil(g, -r, -r, r, r); g.lineCap = 'butt';
+  for (let i = 0; i < 24; i++) {
+    const a0 = -Math.PI / 2 + i * TAU / 24 + gap / 2, big = i % 6 === 0;
+    g.lineWidth = big ? th * 1.4 : th;
+    g.beginPath(); g.arc(0, 0, r + (big ? th * 0.2 : 0), a0, a0 + TAU / 24 - gap); g.stroke();
+  }
   if (o.bezel !== false) { g.strokeStyle = hexA(D3.au, 0.5); g.lineWidth = Math.max(1, r * 0.014); g.beginPath(); g.arc(0, 0, r * 1.17, 0, TAU); g.stroke(); }
-  const pts = [[-0.46, 0.2], [-0.16, -0.06], [0.06, 0.12], [0.44, -0.3]].map(([a, b]) => [a * r, b * r]);
-  g.strokeStyle = D3.iv; g.lineWidth = r * 0.075; g.lineCap = 'round'; g.lineJoin = 'round';
+  // K: ivory stem and leg, gold rising arrow as the upper arm
+  g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = r * 0.12; g.strokeStyle = D3.iv;
+  g.beginPath(); g.moveTo(-0.3 * r, -0.4 * r); g.lineTo(-0.3 * r, 0.4 * r); g.moveTo(-0.22 * r, 0.04 * r); g.lineTo(0.32 * r, 0.4 * r); g.stroke();
+  const pts = [[-0.22, 0.04], [0.0, -0.12], [0.08, -0.04], [0.3, -0.3]].map(([a, b]) => [a * r, b * r]);
+  g.strokeStyle = d3_foil(g, -r * 0.3, -r * 0.4, r * 0.4, r * 0.1);
   g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke();
-  g.fillStyle = d3_foil(g, pts[3][0] - r * 0.1, pts[3][1] - r * 0.1, pts[3][0] + r * 0.1, pts[3][1] + r * 0.1);
-  g.beginPath(); g.arc(pts[3][0], pts[3][1], r * 0.1, 0, TAU); g.fill();
+  const e = pts[3], an = Math.atan2(e[1] - pts[2][1], e[0] - pts[2][0]), hs = r * 0.19;
+  g.fillStyle = d3_foil(g, e[0] - r * 0.2, e[1] - r * 0.2, e[0] + r * 0.2, e[1] + r * 0.2);
+  g.beginPath(); g.moveTo(e[0] + Math.cos(an) * hs, e[1] + Math.sin(an) * hs);
+  g.lineTo(e[0] + Math.cos(an + 2.3) * hs, e[1] + Math.sin(an + 2.3) * hs); g.lineTo(e[0] + Math.cos(an - 2.3) * hs, e[1] + Math.sin(an - 2.3) * hs); g.closePath(); g.fill();
   g.restore();
-  if (o.glint) d3_glint(g, x + pts[3][0], y + pts[3][1], r * 0.35, o.glint);
+  if (o.glint) d3_glint(g, x + e[0], y + e[1], r * 0.35, o.glint);
 }
-// serif wordmark: "AllInvest" ivory roman (Playfair's capital I keeps its serifs) + "View" gold italic
+// serif wordmark: "Kripto" ivory roman + "724" gold italic
 function d3_wordmark(g, x, y, s, o = {}) {
   const A = { f: D3_PF, w: 700, s, a: 'left', ls: -s * 0.005 }, B = { ...A, it: true };
-  const wa = measure(g, 'AllInvest', A), wb = measure(g, 'View', B), sp = s * 0.03, total = wa + sp + wb;
+  const wa = measure(g, 'Kripto', A), wb = measure(g, '724', B), sp = s * 0.04, total = wa + sp + wb;
   const x0 = o.a === 'left' ? x : o.a === 'right' ? x - total : x - total / 2;
-  d3_ivory(g, 'AllInvest', x0, y, A);
-  d3_gold(g, 'View', x0 + wa + sp, y, B, { sweep: o.sweep, glow: 0.35 });
+  d3_ivory(g, 'Kripto', x0, y, A);
+  d3_gold(g, '724', x0 + wa + sp, y, B, { sweep: o.sweep, glow: 0.35 });
   return total;
 }
 // text set along a circle, centred on angle a0 (−π/2 = top); fills the circle when o.fill
@@ -463,7 +472,7 @@ const D3_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Tek görünüm',
-    desc: 'Siyah sahnede altın bir çizgi çerçeveyi iki yönden çizer; "tek bir görünümde." altın varak ışığıyla parlar ve AllInvestView imzası belirir.',
+    desc: 'Siyah sahnede altın bir çizgi çerçeveyi iki yönden çizer; "tek bir görünümde." altın varak ışığıyla parlar ve Kripto724 imzası belirir.',
     draw(g) {
       d3_bg(g, { ly: 500, lr: 1000 });
       d3_sweep(g, 0.6, 0.06);
@@ -472,7 +481,7 @@ const D3_SCENES = [
       d3_ivory(g, 'Tüm yatırımlarınız,', CX, 430, { f: D3_PF, w: 700, s: 108, ls: -1 });
       d3_gold(g, 'tek bir görünümde.', CX, 580, { f: D3_PF, w: 700, it: true, s: 132, ls: -1 }, { sweep: 0.64, glow: 0.4 });
       d3_hair(g, CX - 260, 650, CX + 260, 650, 0.6, 1.2);
-      const wm = measure(g, 'AllInvest', { f: D3_PF, w: 700, s: 80 }) + measure(g, 'View', { f: D3_PF, w: 700, it: true, s: 80 });
+      const wm = measure(g, 'Kripto', { f: D3_PF, w: 700, s: 80 }) + 80 * 0.04 + measure(g, '724', { f: D3_PF, w: 700, it: true, s: 80 });
       const total = 96 + 34 + wm, x0 = CX - total / 2;
       d3_mark(g, x0 + 48, 768, 46, { glint: 0.9 });
       d3_wordmark(g, x0 + 96 + 34, 796, 80, { a: 'left', sweep: 0.2 });
@@ -944,7 +953,7 @@ const D3_SCENES = [
       const lw = measure(g, lbl, lo), lx = CX - (lw + 70) / 2;
       text(g, lbl, lx, by + 59, { ...lo, a: 'left', c: '#1A1408' });
       d3_arrow(g, lx + lw + 22, by + 48, 46, '#1A1408', 3);
-      text(g, 'www.kripto724.com/app', CX, 845, { f: D3_MR, w: 600, s: 44, ls: 1, c: D3.iv });
+      text(g, 'kripto724.com', CX, 845, { f: D3_MR, w: 600, s: 44, ls: 1, c: D3.iv });
       d3_hair(g, CX - 230, 876, CX + 230, 876, 0.5, 1);
       text(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1030, { f: D3_MR, w: 500, s: 22, c: '#948B78' });
       d3_glint(g, cx0 + 22, cy0 + 22 + 30, 34, 0.9);

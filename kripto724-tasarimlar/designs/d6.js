@@ -541,7 +541,7 @@ function d6_ferry(g, x, wy, L, o = {}) {
   g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(mx, my, Math.max(1.4, L * 0.007), 0, TAU); g.fill();
   return { mx, my, top: Math.min(my, wy + d2 - uh - L * 0.15) };
 }
-// classic İstanbul pier (iskele) with a clock tower; the clock face is the AllInvestView mark
+// classic İstanbul pier (iskele) with a clock tower; the clock face is the Kripto724 mark
 function d6_iskele(g, x, wy, s) {
   const deck = wy - s * 0.04, bh = s * 0.25, top = deck - bh;
   g.fillStyle = '#070A20';
@@ -566,7 +566,7 @@ function d6_iskele(g, x, wy, s) {
   for (let i = 0; i <= 10; i++) { const lx = x - s * 0.56 + i * s * 0.112; addGlow(g, D6.gold, lx, deck - s * 0.03, 12, 0.6); g.fillStyle = '#FFF0C8'; g.beginPath(); g.arc(lx, deck - s * 0.03, 1.8, 0, TAU); g.fill(); }
   // sign band with the wordmark
   g.fillStyle = '#0B1030'; g.fillRect(x - s * 0.5, top + 2, s, s * 0.07);
-  wordmark(g, x, top + 2 + s * 0.055, s * 0.05, null, { c: D6.paper });
+  wordmark(g, x, top + 2 + s * 0.055, s * 0.05, null, { c: D6.paper, accent: D6.gold });
   // clock tower
   const tw = s * 0.15, tTop = top - s * 0.3;
   g.fillStyle = mixHex(D6.navy, D6.paper, 0.26); g.fillRect(x - tw / 2, tTop, tw, top - s * 0.08 - tTop + 2);
@@ -576,7 +576,7 @@ function d6_iskele(g, x, wy, s) {
   g.fillStyle = D6.gold; g.beginPath(); g.arc(x, tTop - s * 0.17, 3, 0, TAU); g.fill();
   const mr = tw * 0.33, my = tTop + tw * 0.62;
   addGlow(g, D6.teal, x, my, mr * 3, 0.5);
-  drawMark(g, x, my, mr, { th: 0.28 });
+  drawMark(g, x, my, mr, { th: 0.24, col: D6.teal, col2: D6.gold, arrow: D6.gold });
   return { x, y: top, tTop, my, deck };
 }
 
@@ -756,7 +756,7 @@ const D6_SCENES = [
   },
   {
     time: '4–8 sn', title: 'Vaat: Köprü yanar',
-    desc: 'Kamera Boğaz\'ın üstüne yükselir; köprünün kablo ışıkları uçtan uca yanar. AllInvestView, suda titreyen yansımasıyla belirir.',
+    desc: 'Kamera Boğaz\'ın üstüne yükselir; köprünün kablo ışıkları uçtan uca yanar. Kripto724, suda titreyen yansımasıyla belirir.',
     draw(g) {
       const hz = 735;
       const P = d6_panorama(g, hz, {
@@ -776,7 +776,7 @@ const D6_SCENES = [
       d6_serif(g, 'tek ekranda.', CX, 335, 132, D6.gold, { a: 'center', it: true, glow: 0.75 });
       const bg = g.createRadialGradient(CX, 880, 30, CX, 880, 560); bg.addColorStop(0, 'rgba(5,8,24,0.72)'); bg.addColorStop(1, 'rgba(5,8,24,0)');
       g.fillStyle = bg; g.fillRect(0, 760, W, 320);
-      d6_float(g, 908, x => { x.save(); x.shadowColor = hexA(D6.gold, 0.5); x.shadowBlur = 30; wordmark(x, CX, 892, 104, null, { c: D6.paper }); x.restore(); }, { a: 0.3, depth: 160, amp: 9, h1: 5 });
+      d6_float(g, 908, x => { x.save(); x.shadowColor = hexA(D6.gold, 0.5); x.shadowBlur = 30; wordmark(x, CX, 892, 112, null, { c: D6.paper, accent: D6.gold }); x.restore(); }, { a: 0.3, depth: 160, amp: 9, h1: 5 });
       d6_sans(g, 'TEK NET GÖRÜNÜM', CX, 1052, 22, D6.soft, { a: 'center', w: 800, ls: 6 });
     },
   },
@@ -1309,8 +1309,8 @@ const D6_SCENES = [
       d6_streak(g, sx, hz, 240, '#FFE3A6', 170, 0.7, 3);
       d6_float(g, hz + 34, x => d6_kiz(x, sx - 110, hz + 34, 230, { sil: '#140F33' }), { a: 0.35, depth: 120 });
       [[1640, 430, 32, 0.2], [1720, 470, 22, 0.7], [1580, 500, 18, 0.5]].forEach(([x, y, s, f]) => d6_gull(g, x, y, s, { flap: f, col: '#1A1640' }));
-      drawMark(g, CX, 165, 74, { glow: 0.6 });
-      g.save(); g.shadowColor = 'rgba(10,8,40,0.55)'; g.shadowBlur = 30; wordmark(g, CX, 375, 124, null, { c: D6.paper }); g.restore();
+      drawMark(g, CX, 165, 74, { glow: 0.6, col: D6.teal, col2: D6.gold, arrow: D6.gold });
+      g.save(); g.shadowColor = 'rgba(10,8,40,0.55)'; g.shadowBlur = 30; wordmark(g, CX, 375, 132, null, { c: D6.paper, accent: D6.gold }); g.restore();
       d6_serif(g, 'Tüm yatırımların, tek ekranda.', CX, 445, 42, D6.paper, { a: 'center', it: true });
       const bw = 820, bh = 96, by = 545;
       g.save(); g.shadowColor = 'rgba(13,19,51,0.55)'; g.shadowBlur = 40; g.shadowOffsetY = 12;
@@ -1319,7 +1319,7 @@ const D6_SCENES = [
       g.fillStyle = D6.red; g.beginPath(); g.arc(CX - bw / 2 + 50, by, 9, 0, TAU); g.fill(); addGlow(g, D6.red, CX - bw / 2 + 50, by, 26, 0.6);
       d6_sans(g, 'Ücretsiz başla — kredi kartı gerekmez', CX - 6, by + 12, 34, D6.paper, { w: 800, a: 'center' });
       d6_arrow(g, CX + bw / 2 - 58, by, 16, D6.gold, 4);
-      d6_sans(g, 'www.kripto724.com/app', CX, 668, 60, D6.navy, { w: 800, a: 'center', ls: -1 });
+      d6_sans(g, 'kripto724.com', CX, 668, 60, D6.navy, { w: 800, a: 'center', ls: -1 });
       d6_sans(g, 'Örnek veriler gösterilmektedir. Yatırım tavsiyesi değildir.', CX, 1048, 21, hexA(D6.paper, 0.75), { w: 500, a: 'center' });
     },
   },

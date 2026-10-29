@@ -5,28 +5,29 @@ showing all 9 scenes. The client picks one, and that design is then animated int
 with the pipeline in `allinvestview-showreel/`. The scene drawings therefore need to be
 animatable, so draw them the way the showreel does (canvas 2D, pure functions, no external images).
 
-- **Subject:** AllInvestView, the portfolio tracker for every asset (stocks, ETFs, bonds,
-  options, crypto, real estate, funds, cash), offered at **www.kripto724.com/app**.
+- **Brand:** **Kripto724**, a portfolio tracking platform for every asset (stocks, ETFs, bonds,
+  options, crypto, real estate, funds, cash). Address: **kripto724.com**. No other brand name or
+  product name appears anywhere in the film.
 - **Audience:** Turkish investors who also hold crypto. **All on-screen copy is in Turkish.**
 - **Format:** 16:9, 1920×1080, ~40 s, 120 BPM (every cut on a 2-second bar).
-- The kripto724.com site could not be reached from the build environment, so do not invent a
-  kripto724 logo or brand identity. Write "kripto724.com/app" as plain text only. The product name
-  "AllInvestView" can use `wordmark()` from `lib/core.js` (capital I with serifs, "View" in gradient)
-  or be set in the design's own typeface.
+- The kripto724.com site could not be reached from the build environment, so the official logo
+  is unknown. `drawMark()` (a 24-hour ring with a K whose upper arm is a rising arrow) and
+  `wordmark()` ("Kripto724", with "724" in the accent colour) in `lib/core.js` stand in for it,
+  and each design passes its own colours and typeface. Swap in the official logo once it is supplied.
 
 ## Story (shared skeleton; each design tells it its own way)
 
 | # | Time | Scene | Content |
 |---|---|---|---|
 | 1 | 0–4 s | Hook | The problem: investments are scattered (stocks in one app, crypto on another exchange, calculations in a spreadsheet). |
-| 2 | 4–8 s | Promise | "Tüm yatırımların, tek ekranda." / "tek net görünüm". AllInvestView appears. |
+| 2 | 4–8 s | Promise | "Tüm yatırımların, tek ekranda." / "tek net görünüm". Kripto724 appears. |
 | 3 | 8–13 s | Dashboard | Total value, performance chart (vs S&P 500), daily change, holdings, allocation. |
 | 4 | 13–17 s | Every asset | 8 asset classes; 60+ markets, 50+ currencies. |
 | 5 | 17–21 s | Sync | Automatic sync with 25+ brokers; read-only; updated nightly. |
 | 6 | 21–25 s | Dividends | Dividend calendar, payments received, forecast. |
 | 7 | 25–31 s | Risk lab | 1,000-scenario Monte Carlo and/or efficient frontier, risk metrics. |
 | 8 | 31–35 s | Quick features | Benchmark · Tax report (FIFO/LIFO/average cost) · AI import · Crisis test. |
-| 9 | 35–40 s | Closing | "Ücretsiz başla — kredi kartı gerekmez" + **www.kripto724.com/app** + disclaimer. |
+| 9 | 35–40 s | Closing | "Ücretsiz başla — kredi kartı gerekmez" + **kripto724.com** + disclaimer. |
 
 ## Approved claims (do not add anything outside this list)
 
