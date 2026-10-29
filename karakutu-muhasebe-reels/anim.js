@@ -8,10 +8,10 @@
  *
  * Akış (120 BPM, 1 vuruş = 0.5 sn, 1 ölçü = 2 sn):
  *   0–4      Defter      veresiye defteri kendini yazar · "Hâlâ veresiye defteriyle mi?"
- *   4–8      Kapanış     kapak kapanır → kara kutu logosu → telefon · "Defter kapandı. Karakutu açıldı."
+ *   4–8      Kapanış     kapak kapanır → Karakutu logosu kendini çizer → telefon · "Defter kapandı. Karakutu açıldı."
  *   8–19.5   WhatsApp    hatırlatma kurulur → müşterinin telefonu → cevap → tahsilat → 8 cari
  *   19.5–32  Modüller    defterdeki her not telefona uçar: cari, stok, e-Fatura, gelen/giden, teklif
- *   32–38    Kapanış     modüller kutuya girer, logo, "Defteri kapat, Karakutu'yu aç.", adres
+ *   32–38    Kapanış     modüller logonun ortasına çekilir, logo kapanır, "Defteri kapat, Karakutu'yu aç.", adres
  */
 
 const W = 1080, H = 1920, FPS = 30, DUR = 38;
@@ -34,7 +34,7 @@ const T = {
   s3: 8.0, tapWa: 8.4, sheet: 8.55, toggle: 9.3, save: 9.85, sheetOut: 10.05,
   flipA: 10.5, notif: 11.0, tapNotif: 11.45, chatOpen: 11.55, bubble: 11.95, reply: 13.4, read: 13.9,
   flipB: 14.5, paid: 15.0, toast: 15.3, many: 16.0, send0: 16.45,
-  s4: 19.5, mod: 2.5, s5: 32.0, cube: 34.0,
+  s4: 19.5, mod: 2.5, s5: 32.0, logo: 34.0,
 };
 
 /* ───────────────────────── yardımcılar ───────────────────────── */
@@ -208,27 +208,38 @@ function icon(g, name, x, y, size, col, lw = 2) {
   g.stroke(IC[name]); g.restore();
 }
 
-/* ───────────────────────── logo: izometrik kara kutu (yer tutucu) ───────────────────────── */
-const CUBE = {
-  top: P('M50 6 92 29 50 52 8 29Z'), left: P('M8 29 50 52 50 96 8 73Z'), right: P('M50 52 92 29 92 73 50 96Z'),
-  edge: P('M8 29 50 52 92 29'), out: P('M50 6 92 29 92 73 50 96 8 73 8 29Z'),
+/* ───────────────────────── logo: Karakutu işareti ───────────────────────── */
+// assets/karakutu-logo.svg ile birebir: 1000 birimlik kutu, çizgi kalınlığı 44, yuvarlak uç ve köşe.
+// Çizerek kurmak için çubuklar ortadan dışa, eşkenar dörtgen soldan sağa iki yarım hâlinde ilerler.
+const MARK = {
+  w: 44,
+  bars: [[[240, 500], [240, 240]], [[240, 500], [240, 760]], [[760, 500], [760, 240]], [[760, 500], [760, 760]]],
+  dia: [[[240, 500], [500, 300], [760, 500]], [[240, 500], [500, 700], [760, 500]]],
 };
-// o.l / o.r / o.tp: yüzlerin görünme ölçeği (0..1), o.dy: üst yüzün düşüş kayması, o.rim: koyu zeminde kenar çizgisi
-function cube(g, x, y, s, o = {}) {
-  g.save(); g.translate(x, y); g.scale(s / 100, s / 100); g.translate(-50, -51);
-  const face = (path, col, a, cx, cy, dy = 0) => {
-    if (a <= 0.001) return;
-    g.save(); g.translate(cx, cy + dy); g.scale(a, a); g.translate(-cx, -cy);
-    g.fillStyle = col; g.fill(path);
-    if (o.rim) { g.strokeStyle = 'rgba(255,255,255,0.10)'; g.lineWidth = 1.2; g.stroke(path); }
-    g.restore();
-  };
-  face(CUBE.left, '#2C2E35', o.l ?? 1, 29, 62);
-  face(CUBE.right, '#15161A', o.r ?? 1, 71, 62);
-  face(CUBE.top, C.or, o.tp ?? 1, 50, 29, o.dy || 0);
-  if ((o.tp ?? 1) > 0.98 && Math.abs(o.dy || 0) < 0.5) { g.strokeStyle = '#FFB07A'; g.lineWidth = 2; g.lineJoin = 'round'; g.stroke(CUBE.edge); }
+function polyPart(g, pts, p) { // çoklu çizginin baştan p oranlık kısmı
+  const L = []; let tot = 0;
+  for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+  let rem = tot * p;
+  g.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length && rem > 0; i++) {
+    const k = Math.min(1, rem / L[i - 1]);
+    g.lineTo(lerp(pts[i - 1][0], pts[i][0], k), lerp(pts[i - 1][1], pts[i][1], k));
+    rem -= L[i - 1];
+  }
+}
+// s: 1000 birimlik kutunun boyu (işaret bunun ~%56'sını kaplar). o.bars / o.dia: çizim ilerlemesi 0..1
+function mark(g, x, y, s, col, o = {}) {
+  const bars = o.bars ?? 1, dia = o.dia ?? 1;
+  if (bars <= 0 && dia <= 0) return;
+  g.save(); g.translate(x, y); g.scale(s / 1000, s / 1000); g.translate(-500, -500);
+  g.strokeStyle = col; g.lineWidth = MARK.w; g.lineCap = 'round'; g.lineJoin = 'round';
+  g.beginPath();
+  if (bars > 0) for (const b of MARK.bars) polyPart(g, b, bars);
+  if (dia > 0) for (const d of MARK.dia) polyPart(g, d, dia);
+  g.stroke();
   g.restore();
 }
+const markBuild = (t, t0) => ({ bars: E.outCubic(prog(t, t0, t0 + 0.24)), dia: E.inOutCubic(prog(t, t0 + 0.1, t0 + 0.42)) });
 
 /* ───────────────────────── arka plan sprite'ları ───────────────────────── */
 function grain(x, w, h, amt, seed) {
@@ -501,15 +512,9 @@ function scene1(g, t) {
 const PH = { W: 640, H: 1300, r: 96, bz: 18 };
 PH.SW = PH.W - PH.bz * 2; PH.SH = PH.H - PH.bz * 2; PH.sr = PH.r - PH.bz;
 const PCX = 540, PCY = 1252;
-const LOGO_COVER = { x: 540, y: 700, s: 260 };
-const LOGO_SPLASH = { x: PH.SW / 2, y: PH.SH / 2 - 60, s: 190 };
+const LOGO_COVER = { x: 540, y: 1150, s: 420 }; // yazının altında: telefona geçerken yazıyla kesişmesin
+const LOGO_SPLASH = { x: PH.SW / 2, y: PH.SH / 2 - 60, s: 290 };
 
-function cubeBuild(t, t0) { // yüzler sırayla: sol, sağ, üst (düşerek)
-  return {
-    l: clamp(spring(t - t0, 2.4, 9)), r: clamp(spring(t - t0 - 0.08, 2.4, 9)),
-    tp: t >= t0 + 0.16 ? 1 : 0, dy: -60 * (1 - E.inQuad(prog(t, t0 + 0.16, t0 + 0.32))), rim: true,
-  };
-}
 function traceRect(g, x, y, w, h, r, p, a, lw) { // turuncu kenar: üst ortadan iki yöne
   if (p <= 0 || a <= 0) return;
   const per = 2 * (w + h) - (8 - 2 * Math.PI) * r, len = per * p / 2, top = w / 2;
@@ -541,7 +546,7 @@ function scene2(g, t) { // kapak (tam ekran) → telefon gövdesi
   const lx = lerp(LOGO_COVER.x, sp.x, m), ly = lerp(LOGO_COVER.y, sp.y, m), ls = lerp(LOGO_COVER.s, LOGO_SPLASH.s, m);
   if (t >= T.trace + 0.1) {
     glow(g, SPR.or, lx, ly, ls * 1.6, 0.35 * ap(t, T.trace + 0.3, 0.3));
-    cube(g, lx, ly, ls, cubeBuild(t, T.trace + 0.1));
+    mark(g, lx, ly, ls, '#fff', markBuild(t, T.trace + 0.1));
   }
 }
 
@@ -601,7 +606,7 @@ function appTop(g, title, time, o = {}) {
   if (o.back) icon(g, 'back', 40, 150, 34, C.ink, 2.6);
   text(g, 'Yılmaz Ticaret', x, 118, { f: 'Txt', w: 600, s: 21, c: C.mute, a: 'left' });
   text(g, title, x, 172, { f: 'Disp', w: 900, s: 48, c: C.ink, a: 'left', ls: -0.5 });
-  cube(g, SW - 60, 140, 62);
+  mark(g, SW - 60, 140, 96, C.ink);
 }
 function tabBar(g, active) {
   const y = SH - 122;
@@ -654,7 +659,7 @@ function scrSplash(g, t) {
   g.fillStyle = '#0B0B0D'; g.fillRect(0, 0, SW, SH);
   const pulse = 1 + 0.04 * Math.sin((t - T.morph1) * 9) * (1 - ap(t, T.open - 0.1, 0.1));
   glow(g, SPR.or, LOGO_SPLASH.x, LOGO_SPLASH.y, 300, 0.35 + 0.25 * ap(t, T.morph1, 0.3));
-  cube(g, LOGO_SPLASH.x, LOGO_SPLASH.y, LOGO_SPLASH.s * pulse, { rim: true });
+  mark(g, LOGO_SPLASH.x, LOGO_SPLASH.y, LOGO_SPLASH.s * pulse, '#fff');
   const a = ap(t, T.morph1 - 0.05, 0.25);
   g.globalAlpha = a;
   text(g, 'karakutu', SW / 2, LOGO_SPLASH.y + 190, { f: 'Disp', w: 900, s: 58, c: '#fff', ls: -1 });
@@ -780,7 +785,7 @@ function scrChat(g, t) {
   statusBar(g, t < T.reply ? '09:00' : '09:04', '#fff');
   icon(g, 'back', 34, 132, 34, '#fff', 2.6);
   g.fillStyle = C.ink; g.beginPath(); g.arc(98, 132, 36, 0, TAU); g.fill();
-  cube(g, 98, 133, 48);
+  mark(g, 98, 132, 70, '#fff');
   text(g, 'Yılmaz Ticaret', 150, 124, { f: 'Txt', w: 700, s: 28, c: '#fff', a: 'left' });
   text(g, 'işletme hesabı', 150, 156, { f: 'Txt', w: 500, s: 20, c: '#A9D8C3', a: 'left' });
   pill(g, 'BUGÜN', SW / 2, 206, { f: 'Txt', w: 700, s: 17, c: '#4D6470', bg: '#DCEFF7', a: 'center', h: 34, px: 16, ls: 1.5 });
@@ -1214,7 +1219,7 @@ function headlines(g, t) {
   // "Defter kapandı." kapakta doğar, sonra yukarı kayar
   if (t >= T.close && t < T.s3) {
     const m = E.inOutCubic(prog(t, T.morph0, T.morph1));
-    const y = lerp(1060, HL.y1, m), s = lerp(124, o.s, m), q = ap(t, T.s3 - 0.25, 0.25);
+    const y = lerp(800, HL.y1, m), s = lerp(124, o.s, m), q = ap(t, T.s3 - 0.25, 0.25);
     const oo = fit(g, 'Defter kapandı.', { ...o, s }, 960);
     if (q < 1) letters(g, 'Defter kapandı.', 540, y - q * 40, { ...oo, c: '#fff' }, (i, n) => {
       const p = E.outExpo(clamp((t - T.close - i * 0.018) / 0.25));
@@ -1250,15 +1255,15 @@ function headlines(g, t) {
 
 /* ───────────────────────── 5. KAPANIŞ (32–38 sn) ───────────────────────── */
 const ORB = [['box', 'Stok'], ['users', 'Cari'], ['inv', 'e-Fatura'], ['io', 'Gelen / Giden'], ['quote', 'Teklif'], ['chat', 'WhatsApp']];
-const END = { x: 540, y: 800, s: 300 };
+const END = { x: 540, y: 800, s: 470 };
 const SPARK = (() => { const r = mulberry32(44), a = []; for (let i = 0; i < 70; i++) a.push([r() * TAU, 0.3 + r() * 0.7, r(), r()]); return a; })();
 function bgEnd(g, t, a) {
   g.save(); g.globalAlpha *= a;
   g.fillStyle = '#07070A'; g.fillRect(0, 0, W, H);
-  glow(g, SPR.or, END.x, END.y, 900, 0.4 + 0.3 * ap(t, T.cube, 0.4));
-  if (t > T.cube) { // dönen ışık hüzmeleri
-    const ra = ap(t, T.cube, 0.6);
-    g.save(); g.translate(END.x, END.y); g.rotate((t - T.cube) * 0.12); g.globalCompositeOperation = 'lighter';
+  glow(g, SPR.or, END.x, END.y, 900, 0.4 + 0.3 * ap(t, T.logo, 0.4));
+  if (t > T.logo) { // dönen ışık hüzmeleri
+    const ra = ap(t, T.logo, 0.6);
+    g.save(); g.translate(END.x, END.y); g.rotate((t - T.logo) * 0.12); g.globalCompositeOperation = 'lighter';
     for (let i = 0; i < 12; i++) {
       g.rotate(TAU / 12);
       const gr = g.createLinearGradient(0, 0, 0, -1300);
@@ -1272,13 +1277,13 @@ function bgEnd(g, t, a) {
 function scene5(g, t) {
   const burst = T.s5 + 0.55;
   // modül ikonları: patlar, döner, kutuya çekilir
-  const out = E.outBack(prog(t, burst, burst + 0.5)), suck = E.inBack(prog(t, T.cube - 0.42, T.cube - 0.08));
-  if (t >= burst && t < T.cube) {
+  const out = E.outBack(prog(t, burst, burst + 0.5)), suck = E.inBack(prog(t, T.logo - 0.42, T.logo - 0.08));
+  if (t >= burst && t < T.logo) {
     ORB.forEach(([ic, lb], i) => {
       const a = i / ORB.length * TAU - Math.PI / 2 + (t - burst) * 1.1;
       const r = 340 * out * (1 - suck);
       const x = END.x + Math.cos(a) * r, y = END.y + Math.sin(a) * r * 0.92, s = lerp(1, 0.3, suck);
-      g.save(); g.translate(x, y); g.scale(s, s);
+      g.save(); g.translate(x, y); g.scale(s, s); g.globalAlpha *= 1 - E.inQuad(suck);
       shadowOn(g, 30, 10, 'rgba(0,0,0,0.5)');
       g.fillStyle = C.or; g.beginPath(); g.arc(0, 0, 58, 0, TAU); g.fill(); shadowOff(g);
       icon(g, ic, 0, 0, 58, '#fff', 2);
@@ -1290,16 +1295,22 @@ function scene5(g, t) {
   // patlama parlaması
   const fl = kick(t - burst, 6);
   if (t >= burst) glow(g, SPR.white, END.x, END.y, 500 * fl + 50, fl);
-  // kutu
-  if (t >= T.cube - 0.32) {
-    const o = cubeBuild(t, T.cube - 0.32);
-    const sq = 1 + 0.06 * kick(t - T.cube, 8) * Math.cos((t - T.cube) * 40);
-    glow(g, SPR.or, END.x, END.y, 520, 0.6 * ap(t, T.cube, 0.3));
-    cube(g, END.x, END.y, END.s * sq, o);
-    const ring = ap(t, T.cube, 0.7, E.outCubic);
+  // logo: çubuklar fırlar, eşkenar dörtgen tam vuruşta kapanır
+  if (t >= T.logo - 0.42) {
+    const o = markBuild(t, T.logo - 0.42);
+    const sq = 1 + 0.06 * kick(t - T.logo, 8) * Math.cos((t - T.logo) * 40);
+    glow(g, SPR.or, END.x, END.y, 520, 0.6 * ap(t, T.logo, 0.3));
+    const fill = kick(t - T.logo, 3);
+    if (fill > 0.01) { // kapanış anında dörtgenin içi turuncu parlar
+      g.save(); g.translate(END.x, END.y); g.scale(END.s * sq / 1000, END.s * sq / 1000); g.translate(-500, -500);
+      g.fillStyle = `rgba(255,106,19,${0.85 * fill})`; g.beginPath(); g.moveTo(500, 300); g.lineTo(760, 500); g.lineTo(500, 700); g.lineTo(240, 500); g.closePath(); g.fill();
+      g.restore();
+    }
+    mark(g, END.x, END.y, END.s * sq, '#fff', o);
+    const ring = ap(t, T.logo, 0.7, E.outCubic);
     if (ring > 0 && ring < 1) { g.strokeStyle = `rgba(255,140,60,${1 - ring})`; g.lineWidth = 10 * (1 - ring); g.beginPath(); g.arc(END.x, END.y, 160 + 600 * ring, 0, TAU); g.stroke(); }
     for (const [a, sp, v, w] of SPARK) {
-      const dt = t - T.cube; if (dt <= 0) break;
+      const dt = t - T.logo; if (dt <= 0) break;
       const d = (180 + 900 * sp) * E.outCubic(clamp(dt / 1.4)), al = 1 - clamp(dt / (1.0 + w));
       if (al <= 0) continue;
       g.fillStyle = `rgba(255,${180 + v * 60 | 0},${110 + v * 80 | 0},${al})`;
@@ -1308,18 +1319,18 @@ function scene5(g, t) {
   }
   // yazılar
   const wm = { f: 'Disp', w: 900, s: 168, ls: -4 };
-  if (t >= T.cube + 0.15) {
+  if (t >= T.logo + 0.15) {
     letters(g, 'karakutu', 540, 1150, { ...wm, c: '#fff' }, (i, n) => {
-      const p = E.outBack(clamp((t - T.cube - 0.2 - i * 0.06) / 0.35));
+      const p = E.outBack(clamp((t - T.logo - 0.2 - i * 0.06) / 0.35));
       return { dy: (1 - p) * 80, al: clamp(p * 1.5), sc: lerp(0.6, 1, clamp(p)) };
     });
-    const m = ap(t, T.cube + 0.7, 0.5);
+    const m = ap(t, T.logo + 0.7, 0.5);
     g.save(); g.globalAlpha *= m;
     text(g, 'MUHASEBE', 540 + 13, 1220, { f: 'Txt', w: 700, s: 40, c: C.or, ls: lerp(60, 26, m) });
     g.restore();
   }
-  slotText(g, "Defteri kapat, Karakutu'yu aç.", 540, 1365, fit(g, "Defteri kapat, Karakutu'yu aç.", { f: 'Disp', w: 800, s: 66, c: '#fff', ls: -1 }, 940), ap(t, T.cube + 1.15, 0.5, E.lin));
-  const up = t - (T.cube + 1.65);
+  slotText(g, "Defteri kapat, Karakutu'yu aç.", 540, 1365, fit(g, "Defteri kapat, Karakutu'yu aç.", { f: 'Disp', w: 800, s: 66, c: '#fff', ls: -1 }, 940), ap(t, T.logo + 1.15, 0.5, E.lin));
+  const up = t - (T.logo + 1.65);
   if (up > 0) {
     const s = clamp(spring(up, 1.6, 7), 0, 1.3);
     const o = { f: 'Txt', w: 800, s: 46, c: C.ink }, tw = measure(g, 'karakutuveri.com/muhasebe', o) + 90;
@@ -1329,7 +1340,7 @@ function scene5(g, t) {
     text(g, 'karakutuveri.com/muhasebe', 0, 16, o);
     g.restore();
   }
-  const fa = ap(t, T.cube + 2.15, 0.5);
+  const fa = ap(t, T.logo + 2.15, 0.5);
   if (fa > 0) {
     g.save(); g.globalAlpha *= fa;
     const s = 'Stok · Cari · e-Fatura · Gelen/Giden · Teklif · WhatsApp';
@@ -1365,7 +1376,7 @@ function background(g, t) {
 
 /* ───────────────────────── kamera sarsıntısı ve ana çizim ───────────────────────── */
 const IMPACTS = [[2.0, 9], [2.25, 9], [2.5, 11], [2.75, 18], [T.close, 30], [T.open, 14],
-  ...[0, 1, 2, 3, 4].map(k => [modHit(k), 9]), [T.cube, 28]];
+  ...[0, 1, 2, 3, 4].map(k => [modHit(k), 9]), [T.logo, 28]];
 function shake(t) {
   let x = 0, y = 0, z = 0;
   IMPACTS.forEach(([ti, a], i) => {
@@ -1470,12 +1481,12 @@ function buildCues() {
   cue(T.s5 + 0.55, 'impact', { gain: 0.6 });
   ORB.forEach((o, i) => cue(T.s5 + 0.55 + i * 0.04, 'pop', { pitch: 1 + i * 0.12, gain: 0.3, pan: Math.cos(i / 6 * TAU) * 0.6 }));
   cue(T.s5 + 0.9, 'shimmer', { dur: 1.0, gain: 0.25 });
-  cue(T.cube - 0.45, 'whoosh', { dur: 0.42, f0: 6000, f1: 400, gain: 0.55 });
-  cue(T.cube - 0.32, 'pop', { pitch: 0.7, gain: 0.5 }); cue(T.cube - 0.24, 'pop', { pitch: 0.85, gain: 0.5 });
-  cue(T.cube, 'impact', { gain: 1, big: true });
-  cue(T.cube + 0.05, 'sparkle', { dur: 1.2, gain: 0.4 });
-  cue(T.cube + 1.15, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.25 });
-  cue(T.cube + 1.65, 'pop', { pitch: 1.1, gain: 0.5 }); cue(T.cube + 1.7, 'shine', { dur: 0.45, gain: 0.3 });
+  cue(T.logo - 0.45, 'whoosh', { dur: 0.42, f0: 6000, f1: 400, gain: 0.55 });
+  cue(T.logo - 0.32, 'pop', { pitch: 0.7, gain: 0.5 }); cue(T.logo - 0.24, 'pop', { pitch: 0.85, gain: 0.5 });
+  cue(T.logo, 'impact', { gain: 1, big: true });
+  cue(T.logo + 0.05, 'sparkle', { dur: 1.2, gain: 0.4 });
+  cue(T.logo + 1.15, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.25 });
+  cue(T.logo + 1.65, 'pop', { pitch: 1.1, gain: 0.5 }); cue(T.logo + 1.7, 'shine', { dur: 0.45, gain: 0.3 });
   return q.sort((a, b) => a.t - b.t);
 }
 

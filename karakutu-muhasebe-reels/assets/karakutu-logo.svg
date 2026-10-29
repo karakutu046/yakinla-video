@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <!-- Karakutu işareti: iki dikey çubuk ve aralarında, çubuklara ortadan değen eşkenar dörtgen.
+       Orijinal görselden ölçüldü (karakutu-logo-orijinal.webp ile örtüşme IoU 0.995). -->
+  <path d="M240 240V760M760 240V760M500 300 760 500 500 700 240 500Z" fill="none" stroke="#1A1A1A" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
