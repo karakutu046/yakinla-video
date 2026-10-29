@@ -88,6 +88,68 @@ footer.pick { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: cente
 footer.pick strong { color: var(--ink); }
 .rules { font-size: 12.5px; color: var(--muted); max-width: 90ch; }
 
+
+/* Kare animasyonları (SVG içinde). Taban durum = sahnenin okunur hâli; hareket azaltılınca o kalır. */
+.frame svg .fall { animation: fall .75s linear infinite; }
+.frame svg .fall.slow { animation-duration: 7s; }
+.frame svg .fall.mid { animation-duration: 3.6s; }
+.frame svg .sway { animation: sway 3.2s ease-in-out infinite alternate; }
+.frame svg .bob { transform-box: fill-box; transform-origin: center; animation: bob 2.4s ease-in-out infinite alternate; }
+.frame svg .pop { transform-box: fill-box; transform-origin: center; animation: pop 4.8s cubic-bezier(.2,.8,.25,1.15) infinite both; }
+.frame svg .ripple { transform-box: fill-box; transform-origin: center; animation: ripple 1.6s ease-out infinite; }
+.frame svg .halo { transform-box: fill-box; transform-origin: center; animation: halo 2.8s ease-out infinite; }
+.frame svg .spin { animation: spin 4s linear infinite; }
+.frame svg .flow { animation: flow 1.1s linear infinite; }
+.frame svg .route { animation: route 4.8s ease-in-out infinite; }
+.frame svg .drive { animation: drive 4.8s cubic-bezier(.15,.75,.25,1) infinite; }
+.frame svg .bounce { animation: bounce .42s ease-in-out infinite alternate; }
+.frame svg .jump { transform-box: fill-box; transform-origin: center; animation: jump 2.4s ease-in-out infinite; }
+.frame svg .door-close { transform-box: fill-box; transform-origin: left center; transform: scaleX(0); animation: door 4.8s ease-in-out infinite; }
+.frame svg .door-leaf { animation: leaf 4.8s ease-in-out infinite; }
+.frame svg .reveal { animation: reveal 4.8s ease-out infinite; }
+.frame svg .wiper { transform-box: view-box; transform: rotate(-60deg); animation: wipe 3.6s ease-in-out infinite; }
+.frame svg .mudglass { animation: mudglass 3.6s ease-in-out infinite; }
+.frame svg .grow { transform-box: fill-box; transform-origin: left center; animation: grow 4.8s ease-in-out infinite; }
+.frame svg .ticker { animation: ticker 7s linear infinite; }
+.frame svg .press { transform-box: fill-box; transform-origin: center; animation: press 2.4s ease-in-out infinite; }
+.frame svg .twinkle { animation: twinkle 1.9s ease-in-out infinite alternate; }
+.frame svg .slide { animation: slide 5s linear infinite; }
+.frame svg .scroll { animation: scroll 9s linear infinite; }
+.frame svg .scroll.fast { animation-duration: 4.5s; }
+.frame svg .vanmove { animation: vanmove 4.8s ease-in-out infinite; }
+.frame svg .d1 { animation-delay: -.6s; } .frame svg .d2 { animation-delay: -1.2s; } .frame svg .d3 { animation-delay: -1.8s; }
+.frame svg .s1 { animation-delay: .25s; } .frame svg .s2 { animation-delay: .5s; } .frame svg .s3 { animation-delay: .75s; } .frame svg .s4 { animation-delay: 1s; } .frame svg .s5 { animation-delay: 1.25s; } .frame svg .s6 { animation-delay: 1.5s; } .frame svg .s7 { animation-delay: 1.75s; }
+@keyframes fall { to { transform: translateY(var(--p, 320px)); } }
+@keyframes sway { from { transform: translateX(-3px); } to { transform: translateX(3px); } }
+@keyframes bob { from { transform: translateY(-2.5px); } to { transform: translateY(2.5px); } }
+@keyframes pop { 0%, 10% { transform: scale(.2); opacity: 0; } 22% { transform: scale(1.1); opacity: 1; } 30%, 100% { transform: scale(1); opacity: 1; } }
+@keyframes ripple { from { transform: scale(.45); opacity: .95; } to { transform: scale(1.9); opacity: 0; } }
+@keyframes halo { from { transform: scale(.8); opacity: .55; } to { transform: scale(1.35); opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes flow { to { stroke-dashoffset: -12; } }
+@keyframes route { 0% { transform: translate(-30px, 5px); } 100% { transform: translate(22px, -4px); } }
+@keyframes drive { 0% { transform: translateX(-130px); } 40%, 100% { transform: translateX(0); } }
+@keyframes bounce { from { transform: translateY(-1.2px); } to { transform: translateY(1px); } }
+@keyframes jump { 0%, 100% { transform: translate(-26px, 18px) rotate(4deg); } 45% { transform: translate(0, -14px) rotate(-12deg); } 75% { transform: translate(22px, 12px) rotate(2deg); } }
+@keyframes door { 0%, 18% { transform: scaleX(1); } 40%, 100% { transform: scaleX(0); } }
+@keyframes leaf { 0%, 18% { opacity: 0; } 34%, 100% { opacity: 1; } }
+@keyframes reveal { 0%, 30% { opacity: 0; transform: translateY(10px); } 52%, 100% { opacity: 1; transform: none; } }
+@keyframes wipe { 0%, 22% { transform: rotate(-60deg); } 48% { transform: rotate(16deg); } 74%, 100% { transform: rotate(-60deg); } }
+@keyframes mudglass { 0%, 26% { opacity: 1; } 46%, 92% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes grow { 0% { transform: scaleX(.12); } 70%, 100% { transform: scaleX(1); } }
+@keyframes ticker { to { transform: translateX(calc(-1 * var(--w, 200px))); } }
+@keyframes press { 0%, 55% { transform: scale(1); } 64% { transform: scale(.93); } 74%, 100% { transform: scale(1); } }
+@keyframes twinkle { from { opacity: .45; } to { opacity: 1; } }
+@keyframes slide { 0% { transform: translateY(-26px); opacity: 0; } 12% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(40px); opacity: 0; } }
+@keyframes scroll { to { transform: translateX(-180px); } }
+@keyframes vanmove { 0% { transform: translateX(-46px); } 70%, 100% { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .frame svg * { animation: none !important; } }
+body.still .frame svg * { animation-play-state: paused !important; }
+.motion { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--sheet); color: var(--ink); border-radius: 10px; padding: 7px 12px; font: 600 13px var(--font-body); cursor: pointer; }
+.motion:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.motion .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+body.still .motion .dot { background: var(--muted); }
+
 @media (max-width: 860px) {
   .board-head { grid-template-columns: auto 1fr; }
   .chips { grid-column: 1 / -1; justify-content: flex-start; max-width: none; }
@@ -195,6 +257,96 @@ footer.pick strong { color: var(--ink); }
   <circle cx="512" cy="414" r="20" fill="#0E5FE0"/>
   <circle cx="512" cy="414" r="10" fill="#3B8BFF"/>
 </symbol>
+    <!-- Premium ikon seti: degrade gövde, yumuşak gölge, ışık yansıması. 64 birimlik semboller. -->
+    <linearGradient id="g-cloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f1f5fc"/><stop offset="1" stop-color="#c9d6ea"/></linearGradient>
+    <linearGradient id="g-cloud-shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#9fb3d1" stop-opacity="0"/><stop offset="1" stop-color="#8aa0c2" stop-opacity=".55"/></linearGradient>
+    <linearGradient id="g-drop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".55" stop-color="#5aa9ff"/><stop offset="1" stop-color="#1f63d8"/></linearGradient>
+    <linearGradient id="g-ice" gradientUnits="userSpaceOnUse" x1="10" y1="6" x2="54" y2="58"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#8fc8ff"/></linearGradient>
+    <linearGradient id="g-mud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b07d45"/><stop offset="1" stop-color="#5a391b"/></linearGradient>
+    <linearGradient id="g-boot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset=".55" stop-color="#ffc23a"/><stop offset="1" stop-color="#e69400"/></linearGradient>
+    <radialGradient id="g-sun" cx=".38" cy=".35" r=".7"><stop offset="0" stop-color="#fff8cf"/><stop offset=".45" stop-color="#ffcf4a"/><stop offset="1" stop-color="#ff9a1a"/></radialGradient>
+    <linearGradient id="g-ray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#ffaa22"/></linearGradient>
+    <linearGradient id="g-ok" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ff0a0"/><stop offset="1" stop-color="#139a46"/></linearGradient>
+    <linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a6"/><stop offset=".45" stop-color="#ffcb3d"/><stop offset="1" stop-color="#e58f00"/></linearGradient>
+    <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9bff"/><stop offset=".55" stop-color="#1f73f0"/><stop offset="1" stop-color="#0b55cf"/></linearGradient>
+    <linearGradient id="g-bag-side" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a5fd6"/><stop offset="1" stop-color="#083f9f"/></linearGradient>
+    <linearGradient id="g-shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-white" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe7f3"/></linearGradient>
+    <filter id="f-soft" x="-40%" y="-40%" width="180%" height="190%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.2"/><feOffset dy="2.4"/><feComponentTransfer><feFuncA type="linear" slope=".32"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="f-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="f-blur"><feGaussianBlur stdDeviation="3"/></filter>
+    <path id="p-cloud" d="M17 48 C9 48 4 42.4 4 35.6 C4 28.8 9.2 23.6 15.8 23.2 C18.2 15 25.4 9 34 9 C44.2 9 52.2 16.6 53.2 26.4 C58 27.8 60.8 32.2 60.8 37.2 C60.8 43.2 56 48 50 48 Z"/>
+    <symbol id="i-cloud" viewBox="0 0 64 64" overflow="visible">
+      <use href="#p-cloud" fill="url(#g-cloud)"/><use href="#p-cloud" fill="url(#g-cloud-shade)"/>
+      <path d="M11.5 32 C12.8 27.2 17 24.4 21.4 24.8" stroke="#fff" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <path d="M26 16 C28.8 12.8 33 11.6 37 12.2" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".85"/>
+    </symbol>
+    <symbol id="i-drop" viewBox="0 0 64 64" overflow="visible">
+      <path d="M32 5 C32 5 15 26 15 38.5 A17 17 0 0 0 49 38.5 C49 26 32 5 32 5 Z" fill="url(#g-drop)"/>
+      <ellipse cx="25" cy="37" rx="3.6" ry="7.5" transform="rotate(-18 25 37)" fill="#fff" opacity=".65"/>
+    </symbol>
+    <symbol id="i-flake" viewBox="0 0 64 64" overflow="visible">
+      <g stroke="url(#g-ice)" stroke-width="3.4" stroke-linecap="round" fill="none" filter="url(#f-glow)">
+        <g id="arm"><line x1="32" y1="32" x2="32" y2="7"/><path d="M26 12 L32 17 L38 12"/><path d="M28 21 L32 24.5 L36 21"/></g>
+        <use href="#arm" transform="rotate(60 32 32)"/><use href="#arm" transform="rotate(120 32 32)"/><use href="#arm" transform="rotate(180 32 32)"/><use href="#arm" transform="rotate(240 32 32)"/><use href="#arm" transform="rotate(300 32 32)"/>
+      </g>
+      <polygon points="32,27 36.3,29.5 36.3,34.5 32,37 27.7,34.5 27.7,29.5" fill="#fff"/>
+    </symbol>
+    <symbol id="i-rain" viewBox="0 0 64 64" overflow="visible">
+      <use href="#i-cloud" x="0" y="-6" width="64" height="64"/>
+      <use href="#i-drop" x="13" y="40" width="13" height="17"/><use href="#i-drop" x="26" y="46" width="13" height="17"/><use href="#i-drop" x="39" y="40" width="13" height="17"/>
+    </symbol>
+    <symbol id="i-snow" viewBox="0 0 64 64" overflow="visible">
+      <use href="#i-cloud" x="0" y="-6" width="64" height="64"/>
+      <use href="#i-flake" x="12" y="41" width="17" height="17"/><use href="#i-flake" x="35" y="44" width="15" height="15"/>
+    </symbol>
+    <symbol id="i-mud" viewBox="0 0 64 64" overflow="visible">
+      <ellipse cx="32" cy="51" rx="27" ry="8.5" fill="url(#g-mud)"/>
+      <ellipse cx="32" cy="49.6" rx="25" ry="6.4" fill="none" stroke="#d3a46b" stroke-width="1.2" opacity=".7"/>
+      <ellipse cx="22" cy="50" rx="7" ry="1.8" fill="#e3bd8a" opacity=".55"/>
+      <path d="M12 41 C9 35 11 31 13 30 C13 34 15 37 17 40 Z" fill="#7d5229"/><path d="M53 40 C56 34 54 30 52 29 C52 33 50 36 48 39 Z" fill="#7d5229"/>
+      <circle cx="8" cy="30" r="2" fill="#8f5f31"/><circle cx="57" cy="27" r="1.7" fill="#8f5f31"/>
+      <path d="M24 8 H39 V33 C47 33 52.5 36 53.5 41 C54.2 44.6 51.5 46 48 46 H24 Z" fill="url(#g-boot)"/>
+      <rect x="24" y="43.2" width="30" height="4.4" rx="2" fill="#7a4a06"/>
+      <rect x="23" y="7" width="17" height="5.5" rx="2.2" fill="#f2ae1a"/>
+      <path d="M28 15 V37" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".55"/>
+      <path d="M24 36 C30 38 26 44 34 43" stroke="#6b4423" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".75"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 64 64" overflow="visible">
+      <g fill="url(#g-ray)"><rect x="29.5" y="2" width="5" height="11" rx="2.5"/><rect x="29.5" y="51" width="5" height="11" rx="2.5"/><rect x="2" y="29.5" width="11" height="5" rx="2.5"/><rect x="51" y="29.5" width="11" height="5" rx="2.5"/>
+        <rect x="29.5" y="2" width="5" height="11" rx="2.5" transform="rotate(45 32 32)"/><rect x="29.5" y="2" width="5" height="11" rx="2.5" transform="rotate(135 32 32)"/><rect x="29.5" y="2" width="5" height="11" rx="2.5" transform="rotate(225 32 32)"/><rect x="29.5" y="2" width="5" height="11" rx="2.5" transform="rotate(315 32 32)"/></g>
+      <circle cx="32" cy="32" r="15" fill="url(#g-sun)"/><path d="M23 27 C25 22.5 29 20.5 33 20.6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/>
+    </symbol>
+    <symbol id="i-partly" viewBox="0 0 64 64" overflow="visible">
+      <use href="#i-sun" x="22" y="-4" width="40" height="40"/><use href="#i-cloud" x="0" y="8" width="56" height="56"/>
+    </symbol>
+    <symbol id="i-ok" viewBox="0 0 64 64" overflow="visible">
+      <circle cx="32" cy="32" r="27" fill="url(#g-ok)"/><circle cx="32" cy="32" r="22.5" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+      <path d="M8 26 A25 25 0 0 1 56 26" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20.5 33 L28.5 41 L44 24.5" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 64 64" overflow="visible">
+      <path d="M32 4.5 L40.2 22.5 L59.5 24.4 L45 37.6 L49.2 57 L32 47 L14.8 57 L19 37.6 L4.5 24.4 L23.8 22.5 Z" fill="url(#g-gold)" stroke="#c97e00" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M32 9 L38.6 23.7 L32 30 Z" fill="#fff" opacity=".45"/><path d="M9.5 25.8 L23.8 24.4 L32 30 Z" fill="#fff" opacity=".25"/>
+    </symbol>
+    <symbol id="i-bag" viewBox="0 0 64 80" overflow="visible">
+      <path d="M19 24 C19 6 39 6 39 24" stroke="#08409f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <path d="M48 24 L58 28 L56 74 L46 78 Z" fill="url(#g-bag-side)"/>
+      <path d="M8 24 H48 L46 78 H10 Z" fill="url(#g-blue)"/>
+      <path d="M8 24 H48 L47.4 30 H8.6 Z" fill="#0b4fc4" opacity=".55"/>
+      <path d="M8 24 H48 L46 78 H10 Z" fill="url(#g-shine)"/>
+      <path d="M23 24 C23 10 35 10 35 24" stroke="#e8f1ff" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <circle cx="28" cy="49" r="12.5" fill="#fff"/><use href="#ylogo" x="16.5" y="37.5" width="23" height="23"/>
+      <text x="28" y="71" font-family="Inter, sans-serif" font-weight="800" font-size="7" fill="#fff" text-anchor="middle">Yakınla</text>
+    </symbol>
+    <symbol id="i-home" viewBox="0 0 64 64" overflow="visible">
+      <path d="M8 31 L32 10 L56 31 V56 H8 Z" fill="url(#g-white)"/><path d="M4 32 L32 7.5 L60 32" stroke="#0b55cf" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="25" y="36" width="14" height="20" rx="2" fill="url(#g-blue)"/><rect x="42" y="36" width="9" height="8" rx="1.5" fill="#ffc26b"/><circle cx="35.5" cy="47" r="1.3" fill="#fff"/>
+    </symbol>
+    <symbol id="i-depot" viewBox="0 0 64 64" overflow="visible">
+      <rect x="4" y="4" width="56" height="56" rx="15" fill="url(#g-blue)"/><rect x="4" y="4" width="56" height="56" rx="15" fill="url(#g-shine)"/>
+      <path d="M14 29 L32 18 L50 29 V48 H14 Z" fill="none" stroke="#fff" stroke-width="3.6" stroke-linejoin="round"/><path d="M21 48 V35 H43 V48 M21 41.5 H43" stroke="#fff" stroke-width="3" fill="none"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -203,7 +355,7 @@ footer.pick strong { color: var(--ink); }
     <div class="eyebrow">Yakınla · Reels / TikTok · 1080×1920 · 20 sn</div>
     <h1>Yağmurda, karda, çamurda: <em>Yakınla kapında.</em></h1>
     <p class="lead">Aynı mesajı dört farklı dille anlatan dört senaryo. Her biri tek ekranda, sahne sahne. Birini seç, videosunu o hâliyle hazırlayayım.</p>
-    <nav class="tabs" aria-label="Senaryolar" id="tabs"></nav>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><nav class="tabs" aria-label="Senaryolar" id="tabs"></nav><button class="motion" id="motion" type="button" aria-pressed="false"><span class="dot"></span><span id="motion-label">Animasyonu durdur</span></button></div>
   </header>
   <main id="boards"></main>
   <footer class="pick">
@@ -213,162 +365,187 @@ footer.pick strong { color: var(--ink); }
 </div>
 
 <script>
-// ---------- çizim yardımcıları (her kare 180×320 birimlik dikey SVG) ----------
+// Hikâye panosu: dört senaryo, her biri 6 animasyonlu kare (180×320 birimlik dikey SVG).
+// İkonlar sayfanın başındaki <defs> içinde tanımlı premium semboller (#i-*) üzerinden kullanılır.
+// Animasyon sınıfları CSS'te; taban durum her zaman sahnenin okunur hâlidir.
+
 let _u = 0;
 const uid = (p) => `${p}${++_u}`;
 const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 const lg = (id, stops, x1 = 0, y1 = 0, x2 = 0, y2 = 1) => `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${stops.map(([o, c, a = 1]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</linearGradient>`;
 const rg = (id, stops, cx = 0.5, cy = 0.5, r = 0.5) => `<radialGradient id="${id}" cx="${cx}" cy="${cy}" r="${r}">${stops.map(([o, c, a = 1]) => `<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')}</radialGradient>`;
-const T = (x, y, s, txt, o = {}) => `<text x="${x}" y="${y}" font-size="${s}" font-family="${o.f || 'Manrope, sans-serif'}" font-weight="${o.w || 700}" fill="${o.c || '#fff'}" text-anchor="${o.a || 'middle'}"${o.ls ? ` letter-spacing="${o.ls}"` : ''}${o.op ? ` opacity="${o.op}"` : ''}${o.it ? ' font-style="italic"' : ''}>${txt}</text>`;
-const BLUE = '#1F73F0', BLUE_L = '#3B8BFF', BLUE_D = '#0E5FE0', AMBER = '#FFB547', INK = '#0B1A33';
+const T = (x, y, s, txt, o = {}) => `<text x="${x}" y="${y}" font-size="${s}" font-family="${o.f || 'Manrope, sans-serif'}" font-weight="${o.w || 700}" fill="${o.c || '#fff'}" text-anchor="${o.a || 'middle'}"${o.ls ? ` letter-spacing="${o.ls}"` : ''}${o.op ? ` opacity="${o.op}"` : ''}>${txt}</text>`;
+const BLUE = '#1F73F0', BLUE_D = '#0E5FE0', AMBER = '#FFB547', INK = '#0B1A33';
+const DISPLAY = 'Bricolage Grotesque, sans-serif';
 const frameSvg = (body, label) => `<svg viewBox="0 0 180 320" role="img" aria-label="${label}">${body}</svg>`;
 
-const rain = (n, seed, x0, y0, w, h, len = 14, dx = -4, op = 0.55, col = '#cfe0ff', sw = 0.9) => {
+/** Premium ikon (sembol) — boyut kare; cls ile animasyon */
+const icon = (id, x, y, s, cls = '', shadow = true) => `<use href="#${id}" x="${x}" y="${y}" width="${s}" height="${id === 'i-bag' ? s * 1.25 : s}"${cls ? ` class="${cls}"` : ''}${shadow ? ' filter="url(#f-soft)"' : ''}/>`;
+const logo = (x, y, s) => `<use href="#ylogo" x="${x}" y="${y}" width="${s}" height="${s}"/>`;
+/** Animasyon sarmalayıcısı: transform özniteliği olan öğeye CSS animasyonu verilmez */
+const anim = (cls, inner, style = '') => `<g class="${cls}"${style ? ` style="${style}"` : ''}>${inner}</g>`;
+const at = (x, y, inner, s = 1) => `<g transform="translate(${x} ${y})${s !== 1 ? ` scale(${s})` : ''}">${inner}</g>`;
+
+// ---------- parçacıklar (kesintisiz döngü: içerik iki kopya, dönem p) ----------
+const rainLines = (n, seed, w, h, len, dx, sw) => {
   let s = '';
-  for (let i = 0; i < n; i++) { const x = x0 + rnd(seed + i * 3.1) * w, y = y0 + rnd(seed + i * 7.7) * h, l = len * (0.6 + rnd(seed + i) * 0.7); s += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + dx * l / len).toFixed(1)}" y2="${(y + l).toFixed(1)}"/>`; }
-  return `<g stroke="${col}" stroke-width="${sw}" stroke-linecap="round" opacity="${op}">${s}</g>`;
+  for (let i = 0; i < n; i++) {
+    const x = rnd(seed + i * 3.1) * (w + 20) - 10, y = rnd(seed + i * 7.7) * h, l = len * (0.6 + rnd(seed + i) * 0.7);
+    s += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + (dx * l) / len).toFixed(1)}" y2="${(y + l).toFixed(1)}" stroke-width="${(sw * (0.6 + rnd(seed + i * 2) * 0.8)).toFixed(2)}"/>`;
+  }
+  return s;
 };
-const snow = (n, seed, x0, y0, w, h, rmin = 0.7, rmax = 2.2, op = 0.9) => {
+const rainLoop = (n, seed, x0, y0, w, h, o = {}) => {
+  const L = rainLines(n, seed, w, h, o.len || 14, o.dx ?? -3, o.sw || 0.9);
+  return at(x0, y0, `<g stroke="${o.col || '#d6e6ff'}" stroke-linecap="round" opacity="${o.op ?? 0.55}">${anim(`fall${o.cls ? ' ' + o.cls : ''}`, `${L}<g transform="translate(0 ${-h})">${L}</g>`, `--p:${h}px`)}</g>`);
+};
+const flakes = (n, seed, w, h, rmin, rmax) => {
   let s = '';
-  for (let i = 0; i < n; i++) { const r = rmin + rnd(seed + i * 5.3) * (rmax - rmin); s += `<circle cx="${(x0 + rnd(seed + i * 2.9) * w).toFixed(1)}" cy="${(y0 + rnd(seed + i * 6.1) * h).toFixed(1)}" r="${r.toFixed(2)}" opacity="${(0.45 + rnd(seed + i) * 0.55).toFixed(2)}"/>`; }
-  return `<g fill="#fff" opacity="${op}">${s}</g>`;
+  for (let i = 0; i < n; i++) s += `<circle cx="${(rnd(seed + i * 2.9) * w).toFixed(1)}" cy="${(rnd(seed + i * 6.1) * h).toFixed(1)}" r="${(rmin + rnd(seed + i * 5.3) * (rmax - rmin)).toFixed(2)}" opacity="${(0.45 + rnd(seed + i) * 0.55).toFixed(2)}"/>`;
+  return s;
+};
+const snowLoop = (n, seed, x0, y0, w, h, o = {}) => {
+  const F = flakes(n, seed, w, h, o.rmin || 0.7, o.rmax || 2.3);
+  return at(x0, y0, `<g fill="#fff" opacity="${o.op ?? 0.95}"${o.glow ? ' filter="url(#f-glow)"' : ''}>${anim('sway', anim(`fall ${o.speed || 'slow'}`, `${F}<g transform="translate(0 ${-h})">${F}</g>`, `--p:${h}px`))}</g>`);
 };
 const splats = (n, seed, x0, y0, w, h, col = '#6b4a2b', rmax = 3) => {
   let s = '';
   for (let i = 0; i < n; i++) { const r = 0.6 + rnd(seed + i * 4.1) * rmax; s += `<ellipse cx="${(x0 + rnd(seed + i * 1.7) * w).toFixed(1)}" cy="${(y0 + rnd(seed + i * 8.3) * h).toFixed(1)}" rx="${r.toFixed(1)}" ry="${(r * (0.6 + rnd(i) * 0.5)).toFixed(1)}"/>`; }
   return `<g fill="${col}">${s}</g>`;
 };
-const logo = (x, y, s) => `<use href="#ylogo" x="${x}" y="${y}" width="${s}" height="${s}"/>`;
 
-/** Uygulamadaki logolu beyaz minibüs. Yerel ölçü: 100×52, sağa bakar. */
-const van = (x, y, s, o = {}) => {
-  const g = uid('vg');
-  return `<g transform="translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})">
-    <defs>${lg(g, [[0, '#ffffff'], [1, '#dfe6f1']])}</defs>
-    <ellipse cx="50" cy="51" rx="50" ry="3.2" fill="#000" opacity="${o.shadow ?? 0.25}"/>
-    ${o.lights ? `<polygon points="99,30 160,18 160,52" fill="${AMBER}" opacity="0.18"/>` : ''}
-    <path d="M2 12 Q2 6 8 6 H62 Q66 6 69 9 L82 22 Q97 24 99 30 V44 Q99 47 95 47 H5 Q2 47 2 44 Z" fill="url(#${g})" stroke="#b8c3d6" stroke-width="0.8"/>
-    <path d="M66 10 L79 23 H66 Z" fill="#2a4a7e"/><rect x="56" y="10" width="8" height="13" rx="1" fill="#2a4a7e"/>
-    <rect x="2" y="33" width="97" height="4" fill="${BLUE}"/>
-    <path d="M2 37 H99 V44 Q99 47 95 47 H5 Q2 47 2 44 Z" fill="${BLUE_D}" opacity="0.9"/>
-    ${logo(8, 9, 21)}
-    <text x="29" y="23" font-family="Inter, sans-serif" font-weight="800" font-size="8.5" fill="${BLUE}">Yakınla</text>
-    <line x1="54" y1="8" x2="54" y2="45" stroke="#b8c3d6" stroke-width="0.6"/>
-    <rect x="94" y="27" width="5" height="4" rx="1" fill="${o.lights ? '#fff3d0' : '#ffe6a8'}"/>
-    ${o.snow ? `<path d="M4 7 Q6 1 14 2 H58 Q64 1 64 7 Z" fill="#fff"/><path d="M70 12 Q76 10 80 17 L74 14 Z" fill="#fff"/>` : ''}
-    ${o.mud ? splats(26, 41, 2, 34, 97, 13, '#6b4a2b', 2.6) + splats(10, 77, 4, 26, 92, 8, '#7d5a36', 1.6) : ''}
-    ${o.wet ? `<path d="M6 14 H60" stroke="#fff" stroke-width="1.2" opacity="0.7"/>` : ''}
-    <circle cx="22" cy="47" r="8.2" fill="#1b2233"/><circle cx="22" cy="47" r="3.6" fill="#9aa4b5"/>
-    <circle cx="80" cy="47" r="8.2" fill="#1b2233"/><circle cx="80" cy="47" r="3.6" fill="#9aa4b5"/>
-    ${o.mud ? `<circle cx="22" cy="47" r="8.2" fill="none" stroke="#6b4a2b" stroke-width="2.2" stroke-dasharray="4 3"/><circle cx="80" cy="47" r="8.2" fill="none" stroke="#6b4a2b" stroke-width="2.2" stroke-dasharray="4 3"/>` : ''}
-  </g>`;
+/** Uygulamadaki logolu beyaz minibüs (yerel 100×52, sağa bakar) */
+const van = (o = {}) => {
+  const g = uid('vg'), w = uid('vw'), r = uid('vr');
+  return `<defs>${lg(g, [[0, '#ffffff'], [0.7, '#eef2f8'], [1, '#cfd9e8']])}${lg(w, [[0, '#4d6c9e'], [1, '#1d3561']])}${rg(r, [[0, '#d8dee8'], [1, '#6b7486']])}</defs>
+    <ellipse cx="50" cy="51.5" rx="49" ry="3.2" fill="#000" opacity="${o.shadow ?? 0.28}"/>
+    ${o.lights ? `<path d="M98 28 L170 12 L170 50 Z" fill="#fff3d0" opacity="0.16"/>` : ''}
+    <path d="M2 12 Q2 6 8 6 H62 Q66 6 69 9 L82 22 Q97 24 99 30 V44 Q99 47 95 47 H5 Q2 47 2 44 Z" fill="url(#${g})" stroke="#aebad0" stroke-width="0.7"/>
+    <path d="M66 10 L79 23 H66 Z" fill="url(#${w})"/><rect x="56" y="10" width="8" height="13" rx="1" fill="url(#${w})"/>
+    <path d="M67 12 L71 12 L66 18 Z" fill="#fff" opacity="0.35"/><path d="M57 11 L60 11 L57 15 Z" fill="#fff" opacity="0.35"/>
+    <path d="M2 33 H99 V37 H2 Z" fill="${BLUE}"/><path d="M2 37 H99 V44 Q99 47 95 47 H5 Q2 47 2 44 Z" fill="${BLUE_D}"/>
+    ${logo(8, 9, 21)}<text x="29" y="23" font-family="Inter, sans-serif" font-weight="800" font-size="8.6" fill="${BLUE}">Yakınla</text>
+    <line x1="54" y1="8" x2="54" y2="45" stroke="#aebad0" stroke-width="0.6"/><rect x="47" y="25" width="4" height="1.4" rx="0.7" fill="#8a96aa"/>
+    <rect x="94" y="27" width="5" height="4" rx="1" fill="#fff6dc"/>${o.lights ? `<circle cx="97" cy="29" r="5" fill="#fff3d0" opacity="0.35" filter="url(#f-glow)"/>` : ''}
+    <rect x="2" y="30" width="3" height="3" rx="0.8" fill="#ff4a3a"/>
+    ${o.snow ? `<path d="M4 7 Q6 0.5 14 1.5 H58 Q64 1 64 7 Z" fill="#fff"/><path d="M70 12 Q76 10 80 17 L74 14 Z" fill="#fff"/>` : ''}
+    ${o.wet ? `<path d="M6 13 H60" stroke="#fff" stroke-width="1.1" opacity="0.7"/><path d="M8 39 H96" stroke="#fff" stroke-width="0.6" opacity="0.35"/>` : ''}
+    ${o.mud ? splats(26, 41, 2, 34, 97, 13, '#5f3f22', 2.6) + splats(10, 77, 4, 25, 92, 8, '#7d5a36', 1.6) : ''}
+    ${[22, 80].map((cx) => `<circle cx="${cx}" cy="47" r="8.4" fill="#141924"/><circle cx="${cx}" cy="47" r="4.4" fill="url(#${r})"/><circle cx="${cx}" cy="47" r="1.4" fill="#3a4252"/>${o.mud ? `<circle cx="${cx}" cy="47" r="8.4" fill="none" stroke="#6b4a2b" stroke-width="2.4" stroke-dasharray="5 3"/>` : ''}`).join('')}`;
 };
+const vanAt = (x, y, s, o = {}, cls = '') => at(x, y, cls ? anim(cls, van(o)) : van(o), s);
 
-/** Kurye, önden (yüzsüz, sade çizim); poşeti uzatır. Yerel: ayaklar y=70 */
-const courierFront = (x, y, s, kind) => {
-  const jacket = kind === 'rain' ? '#2a7bf2' : '#1f5fd0';
-  const head = kind === 'rain'
-    ? `<path d="M-11 4 Q0 -14 11 4 L10 14 Q0 18 -10 14 Z" fill="#1d63d8"/><ellipse cx="0" cy="9" rx="6.5" ry="7" fill="#e8c6a6"/><path d="M-9 4 Q0 -3 9 4" fill="none" stroke="#174ea8" stroke-width="2"/>`
-    : kind === 'snow'
-      ? `<ellipse cx="0" cy="9" rx="7" ry="7.5" fill="#e8c6a6"/><path d="M-8 6 Q0 -7 8 6 Z" fill="${BLUE}"/><rect x="-8.5" y="4" width="17" height="3.4" rx="1.5" fill="#fff"/><circle cx="0" cy="-3" r="2.4" fill="#fff"/><path d="M-9 16 Q0 21 9 16 L8 20 Q0 24 -8 20 Z" fill="#e9eef7"/>`
-      : `<ellipse cx="0" cy="9" rx="7" ry="7.5" fill="#e8c6a6"/><path d="M-8 6 Q0 -4 8 6 Z" fill="${BLUE_D}"/><path d="M-1 5 H12 Q12 7 9 7 H-1 Z" fill="${BLUE_D}"/>`;
-  const boots = kind === 'mud' ? '#5a3d22' : '#151a24';
-  return `<g transform="translate(${x} ${y}) scale(${s})">
-    <rect x="-9" y="44" width="7" height="22" rx="2.5" fill="#1d2433"/><rect x="2" y="44" width="7" height="22" rx="2.5" fill="#1d2433"/>
-    <rect x="-10.5" y="63" width="9" height="7" rx="2.5" fill="${boots}"/><rect x="1.5" y="63" width="9" height="7" rx="2.5" fill="${boots}"/>
-    ${kind === 'mud' ? splats(10, 9, -12, 54, 24, 14, '#6b4a2b', 1.4) : ''}
-    <path d="M-14 22 Q-14 14 -6 13 H6 Q14 14 14 22 V47 Q14 50 10 50 H-10 Q-14 50 -14 47 Z" fill="${jacket}"/>
-    ${kind === 'snow' ? `<g stroke="#174ea8" stroke-width="0.8" opacity="0.7"><line x1="-13" y1="27" x2="13" y2="27"/><line x1="-13" y1="34" x2="13" y2="34"/><line x1="-13" y1="41" x2="13" y2="41"/></g><ellipse cx="-9" cy="15" rx="6" ry="2.2" fill="#fff"/><ellipse cx="9" cy="15" rx="6" ry="2.2" fill="#fff"/>` : ''}
-    ${kind === 'rain' ? `<path d="M-12 20 Q-10 16 -6 16" stroke="#fff" stroke-width="1.4" opacity="0.6" fill="none"/>` : ''}
-    <rect x="-14" y="38" width="28" height="2.4" fill="#d9f0ff" opacity="${kind === 'mud' ? 0.9 : 0.5}"/>
-    <path d="M-13 22 Q-18 30 -8 36" stroke="${jacket}" stroke-width="6" stroke-linecap="round" fill="none"/>
-    <path d="M13 22 Q18 30 8 36" stroke="${jacket}" stroke-width="6" stroke-linecap="round" fill="none"/>
-    <g transform="translate(-10 30)">
-      <rect x="0" y="0" width="20" height="22" rx="2" fill="${BLUE}"/><path d="M5 0 Q10 -7 15 0" fill="none" stroke="${BLUE_D}" stroke-width="1.6"/>
-      <circle cx="10" cy="10" r="6" fill="#fff"/>${logo(4, 4, 12)}
-      ${kind === 'rain' ? `<rect x="-1" y="-1" width="22" height="24" rx="3" fill="#dff1ff" opacity="0.28" stroke="#fff" stroke-width="0.6"/>` : ''}
-    </g>
-    ${head}
-  </g>`;
-};
-
-/** İçeriden bakış: kapı açık, dışarısı (outside) içeride çizilir */
-const doorway = (outside, kind) => {
-  const clip = uid('dc'), wall = uid('wl'), warm = uid('wm'), floor = uid('fl');
-  return `<defs>
-      ${lg(wall, [[0, '#4a2f1d'], [1, '#22150d']])}
-      ${rg(warm, [[0, '#ffcf8a', 0.55], [1, '#ffcf8a', 0]], 0.5, 0.2, 0.7)}
-      ${lg(floor, [[0, '#6b4126'], [1, '#2a180d']])}
-      <clipPath id="${clip}"><rect x="42" y="64" width="96" height="200"/></clipPath>
-    </defs>
-    <rect width="180" height="320" fill="url(#${wall})"/>
-    <g clip-path="url(#${clip})">${outside}</g>
-    <rect x="38" y="60" width="104" height="6" fill="#f0e6d8"/><rect x="38" y="60" width="5" height="206" fill="#f0e6d8"/><rect x="137" y="60" width="5" height="206" fill="#f0e6d8"/>
-    <polygon points="42,66 18,52 18,292 42,264" fill="#6a4029"/><polygon points="22,72 38,80 38,250 22,262" fill="#7d4c31" opacity="0.7"/><circle cx="36" cy="168" r="2.2" fill="#d9a441"/>
-    <rect x="0" y="264" width="180" height="56" fill="url(#${floor})"/>
-    <polygon points="42,264 138,264 168,320 12,320" fill="#ffcf8a" opacity="0.14"/>
-    <rect x="52" y="268" width="76" height="14" rx="3" fill="${kind === 'mud' ? '#4b3a2c' : '#3d4a5e'}"/>
-    ${kind === 'snow' ? snow(10, 5, 54, 266, 70, 8, 0.6, 1.4) : ''}${kind === 'mud' ? splats(8, 4, 60, 268, 60, 10, '#6b4a2b', 1.6) : ''}${kind === 'rain' ? `<ellipse cx="90" cy="276" rx="22" ry="3" fill="#9cc4ff" opacity="0.25"/>` : ''}
-    <rect width="180" height="320" fill="url(#${warm})"/>`;
-};
-
-const houses = (y, seed, col, lit = 0.55, snowRoof = false) => {
+const houses = (y, seed, col, lit = 0.55, snowRoof = false, w = 186) => {
   let s = '';
   let x = -6;
-  for (let i = 0; x < 186; i++) {
-    const w = 26 + rnd(seed + i) * 18, h = 22 + rnd(seed + i * 2.3) * 16;
-    s += `<rect x="${x.toFixed(1)}" y="${(y - h).toFixed(1)}" width="${w.toFixed(1)}" height="${(h + 4).toFixed(1)}" fill="${col}"/>`;
-    s += `<polygon points="${(x - 2).toFixed(1)},${(y - h).toFixed(1)} ${(x + w / 2).toFixed(1)},${(y - h - 10).toFixed(1)} ${(x + w + 2).toFixed(1)},${(y - h).toFixed(1)}" fill="${snowRoof ? '#f4f7ff' : col}" ${snowRoof ? '' : 'opacity="0.9"'}/>`;
+  for (let i = 0; x < w; i++) {
+    const hw = 26 + rnd(seed + i) * 18, h = 22 + rnd(seed + i * 2.3) * 16;
+    s += `<rect x="${x.toFixed(1)}" y="${(y - h).toFixed(1)}" width="${hw.toFixed(1)}" height="${(h + 4).toFixed(1)}" fill="${col}"/>`;
+    s += `<polygon points="${(x - 2).toFixed(1)},${(y - h).toFixed(1)} ${(x + hw / 2).toFixed(1)},${(y - h - 10).toFixed(1)} ${(x + hw + 2).toFixed(1)},${(y - h).toFixed(1)}" fill="${snowRoof ? '#f4f7ff' : col}"/>`;
     for (let k = 0; k < 2; k++) for (let j = 0; j < 2; j++) {
       const on = rnd(seed + i * 9 + k * 3 + j) < lit;
-      s += `<rect x="${(x + 5 + j * (w - 16)).toFixed(1)}" y="${(y - h + 5 + k * 9).toFixed(1)}" width="6" height="5" fill="${on ? '#ffc26b' : '#2a3550'}"/>`;
+      s += `<rect x="${(x + 5 + j * (hw - 16)).toFixed(1)}" y="${(y - h + 5 + k * 9).toFixed(1)}" width="6" height="5" rx="0.6" fill="${on ? '#ffc26b' : '#26324c'}"${on ? ' filter="url(#f-glow)"' : ''}/>`;
     }
-    x += w + 3;
+    x += hw + 3;
   }
   return s;
 };
 
-// küçük hava simgeleri (TV haritası ve oyun için)
-const iconCloud = (x, y, s, col = '#fff') => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-14 6 Q-20 6 -20 0 Q-20 -6 -13 -6 Q-11 -14 -2 -13 Q4 -19 11 -13 Q19 -13 19 -5 Q24 -3 23 3 Q22 7 17 7 H-13 Z" fill="${col}"/></g>`;
-const iconRain = (x, y, s) => `${iconCloud(x, y, s)}<g transform="translate(${x} ${y}) scale(${s})" stroke="#7fc0ff" stroke-width="2.6" stroke-linecap="round"><line x1="-10" y1="12" x2="-13" y2="20"/><line x1="0" y1="12" x2="-3" y2="20"/><line x1="10" y1="12" x2="7" y2="20"/></g>`;
-const iconSnow = (x, y, s, col = '#fff') => `<g transform="translate(${x} ${y}) scale(${s})" stroke="${col}" stroke-width="2.4" stroke-linecap="round">${[0, 60, 120].map((a) => `<line x1="0" y1="-12" x2="0" y2="12" transform="rotate(${a})"/>`).join('')}${[0, 60, 120, 180, 240, 300].map((a) => `<path d="M-3 -9 L0 -6 L3 -9" fill="none" transform="rotate(${a})"/>`).join('')}</g>`;
-const iconMud = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="10" rx="22" ry="6" fill="#7a5532"/><ellipse cx="-8" cy="9" rx="7" ry="1.8" fill="#a07a4c"/>
-  <path d="M-4 -18 H6 V2 Q14 2 16 6 Q17 10 12 10 H-4 Z" fill="#ffc94d" stroke="#1b2338" stroke-width="1.6" stroke-linejoin="round"/><rect x="-4" y="-18" width="10" height="4" fill="#e0a92e"/>
-  <circle cx="-14" cy="2" r="2.2" fill="#7a5532"/><circle cx="18" cy="-2" r="1.8" fill="#7a5532"/><circle cx="-18" cy="-4" r="1.3" fill="#7a5532"/></g>`;
-const iconSun = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><circle r="9" fill="#ffc94d"/>${[0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<line x1="0" y1="-13" x2="0" y2="-18" stroke="#ffc94d" stroke-width="2.6" stroke-linecap="round" transform="rotate(${a})"/>`).join('')}</g>`;
-const check = (x, y, s, col = '#22c55e') => `<g transform="translate(${x} ${y}) scale(${s})"><circle r="9" fill="${col}"/><path d="M-4.5 0.5 L-1.2 3.8 L5 -3.2" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+/** Kapıdaki kurye: koyu vizörlü kask (yüz yok), poşeti iki eliyle önde tutar (kapı açıklığı koordinatlarında) */
+const courierClose = (kind) => {
+  const j = uid('cj');
+  return `<defs>${lg(j, [[0, '#3d8bff'], [1, '#123f9a']], 0, 0, 1, 1)}</defs>
+    <path d="M74 122 Q76 102 94 99 H114 Q132 102 134 122 V264 H74 Z" fill="url(#${j})"/>
+    <path d="M104 106 V264" stroke="#0b3a8a" stroke-width="1.4"/><path d="M93 99 Q104 109 115 99" stroke="#0b3a8a" stroke-width="2" fill="none"/>
+    <rect x="74" y="210" width="60" height="5" fill="#e9f2ff" opacity="0.85"/><rect x="74" y="218" width="60" height="1.8" fill="#e9f2ff" opacity="0.5"/>
+    <circle cx="123" cy="119" r="6.2" fill="#fff"/>${logo(117.5, 113.5, 11)}
+    <rect x="98" y="90" width="12" height="11" rx="2" fill="#16203a"/>
+    <path d="M88 91 Q86 65 104 64 Q122 65 120 91 Q104 95 88 91 Z" fill="url(#${j})"/>
+    <path d="M90 80 Q104 75 118 80 L117 89 Q104 93 91 89 Z" fill="#0b1426"/>
+    <path d="M94 81 Q100 78.6 107 78.8" stroke="#fff" stroke-width="1.3" opacity="0.55" fill="none" stroke-linecap="round"/>
+    <path d="M95 69 Q101 66.5 110 68" stroke="#fff" stroke-width="1.6" opacity="0.35" fill="none" stroke-linecap="round"/>
+    ${kind === 'rain' ? `<path d="M80 108 Q90 100 100 100" stroke="#fff" stroke-width="1.8" opacity="0.4" fill="none" stroke-linecap="round"/><path d="M128 126 V180" stroke="#fff" stroke-width="1.2" opacity="0.25"/><g fill="#d8ecff" opacity="0.8"><circle cx="90" cy="70" r="0.9"/><circle cx="112" cy="68" r="0.8"/><circle cx="80" cy="128" r="0.9"/><circle cx="130" cy="140" r="0.8"/></g>` : ''}
+    ${kind === 'snow' ? `<path d="M90 76 Q90 62 104 62 Q118 62 118 76 Q104 70 90 76 Z" fill="#fff"/><path d="M75 116 Q78 100 92 99 L94 104 Q82 106 78 118 Z" fill="#fff"/><path d="M133 116 Q130 100 116 99 L114 104 Q126 106 130 118 Z" fill="#fff"/>` : ''}
+    ${kind === 'mud' ? splats(18, 33, 76, 222, 56, 40, '#5f3f22', 2.4) : ''}
+    <path d="M80 112 C70 128 72 142 86 147" stroke="url(#${j})" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <path d="M128 112 C138 128 136 142 122 147" stroke="url(#${j})" stroke-width="12" stroke-linecap="round" fill="none"/>
+    ${icon('i-bag', 80, 136, 48)}
+    <ellipse cx="85" cy="147" rx="5.4" ry="5" fill="#16203a"/><ellipse cx="123" cy="147" rx="5.4" ry="5" fill="#16203a"/>
+    <path d="M82 145 Q85 143 88 145" stroke="#fff" stroke-width="0.8" opacity="0.3" fill="none"/><path d="M120 145 Q123 143 126 145" stroke="#fff" stroke-width="0.8" opacity="0.3" fill="none"/>`;
+};
+
+/** İçeriden bakış: kapı açılır (animasyon), dışarısı açıklığın içinde çizilir */
+const doorway = (outside, kind) => {
+  const clip = uid('dc'), wall = uid('wl'), warm = uid('wm'), floor = uid('fl'), wood = uid('wd');
+  return `<defs>
+      ${lg(wall, [[0, '#4a2f1d'], [1, '#1f130b']])}
+      ${rg(warm, [[0, '#ffcf8a', 0.5], [1, '#ffcf8a', 0]], 0.5, 0.15, 0.75)}
+      ${lg(floor, [[0, '#6b4126'], [1, '#24150b']])}
+      ${lg(wood, [[0, '#7a4a2e'], [1, '#4d2c19']], 0, 0, 1, 0)}
+      <clipPath id="${clip}"><rect x="42" y="64" width="96" height="200"/></clipPath>
+    </defs>
+    <rect width="180" height="320" fill="url(#${wall})"/>
+    <g clip-path="url(#${clip})">${outside}</g>
+    <rect x="38" y="60" width="104" height="6" fill="#efe4d4"/><rect x="38" y="60" width="5" height="206" fill="#efe4d4"/><rect x="137" y="60" width="5" height="206" fill="#efe4d4"/>
+    ${anim('door-leaf', `<polygon points="42,66 16,50 16,294 42,264" fill="url(#${wood})"/><polygon points="20,72 38,82 38,248 20,262" fill="#8a5636" opacity="0.6"/><circle cx="35" cy="168" r="2.4" fill="#e0b04d"/>`)}
+    <rect x="0" y="264" width="180" height="56" fill="url(#${floor})"/>
+    <polygon points="42,264 138,264 170,320 10,320" fill="#ffcf8a" opacity="0.13"/>
+    <rect x="52" y="268" width="76" height="14" rx="3" fill="${kind === 'mud' ? '#4b3a2c' : '#3a465a'}"/>
+    ${kind === 'mud' ? splats(8, 4, 60, 268, 60, 10, '#6b4a2b', 1.6) : ''}
+    <g clip-path="url(#${clip})">${anim('door-close', `<rect x="42" y="64" width="96" height="200" fill="url(#${wood})"/><rect x="52" y="76" width="76" height="80" rx="3" fill="#5a331e"/><rect x="52" y="166" width="76" height="86" rx="3" fill="#5a331e"/><circle cx="128" cy="168" r="2.6" fill="#e0b04d"/>`)}</g>
+    <rect width="180" height="320" fill="url(#${warm})"/>`;
+};
+
+const outsideRain = () => { const s = uid('sk'), g = uid('gr'), refl = uid('rf'); return `<defs>${lg(s, [[0, '#18202d'], [1, '#3a4659']])}${lg(g, [[0, '#2b3446'], [1, '#0f141c']])}${lg(refl, [[0, '#ffc26b', 0.35], [1, '#ffc26b', 0]])}</defs>
+  <rect width="180" height="320" fill="url(#${s})"/>${houses(196, 3, '#1f2836', 0.6)}<rect y="192" width="180" height="128" fill="url(#${g})"/>
+  ${[18, 60, 104, 150].map((x) => `<rect x="${x}" y="196" width="5" height="40" fill="url(#${refl})"/>`).join('')}
+  ${vanAt(28, 172, 0.5, {lights: true, wet: true})}
+  <g transform="translate(66 240)">${anim('ripple', `<ellipse rx="14" ry="2.6" fill="none" stroke="#9cc4ff" stroke-width="0.8"/>`)}</g>
+  ${rainLoop(110, 11, 40, 60, 100, 210, {len: 16})}${courierClose('rain')}${rainLoop(26, 91, 40, 60, 100, 210, {len: 24, dx: -4, op: 0.75, sw: 1.1, col: '#eef4ff'})}`; };
+const outsideSnow = () => { const s = uid('sk'), lamp = uid('lp'); return `<defs>${lg(s, [[0, '#10203f'], [1, '#2f4677']])}${rg(lamp, [[0, '#ffd08a', 0.55], [1, '#ffd08a', 0]])}</defs>
+  <rect width="180" height="320" fill="url(#${s})"/><circle cx="62" cy="112" r="34" fill="url(#${lamp})"/><rect x="61" y="112" width="2" height="84" fill="#1b2640"/><circle cx="62" cy="112" r="3" fill="#ffe2b0"/>
+  ${houses(196, 7, '#1b2848', 0.65, true)}<rect y="192" width="180" height="128" fill="#e6ecf8"/><path d="M0 192 Q45 184 90 192 T180 190 V204 H0 Z" fill="#f7f9ff"/>
+  ${vanAt(28, 172, 0.5, {lights: true, snow: true})}${snowLoop(60, 21, 40, 60, 100, 210, {rmin: 0.6, rmax: 2.3})}${courierClose('snow')}${snowLoop(14, 61, 40, 60, 100, 210, {rmin: 1.6, rmax: 3.2, speed: 'mid', glow: true})}`; };
+const outsideMud = () => { const s = uid('sk'), m = uid('md'); return `<defs>${lg(s, [[0, '#8794a4'], [1, '#c6ccd4']])}${lg(m, [[0, '#7a5a3a'], [1, '#432d19']])}</defs>
+  <rect width="180" height="320" fill="url(#${s})"/><path d="M0 166 L40 136 L70 154 L110 124 L150 148 L180 134 V196 H0 Z" fill="#6c7a8a" opacity="0.65"/>${houses(196, 13, '#b5a38a', 0.15)}
+  <rect y="192" width="180" height="128" fill="url(#${m})"/><ellipse cx="64" cy="232" rx="26" ry="4.4" fill="#9fb0c4" opacity="0.6"/>
+  <g transform="translate(64 232)">${anim('ripple d1', `<ellipse rx="12" ry="2" fill="none" stroke="#e6edf6" stroke-width="0.8"/>`)}</g>
+  <path d="M0 212 Q50 204 100 216 T180 208" stroke="#2f1f10" stroke-width="3" fill="none" opacity="0.6"/>
+  ${vanAt(26, 172, 0.5, {mud: true})}${courierClose('mud')}`; };
+
+// küçük yardımcılar
+const caption = (y, lines, o = {}) => lines.map((l, i) => T(90, y + i * (o.lh || 13), o.s || 11, l, {w: o.w || 800, c: o.c || '#fff', f: o.f || DISPLAY})).join('');
+const capBand = (y = 282) => `<rect x="0" y="${y}" width="180" height="${320 - y}" fill="url(#cap-fade)"/>`;
+const touch = (x, y, r = 8) => `<g transform="translate(${x} ${y})">${anim('ripple', `<circle r="${r + 7}" fill="none" stroke="#fff" stroke-width="1.4"/>`)}<circle r="${r}" fill="#fff" opacity="0.75"/><circle r="${r}" fill="none" stroke="${BLUE}" stroke-width="1.2" opacity="0.6"/></g>`;
 const badges = (x, y, w) => {
-  const h = w * (192 / 575);
-  const w2 = h * (648 / 192);
+  const h = w * (192 / 575), w2 = h * (648 / 192);
   return `<image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAj8AAADACAYAAADr9wLSAAAQAElEQVR4nOydB7wU1d2GD5eiqBiDBRXFHlCxG401NhSJNQZURFFsWCI2bIkRjQ1bLNiCioWiEDW2qAgqCmrsggpGxd4QDEVF+jfP+A2ZO0w5szuz9X1+v2G5s3P3zs7OnvOef21mSsjgwYM3atKkSQfnvx2cxw0XLVrUznlcwXls5exb3vn/ikYIIYQQtcZUZ66f5czzs5zH6c7jx86+ic7je8426ZBDDploSkgTkxP9+vVr6NChw1YLFy7cw3mjnZw3t72zeykjhBBCCOHD0Qk/OQ9jnW1U06ZNn5o0adKbjo5YaHIic/EzbNiwXRzB08v57/6O4FneCCGEEEKkY4az/dPZbuvevftYkzGZiJ+hQ4eu5Dwc5WzHONuvjBBCCCFENkxytoHNmjW7s1u3bt+ZDChK/AwfPrzFggULznLMVec5P7a0+Z2vvvrKTJs2zXz33Xfu9sMPP5gff/zRzJ49293mzp1rhBBCCFEbtGjRwrRs2dIss8wy7uOyyy5rVlxxRdO6dWv3cdVVV7V9qdnOdokjgq50RFBRYqFg8TNkyJCdHbfWHc5/14s6ZubMmebdd981EydOdLcvvvgCv54RQgghhABHS5g111zTdOjQwWy44YZmo402Mq1atYr7lQ8dLdHrsMMOe84USGrx41h7Vp4/f/51zn8PjTpmwoQJ5rHHHjPjx483QgghhBC2IIY222wz06VLF9OxY8fI4xwBNKR58+anOVagb01KUokfx9qzlXNSTzj/XSns+bFjx5pHH33UfPrpp0YIIYQQohjatWtn9tlnH7PjjjuGPu8IoCnOtkePHj0mmBRYi5/Bgwfv4wifEc62dPA5xM7AgQPNhx9+aIQQQgghsmSdddYxxx9/vCuGglA/yHnY33GDPWMssRI/w4YN6+W8+O3B/T/99JMZMWKEefLJJ83Chbml4wshhBCizmloaDCdOnUyBx98sFl66cZ2GEejzHMeDnEE0AM2r5UofhxX1x7Ow5OOxafBv//LL780l19+uZk6daoRQgghhCgFq6yyijn77LPNaqut1mi/I4AWOgJpz0MPPXR00mvEih/H1bWJI3pedLZl/fvfeustc+2115o5c+YYIYQQQohSQtp83759Tfv27YNPzXBE0JaOBWhy3O9Hip/hw4e3nT9//mvOf9v49+Piuuuuu4wQQgghRLlo2rSpOeGEE8z222/faL8jft5r3rz51t26dfs+6ncbop5whM8IExA+r7zyirn77ruNEEIIIUQ5WbBggRkwYIB5+eWXG+13vFXt582bd1Pc74aKn6FDh/Z0Hrbz73v//ffNDTfcoCKFQgghhKgYbr755iVK7DgC6HBHy3SK+p0lxM+DDz64giNwrvbv+/bbb80VV1yBNcgIIYQQQlQKxB9fddVVbqusAIOGDx++XNjvLCF+Zs+efbWjmFb078PiQw8uIYQQQohKg8zzQYMGBXe3ddxfV4Qd30j8DB48eCPnoZd/3wsvvGA++OADI4QQQghRqYwbN8688847jfY5xpwT7r333iV6ZDQEDvqj/2dHMSGIjBBCCCFEpUO3CbSLn4ULF54cPG6x+HnkkUeWcR6O8D85atQoM336dCOEEEIIUelMmTLFPPXUU432LVq06PD/1ziLWSx+Zs2adbRj+VnGd7AZOXKkEUIIIYSoFp544olGmeloG0fjHOk/xu/26uN/Yvz48eabb74xQgghhBDVAsHPEyYs0eT9RP8Prvj5/0Dn9fxPyOojhBBCiGqEsJ0AGw8ZMmQD7wdX/DQ0NDSqDU239jfffNMIIYQQQlQbb7zxhpk7d25w9+LizZ7bq5H4ee+991TJWQghhBBVCa0vgmV6mjRpsljreOLnN/4DJk6caIQQQgghqpVJkyY1+tkx6vxP/AwePHh553FD/wESP0IIIYSoZoLix7H8bOKlvDc0bdp0veAv0MRUCCGEEKJaCetOMWvWrPV5bFi4cOE6/iemTZtmhBBCCCGqGZK3Zs6c2Wif4/pyNQ8xP+v6n6CDuxBCCCFEtROiaVzNI/EjhBBCiJokqGmaNGniWn6aOVsb/xP0xRBCCCGEqHZCNM1q/IP4+YV/b9A/JoQQQghRjcyYMSO4y9U8iJ/l/XsJEBJCCCGEqHaCmmbRokU/ix/H/9XI8jNnzhwjhBBCCFHtzJ49O7gr3PIj8SOEEEKIWiAofjyDT4NjAlra/8S8efOMEEIIIUS1E2xu6mget8Izlp/m/ickfoQQQghRCwSbtDuWH7enKTE/y/qfoBOqEEIIIUSt4YihJjw2Cz4hy48QQgghaplmRgghSkCnTp3MDjvssPhnmg4OHjzYiCX54x//aFZcccXFPz/66KPm1VdfNaJ8nH322aZly5aLfx4yZIiagFcBQbeXQ7jlp6GhwYjKpmnTpuZXv/qV+8WbP3++EaIaQPz07dt38c9PPPGExE8Ep5xyill//fUX//zNN99I/JQZxM8vf/nLxT+/8sorEj9VQEgoz88xP0ZUPMsvv7zp1auX2Xbbbc3GG29s2rdvb1q0aGGWWWaZuhI/n3/+uWnbtq3VsVyXL7/80nzyySfmjTfeMOPGjXNXzz/++KMRQghRH0QGPBtRsay77rrmjDPOMD179jTLLrvsEs/XW3C6c9NaH9usWTPTrl07d9tpp53clTQN7q644gpz4403hhW+EkLUOIceeqi7ePR46aWXXAukqF0WLlzY6OfIgGdRflZbbTUzYMAA8/vf/z72OLm80rHyyiubK6+80hx//PFm3333NZMmTTJCiPqhe/fuZp999ln88/XXXy/xU2d4lh8F+FQQWDZOPPFE89577yUKHwgq2lonJHCtIIil+Pe//+3GoAghhKgrmvKPxE+FsMEGG5gXXnjBdcm0atUq8fgvvvjC1DtXX321KxiDW/Pmzc0222xjTjrpJHPXXXeZ7777bonfJY7qn//8pxs4LoQQojaJMhJI/FQAv/nNb8ybb77pPtry+uuvm3ojGPMTFQOEO5BMjJtuuskceeSRZqONNjKPP/74EscRMP7ggw+6j0IIIeoHxfyUmU033dQ89dRTqSfg1157zdQbQbeXrRuMNOEuXbqYHj16mFtvvbXRtUYY9enTx1x22WUmLbjPNtlkE7PmmmuapZZaynz66aeuy3L8+PE155LkfW611Vbue6XUwscff2wmTJjgvtdSFkblb2+xxRaupZRzIXB98uTJ7rlw/YsFQb3ddtuZXXbZxc2o9Pjss8/MQw89ZKZOnWqKAYsjr08yAzFoZCT+5z//Mc8991yj40KCNE3erL766mbzzTc366yzjmt95j2Tys1CK+v4QpIQNtxwQze+kff29ttvm4kTJ7rfn0r97gQ/g+B58h3Zcsst3SQL7qMPP/zQvPPOO+57K/b6dejQwc305bVJ5vDGmrfeeqsk90YtIvFTRsg6eOaZZ8xyyy1n0lKPNT9sLT9RUFMG4YMA8oP4IRDaZoDib5KBd+qpp0am3c+YMcP9W2eddVZsav2f/vQnc/HFFy/+GSGx2WabmTgQvQywHn/729/M6aefHnk8k9jMmTMb7WOQZkD288ADD5gDDzxw8c8U2SPongnxjjvuMHvttVfo6//3v/81hxxyiBk5cqTJE0TDtddea7p27Rr5ffnoo4/cbL5bbrnFpKV169bm3HPPNYcffrhp06ZN6DEDBw50RcpFF11knn76aZMGxA7Xc88993QFXBCC7/kcwyyUecN7Pv/8811BGQb3MPcH98T06dONDRSwXG+99Rb/jNgZO3asa93mOnbs2DHy97gPg/dnoSDkEMdRkAXK5gfhO2bMmCWOjRp/WATxnvi9ML7++mtz8MEHLyFwk+D1zzzzTHe8iboncenzt7knVcYjHXJ7lQkmYerOMOgWArVr6o1CLT9+/v73vy8xcTGwMKkmwUp99OjRrlCKqzf0i1/8wo03YgD3C5UgTz75ZKOfmRDi4r1WWGGFJV4vKWj7t7/9baOfp0yZEjqxhF1LLCsEhkcJH6DoG++DwTcvqAqNVeCoo46KXSgw0d18883mkUcecT8DWxBvTLpMNFGTDDAZcT1HjRpljj76aGNLt27d3PPfe++9Q4UPsLJ/7LHHUr1usXCvDR8+3Nx9992RwgcYq7CaItB22203UyhYvLh2UcIHEBK4rMnKqjTCxh+u2/PPPx8pfGDVVVc1zz77rDnnnHOMLYh9rhViPu6eZP6g+CL3F5YhYY/ET5lgFeiv4JoGrD6Yy+uNYi0/HmETNSvTOH7961+7rpVdd93V2MJk/OKLL5ojjjgi9HmsOP6VNNXVd9xxx8jXCxMhTCSrrLJK5O8EX+9f//qXsYFr+49//MOsscYaVsdjOfCnEGcFIpJVOBYoWzgPrGhxk6wHYmPYsGGNKvcmwbW57bbbzH777Zd47P7772/uvffeRi60uNdlFY/AKvTetoVAf9xZNqLfg0mYCRmLZloQrSNGjAitVxZk6aWXNnfeeWfB42Op4DOixQXixuZYXOs2Gaa0NcFKlEZo4g6jkCthFMIOub3KACtBVrGFUkh8Si2QheUHmEwxheOK8Nh6660jj2fiRTSstNJKjfazEsZNgd991qxZbkwME5e/fxWTHgM5laaDpnTOn9+n8JoHYiXK9RE1cOJKiWoTERQ/QWuT/1z84AIiHgPmzp3rZiJSEA6RwHULOxdqphC/NmfOHJMFiBgWCUFwFbPaZvJm5Ys1jJgu/+fJZMBnhhsR11wYfJ5hr49wuv/++93PFUsN7hu+r8So+LnuuuvcvxHlLmXCxxIVJmTI1vTaIzBhUb0dyx7HEoSPAMgLBAjWsaC4II4LazTvGwshsVXcy/7PmvPr37+/Gw+EaLQF16l3P33//feuJYS/w3eLuDvevx8yNrmf+FyLgZgw//cOQezvmcbngNXPT9T9EgSLC4siwELK4ohFKSKRe2aPPfZY4nduuOEG1+0cFSfHAojYsqD7m1izhx9+2L3vOT8sTYhv/z2PtZMFC3FbcoElI/FTYmiMF4w5SQMDFCna9UhWlh9gsPIPHHFuLMRLUPggDpgE/KKBuAj43e9+5w5UXp88zpOJgskmOCgRKxMUP1EgcsJgcgoTPwRG+icVzjWqoFvwWnoTFa972mmnLRHoi6WMlbzfJI+la/vtt3fFSbHgYrznnnsa7fvpp59cyxsizM+gQYPcGCzckZyrB2474n+ItwjjsMMOayQyqJh+3HHHuRN1EMoqXHPNNW58mMfaa6/tvt+oWA76mHnX0YMWLbh0mMT8ILIuueSSJfpH5QGxU8ESDwgNYkv8Qo57GCgbgYDwXysv/sm25AbXgQn/8ssvd99nUCATd8RrkjjggZuQa2ErRsIg3sbvkkL0+S2UiFz/Z5qGnXfe2b1nuG4I4SC77767ue+++xqJLeI8EUwsJsK44IILGi2egLi+Cy+80I0l9EAgcX9xv3M9EYuAG87bxshRiwAAEABJREFUJ+KR26vEUF2YFV6hMMDXW3HDPGBlawPWnKCVAzcGg3iU5YnYjb/85S+N9jH4k3YfJChGmGgQLUGYrJjMPfyTTpRFCOHjfy3cpVEBq2FCklIBTEphGU5M3gRsB/EHuRbDCSecsMT3BGESFD4eTELE7BBU6wcra5T7BOsfk4q3EfsTJnyA7xwBycGMMsRPGEziuOz8MPlTWTwofLzzJybEL97yAEtL8D7kfPi7URasl19+2R23/GA9Ovnkk00UYfcTx/O9CLMMInSJxwuS1f2UBWHviXsuTPgA8YF//etfl9gfdT9iKeT1/HBNuO/8wseDz4v5ICh0WAh4YkhEI/FTQnCBFOIv9yBQlVgDUTxY4GxgEvbDgBPMDgmDQMVgXBbVu4OwMsVc7sHq2jOl+/ELHAZChIAHwgrXQZBgHFNcRlZQyFEeACtEHBSQnDZtWqN9fmtaMQSvO6InaAkKgkAJW8X37t079HisAP369Vu84TJIen0shn6w/oSB+9O/4gcEM/W84sAqQ+xGXhx77LFLiGuuddKCiqDoYG0x7kHPuhkkeD8hoMLEjR8sa0Gyup+yIPieuCejhI8Hbs9gtmXUeyI20F+Gg+9WXCanB+LHP9Zgpcb1JeKR+CkhrLiCZnBbMPkfdNBBbvxFvZJVzA8EV3FRq95g0CExHjRITYJVPiZvP2RjBN1nEIzDCXN9+V1eiBhWlf4VdJhLzDbeB4LXg4mO2Iw4uGZkmfhZa621TLHgGggGkSK0bOC8iaPxkyZIPYngRBYVwBuMYUFcEO9hg+1xhRC8FmSNUovGhqD4JN6KuCAbbFyhuPR/+OGHRvuyuJ+yIvgdwWqbNAYxXlPHyU+U+AmONSREBK9HGHwP33333Ub7yKwT8Sjmp4SQLloorACCX6J6I8uYn2BX9yh3EHEsfqLcLmGw2g2CGT/oRkKU+M3d+PwxZ3uwUid+wIOAaIQPcRie6MEyhNXADzEJHgyiZJ5FERzEsUjZQG0dv8gKc9mlJWxySHPdeZ/+1O1CrQcIm+AWXLxEWUyCaccUpLMRzZBFzFQUwWuR5roSoB32ejYFV7/66itjA4UB/RlLWdxPWRH8jtgW1SSg2p9QEZX5FwxyZvERl0LvB7epH7XtSUbip0TwJSaeoxAIpMV8KrKDOhp+wvp/hbnGyHKxJZhFEvWaxFwgZrxgz6DFBiuC38JARg6w8vTED24W7jHPgsXk668ZRIpyXBHHoJAMisMogsdlkaKd9XW3cXGSBYRllomXCR2LQzETb7BeU5qFC/FoCCWCvrMmeC3yuJ8hq/spyq1WDoLvKcky6mFjvYFgjBvNrW0aXIcRVxtI/IzcXiUCM6Q/k8EWJriobJV6I0u3V7CoW9jKNOzzSpPGHWY9CUth5jX9hReJFaHonYc/3oc0bM+C4A+WRhz5g2/TuLwqjbCVcZrrTrySHz7HKFFGejBxdMRdkbXDtcY6V6zFIdiuxnYC9CArLA+C918aNzr3XfA7V8iYJsIJW4AVSh7CudaQ+CkRSUX0wmByo0ha1n116h1Wq8FiYGGpp2HVeG2KtHmEZVxEmbzj4n784sdfA4h4G/8k6T8uKH4I7q0WwoRHmt53Yb8fto/YImrNRFVVxpVAcDmZddR0IlvO1h1IjJ4f2wB7j+B9klXRw6AlJW1PweB52BRvFHZkaeVStlcyEj8lIq58fBie8KnnAOcgWcX8kKUSdEvY9PKBNDVYgtk+cUSJH8SWP3gxmBpPWr1HlPghjiIvS0IeFHvdw4LKgxYLhC01XoIBtWQ14WakajaCCVcEVa4pcEgWnv96xxGsTZO2jU2w7lRWzSuD1zbNdQ2rJK6mmtkRFKJXXXWV+3kVsgVrBYklkfgpEbbNS6kUjPmdQlwSPo3Jwu2FS4NCYn68ruBBMEMHYxBsWiZ4hDUpjYqxwLLgFyieeKFKrDdh4ToJ1ojxiyFiyhBL1HLxp2BXk8sLwgrnpbnuQaseKcNB6ymTQzAomfiKnj17uoHqUcHJtpWXg2UOqEId1dcrCAulYmqBxRG8tsVcV6gmUV3pBN1e/rpeInskfkqEjfiheB5R+tS7CEbvi+JhMGHlHlztRtXqIJMnmLHVuXNna4sTlZ794ArBzRKFX8gg0rAc+a05tI4I3hf+fZwX/b+CLtZqEz9kawWzqLjuNhCDEmwrEFZUMNggljgh2kokEby2Ua6KYE0cLI2278Ff8dsjK7dXMOOP92Pryg3ez5BnTaI8qOQCscFm1RI/+SLxUyKixA8rMdoksNpj0LONKRDpoLIuwcLEefghpuP222+P/L1g2wisKlQNTgI3CX/TD00Q4wbfoEuLNFe/+AlrTYE1yN9egYnf7/LC4kFNoGoCa1tQiPDdsGluShG/YEf3sNYfwZgILK5JUNOGnmF+oj7PMMEVrN4bBqn0Ycdl5V4KXgssWcGCkmGQPYRVzA/1poJFLquNMBdpufDaiXj85je/sY4VpV8Y44W32TYkrmckfkoEAY+4PFgpDR8+3K0AzEqQwZSy9mFppKIxhcT8YAmgTQMDS5grgWrNcZk4FNej+JofXi/OXUBsBNWC/UG2WGcuvfRSEwfp6H5oOeCv1+GluAfxiyLixPy9i7jf0mYaVQK0m/BP+FgnKBoZjNXygyuLhYQf3JlezzU/VEv3Q8uBoDD2g0gIE1FR9yDf9TAxG9cSAkFGv7S491gsCJZgbZ+LLrootp4M58P9HBSVVMWuNoK99Yins3VH5g09G/2LX6yKxKXRYicOLHJUDqc+FBuZo2kD2esRiZ8SQZErhA6rclLXaR2AO0J9uuwJrn4ZuPztCbyNfjpDhw51zcgEnkatbHGBEeAaB5WaaYDpdzcRvEp2GOXo/RMCEyQDES6PYLsJVvPEFsWBFcrvlvAHLZLZFdVE0j/JBuN94lpaVDKIlmBsFt8d3JCshv2WGz4P4uToFO4f9HEzYjEKs5oE21QAGXHUTQoKGsQsE1NYC5E4iwztLIJQvZnPy19pmYwpMs54z6UIVOW+9QtiFmbcJxRS9Qfpc16IIoobBrMHafQaVzSzUgla1iliymIUK0u50/ax0tKXyw8p69yrLJzCWqkwBiKY/e5XmijXe0FcG1TkMARuOIJVMYkyGBAjgimeIEZWdExuwRVEHuA64UuJlYHzIQME8zPnw3lQWZVMHiwT3mOw3UAtEZyU+OIXWsadlWxYo9EwEDp//OMfXYuPB6thr+UCVY4peEYAbVgMCLFcwerLUSCIw95TVDd28Gr/hNX2qFbxA/QsIojbb8mi/hFuPiYK3jfvOSo2gqy+qNYNBJfi7vSnueN65vrzXUeIeMHufPewGvI3uRf8lbPjIIOQiTXoJiUuiy0KxAZ/2/bvpIX2Hwggzs2zeiAmETRsBDFTaBFXSljKNJYFrNXVCO7IoMAIFhOkYKjflVxKsG4ijP2NZPmMzj33XHcjNo3mvXw+CGU+I/+4SJuL4PsT4Uj8mJ/jcf7whz+4vVUQGzZp6Qy8DJTEJmS5AmKwp5M2A35U00RgwI8a9B966CG3O3XQh1ztZBH3QBsLOkun7Z9EhW0K7VEQLyjCgi0w/CCQjjrqKGML91SYO8Ff3ycMrBa9evVqtI/3atN6oFLBKnrggQe6VryuXbs2eg6XYjBo2QORgnU1zN3lBxcUVqRgKwAsIWHV2DmehYdflCTVZiEGide3bTSJtYru8v72JpBVwLMH14aYNMavoMWDeJGomBFcr4yV1Vp7DAsewhbRUKmcdNJJrkWZ+yAIi196PIZB6ASWOts2KvVOXbu9unTp4n6ZCXYcNGiQKzps6/GQ9tm3b193JYgplQwt2yZ/QQhypBs1X0pMnAyyccInCeI+EECc18UXXxw7OdcLrPRZ1XItCm0ciaBkwrXJcGF1zWoS61Ia0cbnH+wzhuhKWomGWYYQTNVeh8UTMrgeP/nkk8TjuQ58N5OEDyA09t57b3clHQcuIsaGW2+9dYnnktzWNEJFLN15550mCVwVrOZxj2ZZzTwK7g+slYwVSWD1Rlzvt99+qaptVxp8XiQFxCUflPs7g4u9e/fubmiErYeB+x0hL+FjTxNnVdXok8a0ZjPIVDMUK0OshHXPLhaCVglmJgU5CVZexCpgZs0bXAh//vOfTTVDTEKwJ1cSuKMIAsRVmeWghmUAlwmWQixwrJ5xRWIRZKLDglNouQJcEv4GlLxuXEYasFIkQNoPQsC2cSUCAzerB7E1dLBPAgulv2kjbiZiEMIgHsof60Kzz4EDBxpbsPbw98g6YtLGOoF7iAaTCBhei+ufFqwqvCaLBsQHrjQmHcQIFjVKIXhZTYwZ/lR6ShfYpMgD7UcQxLwGny8udUQFf4dzxxXrWVRwlfljjFikUWE6L/hbiBuEGgsE3Lrcd7hRCPRGIKWpO0Yigb+wI9fRxgp5zDHHNLI6kakYljmXBfwdGgZz33u98PicGWfC5kDEiL9SN27DYDf1MBCMfislwfZ81jZg6eG7iUWH86QoJ+eAqMY9iteB8YawBxEO1+yyyy5rtM8Rl03qSvyQMcLq3+9PzQvib+655x53deW5xQicxNyKe+2AAw4IDaDME6wKBIASoyKEEELUOlHip25ifrD2EExWKhcQbqvzzz/f3SoFyvazUiV41wvWFUIIIeqNuoj5wa2E6VSxLz9nKWEmxYQrhBBC1CM1L37wzxN/Ue4aDpUGNUgIIhVCCCHqjZoWP9TnIFBQwiccXF9x9UaEEEKIWqRmxQ8FCgk2lvCJhuJZ1L0gHkoIIYSoF2pW/JBaSf0cEQ8tGchKE0IIIeqFmhQ/1LSh/opIhiKNedQ7EkIIISqVmhM/lJI/66yzjEiGEvoUNZs6daoRQggh6oWaq/NDJVwqwYpoqHpMuX7ifYQQQoh6o6ZUAn165MKJh5YLpP9T7VkIIYSoR2pK/PTv39+IeOj/JOEjhBCinqkZ8UPzOPpmiWiGDh1acEdzIYQQolaoGfFDN2ARzYQJE8xRRx1lhBBCiHqnJsQPBQ1/97vfGRHOd999516fuXPnGiFE5bH88ss32ihAOnPmTDNjxgz3cfr06UYIkR01IX66d+9uGhrqokdrQVx88cXms88+M/UMBS/bt2+feNy3335r3nnnHSNEXiy33HJmhx12cMtM7LTTTmabbbZJrEQ/f/5889prr5kxY8aY5557zt1mzZplhBCFURPihywvEQ6D5m233Wbqncsuu8z07Nkz8bgpU6aYNm3aGCGyZrfddjO9e/c2BxxwgGnevHmq36V8x7bbbutu1DHje02pihtvvNE8++yzRgiRjqo3lzRp0kTp7THcf//9db9CZFV90EEHWR27yiqruKUAhMiK448/3kyePNmMHj3adO3aNbXwCQMx9Ic//ME888wz5r333jNHH320EULYU/XiZ6uttnLNyCKcv//976beOfDAA1PdIz169DBCFEvHjh3NK6+8Ysoh/xsAABAASURBVG655RazzjrrmLygqj3WXVxh7dq1M0KIZKpe/KiHVzQffvihefrpp029k1bMYCVKisEQIo4LLrjAzbDceuutTakgfkhWICHsqHrxs+GGGxoRjoSPMb/4xS9M586dU/0OViKsRUIUArW0+vXrZ8rB0ksv7VqBiC0SQkRT9QHPHTp0MCIcLD/1zhFHHOGmDacFa9G9995rhEgDbuZjjz3WlJubb77ZfcTlVgjLLLOMm4UWByn4r7/+uhGiGql68YO/W4Qj8VN4/A7WIqxG1FkRwoZTTz21YOFDUgKp7F9++aW7Idgpz7D66qu7cY3LLrusSQsCaNKkSQVlgxGjRDB1HMQzJQkkISqVqhc/bdu2NSIcMkzqGQbwQgdnJh863w8YMMAIkQSBxpdcckmq33njjTfM4MGDzRNPPGHefffd2GM33XRTs88++5gjjzzSbLDBBsaWgQMHpjpeiHqhqmN+WJmT6i7Cef/99009w0RRDMr6ErYQZ4OryIa33nrL/Pa3vzVbbrmlueaaaxKFD4wfP95ceumlrqV73333dS06Nqy//vrmr3/9qxFCNKaqxc+KK65oRDi0tKj3+j6HHXZY7PNUc46DgnLrrbeeESIOMro6depkdewdd9xhtthiCzctvVAeffRRs/nmm1snNJxxxhluILQQ4n9UtfgpxA9eL3zxxRemnqEEQpJwoUhcEri+hIjj4IMPtjoOFxRp6IsWLTLFMmfOHLdf39ixYxOPbdmypVtVWgjxP9QQq0ahOWI9Q5ZXHB988IG7+n7yySdjj5P4EUnYiB+SD/r06WOy5KeffnIFfJIFE+h/KIT4H1UtfhYsWGBEOK1btzb1CqX/Dz300NhjCDSF++67L/a4dddd12y33XZGiDDIxFpzzTUTjyO2Z/bs2SZrvvnmG6uYHuKEbGOShKgHJH5qlFatWpl6pUuXLmaFFVaIPcYTPyNGjDDz5s2LPVaBzyKKtdZay+q4PGtGefdyEioLIsT/qGrxQ5EtEc1GG21k6pEksUK2jVcD6fvvv3dTjePAZdDQIA+xWJJVV1018RjuMRIQ8uK///2vVS0fiR8h/kdV1/nJc0CpBbbffnurNNpagiD4pODO4Coc1xdugSiwIhFc+sgjj5hKBQuEt+GGWbhwofnkk0/Mxx9/bD766CPz9ddfm0qGWjTe+VPY78cff1x87jxW6nfdRvwgTvKGAom77LJL7DG1Uu8HVzRjG2n8frjnGe+I5ZsyZYqpVKhNx2dBa6ZVVlnFvbeJ26LuE73ZioUSMDvuuKNbSoF6ZQTYT58+3UybNs29Lp999pmZOHGiqXeqWvyQ8cCqSl3dwyFWhfoj9cQhhxximjdvHntM0E1w//33m0GDBsX+HtakrMXP73//e/dvx7H//vubhx9+OPQ5JoFTTjnFrWfEgBcHg+vIkSNdKxdB3jZBsklQd+bcc8+NPWaNNdaIzDwkI+/kk082Xbt2NS1atIh9HUQQ5842evRo88MPP5hKwCbjdOWVVzZ587e//c1NgY/j888/X2Lfn/70J3PxxRebQvj1r3+dmLmG+50xuhhoYbTrrru64o7mrVS+ToICr9wn48aNM0899ZRbNTsrGCviaoh9+umnoe5Q+gVeeOGFZpNNNgn9PSpyn3jiiSYtfPd32203t3YU14mCmDYgmP/1r3+5i8F6WyRD1Vd4RslK/ISDtaLeSHJ5vfzyy0tMAmTNIDDo5h7Ffvvt5050lTDpbrzxxubqq682e+21l/XvMAFT98irfXT55ZcnCpcsCJsc99xzT3PFFVeYzTbbzNhCte4TTjjB3ZhMzz77bHPTTTeZcmNjkaLGDrV9WNnnBQKz1spbUJ39xhtvdOsopYWFAZvXbuShhx5y6x1l0fInSfAFn8fCM3ToULc2U5aQ0XvBBRe4C4ikxUMYBOuz/fnPfzYPPvig24x3woQJpl6o+kAG9a+Kpk2bNm5J/HoBdwmrnziisruSsr6YwGzrueQJWWz0VEojfMI455xz3O8O5vE88VdgJ26KFhBYb9IInyAsdpgUX3zxxSVcH6XG1oKGhU7YgbWQRIR///vfBQmfMLCgUhWbRUOx9eGSugr4n1977bVdC1SWwofXp14U39/TTz+9IOETfD2s0FQRv/322926UPVA1Yuf//znP0ZE06tXL1MvUJMnbmBiRRaVGYNLKykVuZxZX0sttZTbMZwVZFaDEytj4iN69+5t8mallVZyKxKfd955mbWkwW3GgJ23gIvDtn8ebhIsXiIerNWIFJsCpGmhBAZi4Z133ilJMggiju+XjZvOFoTb448/7oYz8J3KGuYL3GFYWmsdiZ8aB3cNZtd6oGfPnrHPUw03KhAS1xem8TiIOcC6VA6oDlxox/A4ECLEGmAJyguCLhE+SVa5QkAIjho1ynTu3NmUA2JKbCG+CzeDCAf3C3FLeVfuJx4H93feVnHcsjY1oGxBTGENK9bqmwTzxZtvvum6amuZqhc/9eSjLAQmnltuucXUOrhRkkRekmsr6XmEQjmsPwRK5l1p+rLLLnOtMlmDtY2A2qggzyzAKsZqmPpOpQZr4ZgxY6yOxV336quvmvPPP18FBwMgwEvZgBWBhbU3qf9fGDYxP7i7shRX7dq1c+8d4v1KAfFEBEMjuGqVqhc/+P1FPDvvvHMuZuRKIkkcMCANGTIk9hhWnUnNYIvtFB88pyQwbeOHLwXE46RZ7dmcP66pPK1Kfu6+++6yNDvGHZmGiy66yLVA3nDDDW72Ur2D6C7E9TpjxgzXRYb1jXY1hSQj4AZPKhFQCATkZ+XeBcYuYjht4Vpgbb3zzjvdxQf36DPPPJOq5AVlHMgMrdWCuVUvfnBXZFEbodbB+kNNiVolSfwwEFDrIo758+e7WQ9xYF2yTSXNAgI0f/nLX4Y+R90OTOvEkrRv395dzVKTiHgGYidwlaUtBMpgmSVxwo06RAguxDnxR0wWZKVhxWNF/s9//tOkAeFDynepIQ6Lwplp4LMiS4eYELK0+BxZoJR6ouH6c92DW8eOHRN/l8D7sN/1b0lp7pTj4Bxs4TqTtYUlhHud7yMxX9TNwbLGvYO4JN3cluHDhydWhPdDPaE4cKvFLZJIK0fMkPZO4D4JAFynqNfFUmgb18Z3ZocddnCvxe67726OOuoo9/ePP/54Nx2e+CMWOI899pjV6zGWYBWuRWqibC1+UBEPE0NSTEu1ssceeyQKO9v2AkmuLyil6ytqUCbFFavQSSed5NYxIfaNwoCshilghsn6uOOOc1dvV155pbEFYUftl6wIO3/Sw7mGuAaI83j++efdOj4wdepUN4gZQYG7j/NPI4IQweWI/+FzKBTiyEjhJ8MJsYo1GxcQNVtqHVuxzXXhGpM1RZ80CvWFwb3Dd4PaQJRTsAHB3b9/f2OLjUWH7FA/iBtiEnEn4bri/ie1HAG89957u6KX8hNBEIeIuSS4PiyC+M688MILsccSz4NLjvNJsnQD152yA7VGTYgfzHkiGVwQ1157rak1ksQIPeD+8Y9/GBtYhSVV5E0KrM4Tzo34GZsBEYhJOeuss9zVoG1jTTJi8oLJiYkpyQXpQeNOBnRWsLZkKd5swfWCqyML+J4iCrFWImgRsmeeeWaucVPl4LTTTrNquYGg33bbbVPVdeJe5/NgkrfpAXnMMcdYWbsgbasb4lL57HDLxomNsCKUYYIoCN8Rvt8sgtLA+WAFsvGc1GLcaE2IH4IdhR19+vQpy+SQFwS7xhUnBPzWSS4vD0zPSVWXsTJhUi6WtDEBrB7JmHr77bdNWlgNssLETZxE69atrUokpD3/999/371uhVSXxkJgGxeCi6Acfe2wNNiKOlvIZuNzw3qHcMRFNmDAgKqv34XbD3dMEog/LBrE9hQC7h2ETRIIGiqW22AT6+bxwAMPuNZUWrSkBRGMSzgOvs+4uAsZE4BaQdT4weUfByIpq5pLlUJNiB+Ur1Le7SEArhyxEXnAFzepwreNKyvt8eXI+qL0fTHZjWQl2Vp1CimzHwerbyZs3FqFcuutt1oHf5966qmmHHBfYNFImkwKBRcZbggylRDDuAfpS5fU0qXSoFlwVCybH6qQk5ZeDAjnYcOGJR7H/WnTq81W9FPRm6KkhWLjSsVtRl2eYiAGycaSnHfGaampmVbVsv6kg8mB7CZ80NVMkgiZN2+eu/pKA+6GJNcXwalYnUoFcSD33HOPKRZSim3cxNSjybLOB9aKLBYo3Ldh7oEg3BflqlSLaxnrU7GTUhJYT5hcac1C9hiLmmCsSaViY1l86aWXzPXXX2+yAIt30nfaq5ycFdTlmjt3rikE+nUlZegS65pVJihWL2KB4qBvIqVTaoWaET9pM0OEWWwupftvNcIAkVTwC7N32saKuL6SAqSxNiV1j08ijfmcDJessO3plZQCnOb8Ce7MAj5LG/cEwofGm+XCa82AS7YU2agEluPOxrVY6WUtSL4ghieJrIQP4GrFSpaETT/EpGwvIIi/GPGLFSpJyBLYnRVYZpNiqnD311KRzpoRP6SMpk3rFcatQIpZmXoX5e6TlJYjjjgicSVim+VVyO8V6/qyNZ9Tjj/LelZMzDZWGIIo47A9f7pg28Zc2UBczZw5cxKPSzr/UoDVkXRsektRYTxvvL5YlWzVJRsv6d4hYDnrBa2N+CG7KqncgE3AM1XHi4H7JQ5ifYhlzBKbxru1FPdTM+IHNW6b0SMag4CgrgqrxixXE3mTJD4YQAtN70dME0sWB4GoWJ8KxdZygqsqa4ifSSJJPNief9oigEmwyLFxZTKRVQJcJ1xTFDRk8uA7ZlsVulA8q24lTlY2NWu4XrbZibYQ9G9T5I9A4zhsLD82QiKOpFYwBL9nDTWUkt6bxE+FctdddxlRHIVk4pQDGu8l1Z5gALXJbooiyfqDaCxF4HPaFFYbbCxJBH9STK4YcFMRu5E1SbVMoBIsP0FwhRBcikuRFhfUqEIMsYonpTtLsOqOHDmy4ppU2rgj0/RMS4PNfZM0wdtYfshSKxSC2pPqlqUp4mgL8ZFJWWPVGiIRRjNTQ7Bap1haPXSkzQNcCbgoqgGbui9ps7zCfp9AyTgQP1RpLQQbtxFVnPPIZGRlyiovaSCnEGHUQGtz/jaTTSHYxFOQsk9QcCFtD0oBlo3Ro0e7G3A9SdHffvvtF282dXDiIKMK6ycxNllbUgrFpgxBXoVrcfGTIRpHUo9AG4tnMdl3VGtPgu9tHm05EEBxZNmotdzUlPgBot/JehDpwSdeKQNkEknZIhQTIx24GLCOUEk27guPiRyx7VUozhpaCOQBFjFqpyRNRMX2yio2TTmKpMwUD6pgV6r4CcKkSnwXG61JAAsAdW6IASG4v5D2FxTYIxiawonlhmrKNll4eTWstnndJGunjegvJivKxtqKgEsScXlAYD3Cy8b1V+nUnPhhFf6Xv/zFtGjRwoh0ZB2bkResiNtTBxTUAAAQAElEQVS2bRt7zOuvv27dDycOLAxJqx0Cr+nTkwdJ6bnFQHp0kvhhsiqGvM4fkY7ATRIDiB96iFUrfEYkI7ABWUCkUO+3335pXsYtEUBtLyyJ5cS2OWdeizCbOlO4ncoJ/bcqFYQPFtVi6nVVCjUnfsgqwfpDrxxhD12R84jNyAObOBsCBkvV9iRP8ZOn1YIeW0kgHoohbZmBNHD+NuKnliCLi424FILWbWMwvEaqed2ntthYTYqJl0nCRowXa+0slkovWFkr4qemAp496IQt0lEtPb+aNWtWVNXUPKAjeVKGSBg2sQN5TgQ2VgAGuihszj9P8WZz/uWeyPLi1VdfdWuu2DbvhEpoiWHTZ6vcgj/unhembMVDs6YmxQ/9SmxqOoifIdCZJnfVACm8UZ3Oy0khWV82q+A8Bxob13Bcmwab88fikBc2558UwFnt0LzTtlUN1iKblhJ5YvN55HnPlLIqe6EUWhVapKMmxQ+QPloLQVml4IYbbojtNlxJlKOnlg3USUrb7dmGPIWezQq32BiRaj//aoB+bTQ8taGcVa/BpvQEJQDSNs21xeZ+LHfSRzHlOYQ9NSt+iGEptLpvPYHvttxxALawIkyqfFouGFS7dOlisiZP8WBjBbBxE8RR7edfLdi6+ssdzGtbyygvC5XN/ZhlNfJCsPn7LO4RiOXYKIZYC9Ss+AFSO2X9iYc+T3kGpWYJjfUqORgwD6tUni1HkuqZQLGWk7zOn4wYG5dgPVh+wLYVhE3X8jyhOrdNTA/1pfLApgacrRUtLyivkUScO1rYUXPZXn6ovULVZ5uCePUItVJuu+02Uy1UqsvLA6tU1kX1GKzJWMo6u4IgbZtg4KQWH0kUEghug20ZA5uJpBBoOmnz3p599llTChjrCI7HZRRHMe1YsuLzzz9PLOS3+eabu+UqsmaLLbZIPCaP6slp+PjjjxOPsSkUKeKpafEDmAclfsI55ZRTTLVArR2biqbUP8kjfol4HjrEx3Va5jk6atu2WbHtjUWbhkJ7lMW9pg1xPYpszp/PDVfLl19+abLE5vzzKpTnYVNKgUk+jwrdYeBSShI/lWDlpYhjkvghk+2OO+4wWWPTmyrv+yaJyZMnJwpZGxEn4ql58cPK74wzzlD6ewCawD7//POmWiCgOAmqCRdb1TkOXrtr166xx1Dzx1b82AZ1du/ePXPxY3M9sQzGBV/anj9/68orrzRZwd+1sQLmVV0auC5MUljQ4th5551LJn5siuNRNLHcYNFJqk5M0+Csocs9BVKToIxAuaGye1xzU1l+iqemY348rrnmmtx6DFUjpLaTIVJNICqSGD58uMmTESNGJB6z6667Fl0VOciBBx6Yab0arDG0TEgiq/5KxxxzjMkS2+uRV38oD9qDJNG7d29TCmzdi++9954pNzYd7XH3Zt276sgjj0yMGaQOkc355Y3NOZQ7c6/aqXnLjwfBspgzK8HnXW769++fWyxEHuD/twnOzVv8YPkhDTYu0BarBIOsjaXD1u3FgI1YpT9TFvTt29fKapNU8dv2/GnOiWB58MEHTRZw/jbkXbEcy1hShh/um5122il3K+txxx1ndZxtT7Q8GTt2rBuIniRgjz/++Exjpmyq/j/99NMVUfZj5MiRbpumOE477TTXKpwlfLfi6ixx/9gG11c6dWH5ASb7SqsMXA4oAVBtjV9tXBxMdHkLOlwdNm4128DsNLVMKGa32WabmWJBiJx44omJx5FNkuRqS3P+t9xyi+t2KBYsgDZWDu6FvGM3bAuDctxyyy1n8oKO7TaWUQQY2VZZUUz/xPvuuy/xGBasLHyyACHVoUOHxOMqpTguTZW/+uqr2GOYz7p162ayAiFPxXDiZKM2m2y5aqFuxA88/vjj5rrrrjP1TM+ePauu6u3hhx+eeEzeVh8PG9fXpptuajXQ2lpOgC7RTBjFuL8IoLznnnusOk7zt5L6IKU5f7qTFzuxrLHGGq7V0oZStGvBhWQTH0LaNtczLli+UNZbbz3zwAMPWH2maa6/TaG9Yty7tk2UEc3FwnfmkksuSTwOi4+NKCsFlGihR2USAwcOzKwR6qWXXpp4zHPPPWdqhboSP4BZz8ZXX4tcfvnlVRf71KlTJ3fiTGLIkCGmFNBU0qYCrE2GYdoqtmTIjB49uiArAkXjxo0bZ7bZZhur42+++ebEY9KeP61JChVABHgSBGpTp4aYNiaFUmCbkcSqGpfBJptsYrKC13zttdesCheSPeR1hrfBxvXD3yV+rBAolIdrJwmsWsWIZlw4Tz75pNWigdjQcld39kPl/aTeflhTH3744aIb+J533nmJlmUC9/MoP1Au6k78YPXAVFhvRaKYOCj6WG3YuJAwEZcqi4UVMYNNEjbZVGksJx4MUAxAtnVugHibd99919qFwCSNUEqikPPHVM/qEYuFLSxYmORtC/ThZipV3Abih16CNiBe+eyIB0tKSY+DTvbU56L0gm0M4/XXX58qzd3WPVaMJf2ss86yOo57BjGbts8dFhGED3FXSeBiStMkthQwptnEDpK+jwVy4403NoXAQs3GMsb1KeQ7X6nUnfgBYgFOPvlkUy/wJWICtOmoXEnQhDApJRZK5fLysHF9tW3b1s38yoMNNtjAjd+gXAF1hcLA0kOWFbVocIukqexrExNUDAQAE3t26623mt133z30GFxciB5qwjDo2rqMmLTPP/98UyqwMtm4ZT2aNWtmzjzzTPP111+bO++80xxwwAFWlhs+z3333dcVW0zURx99tLGFAplpSw0g8m0WFIwrhYoGrD+24ol7eeLEiVbtbbD2ML7jlrStZ8XxSVaWctCvXz+rIPW11lrLvP32225cji1Y1CnLYWO95FrauOGqibrJ9grCwLvddtu5MTC1DNWGmWDKXbK9EBA+SS4eViKlDlJkxZ2U9QVYrWwK4cWBawBXVVhPooMOOsjdgAmRyrlkhiG8Co3HIFYGS1pW0F+PwNUwyFDyspSoqss9iiUDMVBoTzAmsWKrUqeF63XVVVe5osYWrDeMPd748+2335rx48e7goMNKw2fI6KVTEcmt0IhGLqQHmdYE2z61SFSEXF8L7zeXcQgEfeWVBcLa/Q+++xjZQnkGpBpRCwaCx4EZBAso507d04VX8VihgVCpYKnAgFkYy1ELFHXjow6kkAYEwj+x+PBZ4I1jO/XbrvtZvbaay9jy8EHH2xqjboVP0BKcps2bdwvS61CxWNWBNWIjcuLGKZSF25jVUwmVNSk7sGghRUF60ChUEgP339SlhmDWrGBj5988onb6y1LRo0a5bqFktL027Vr527FQDwUAd3l4JxzznEn56TJPgrEapQVrBhOPfVUN9GjEHB92jbrxRrJ30oLIo+Chggt22xArGBkb2UBgtMmU66cvP/++6ZPnz7WcWwIa65pVoUimSdrpZmpn7p0e/lhxVJLEeweZAtgFaBuRTXCZGCzMim1y8vDxvWF1SqLLvQEWefdgw0Buccee1hl+aQFU3zegZLEBHlWsHKASxmxW0muAYR3MTE53HPFxkbaBMUzubMAzePei4N+aAjOUv/dQuCzyKrOly1Y1bFM2lasrzbq2vIDrMpZ3dx///2pzIBJ8IUiLgOzI+Z8TPFsmGyxNmHOpjQ+rrc8+rRgNalkU24SBDkmpe/y5cStUg4IerZ1fUUJNJuJwTuGlR+m6qR2CoWAy4lS+jYNFcPOLekYhAGxScTaxRVQKxS+Z0yelRCzQWwKfcxKGXcUhAKCTFq4oYoBQUxKejExYLYBsrgOWSiQal6oyzMNiHEWvlk3DM4TUtGxzqbJ2isU5irG4GLd9pVM3Vt+gLgYBs8s0mOxIvXq1ctNPaSFAP9nIBwwYIBrLcANQFo2vcZOOukks+WWW7oTAgKMVVpSbZUkCPgk0HbYsGGmmrFxeeHXLlevIpsigMDnmkVVcSZ2+kRlXbUY4YAATyt80sIqm/sy60KUWFq4LpUUrEplXoK6y9EdnOuBC6pY4eNBFWEyRQslTTkE4ts49zwtDdwnxMSQAVZNVe49mDuIAcyzXxzjWseOHWta+IDEjw+CL1kNpB20CPIjm4LquaygBw0a5AoqW/hC4pfHZ966deuCfawE/lIPJcuS8OWAKqI2fWvK5fJK8/exXtmkvduABZFJNYsmvcTh4CZCOGTdcT0KJlEG1UJjUPzQt4vU/az7hmUFwpzU41LVGyKl27sexS6g/MydO9e1OJJZWAqwxDD+Ucoh6zgTsusYW6jnU83wPaJsAoHmeBaygnGAMaHaLGKFIvETANVL4CJWmaT6HU899ZTbWwUzLTUr8F1nASsfBjIUPkIqLlMDMygWI1YyTLLVmNUVxKZAIOb0cosfr9dXElFWrEJqZmBxIquIrBbbAnt+sDziEll//fWLdosWcv5YJrGGYRVNa53AlczKl9+nxUWlB2ESzMuCitgvzw2dZRE9vvsEeCNOsFzndT14HwRyk9aetq9ToXVhCLZmDKSMQLENarlnKC7JuFIJXe2zggxDikxSAqHQ7zKuaMQgxWTJLqzmUIm01H3MTxQ33XSTu7Eypjy9l0mDuMCEb1MErlhQ+J7JmS+vV6WUYGZSY0lvnj59uqk1GNQvvPDC2GN4/+UeyBAiZJ2kKdiXFWSpUOuFLCMGdQYuRDgbWTNMOlgkuT+wBODWIj6qUgZ/Fg5srGDJmiPAnXMnkwc3MNfWO3ceyVjE+pDGolopcM5MwF4VcsYU6s+wYcmzzXJi7MEqTVYbVl7q3pQShA8baeQIExZcWFJw8fP5sZ8xyStbkIVVgvgWNqzqhAiwMOWRa8c9H+SNN95wrW64hVi8kg3qpd9nBdeAMSqOPN1SQUiIYCPLi/uJqth8LtTK4hqxNTQ0uGMmG58L4wehGLUkBqPgvYfRxPkSNZLmpLomfbBCiOKhjhGB9nFQj6p3796mEiEAMyk1/thjj809U63aoX4LAojJiw1LkTdgY3XBHVEq16QQtQZC0F/B2lkYLnS8JE1l+RFCiDJCzB9bWNE+IURxBC0/TZo0WcijxI8QQgghapKQjEOJHyGEEELULiExP26TS4kfIYQQQtQkIZafcPGTpiiVEEIIIUS1sGjRIlfkLCF+kloKCCGEEEJUA1FurwZHBTXq6ibLjxBCCCFqEUfjuOV9kERz/U80a6YwICGEEEJUP0GDDnV+eET8NCqZmtSlWgghhBCiGmjevHlw1zz+aeaoou/9eylRLoQQQghR7VBBPcBM/iHmZ5Z/r8SPEEIIIWqBEG+WK34I8JHlRwghhBA1R1D8ON6un8VP0O1l22FYCFEcdFgeM2ZM7DGl7A6dlsmTJyeeP12+hRCiXKywwgrBXYstP4266a200kpGCJE/zz//vNlll11MtUK3dnVsF0JUMiuvvHJwl7siI+bnQ/9eiR8hhBBC1AIhmsbVPFh+JiccKIQQQghRdQQtP02aNPmAx4amYN6atgAABUJJREFUTZs2svysuOKKRgghhBCimiHYuVWrVo32LViw4Gfxs9RSS70f/IX27dsbIYQQQohqZe21115iX4sWLX4WPwceeOD0RYsWTfA/2aFDByOEEEIIUa1suOGGwV1vdOvWbTb/8dqdPud/VuJHCCGEENVMiJZZrHVc8dOkSZNG4udXv/qVursLIYQQoipp2rSpq2X8OLpmcWEyV/zMmzdvtP8AgoQ222wzI4QQQghRbWyxxRbE9zTa5wiixuKnZ8+e05yHF/wH7bnnnkYIIYQQotro1KlTo58XLVr0XLdu3b7zfm7wPfd3/4FYflTzRwghhBDVRJs2bcwmm2zSaJ/j8hro/3mx+FlhhRXudR5m+A40Xbp0MUIIIYQQ1ULnzp0b/exYfWY6GmeEf99i8eMInTnOAYP9T+6+++5mlVVWMUIIIYQQlQ6aZbfddmu0zzHm3IXG8e/zu70IBrrF/3Pz5s3NMcccY4QQQgghKp3jjjvO1S5+Fi5ceEvwuEbi55BDDnnbsf7c7t/XsWNHs+222xohhBBCiEplp512MhtttFFw96AePXq8G9zZENyxzDLLnOkIoOn+fUcffbR6fgkhhBCiIsHd1bNnz0b70DItW7Y8Pez4JcQP7S4c/1hf/77lllvOnH322WbppZc2QgghhBCVAtoEjeIYbxrtd7TM6WiasN9pCNvZvXv325yHV/371lhjDdOnTx9VfhZCCCFERYAmQZusttpqwadedLTMoKjfa4h5wa7Ow1T/Pmr/HHnkkUYIIYQQotwcccQRYR0pvmnWrFnXuN+LNeMMGzZsa6oiOv9t6d//+uuvm+uuu462GEYIIYQQopQ44sacfPLJZptttmm039EsPzjbdj169JgQ9/uJPqzBgwfv41iBHnK2RlaiyZMnm/79+5tZs2YZIYQQQohS0KpVK9O3b1+z/vrrB59a4AifzocddtiopNewCuAZMmTI0Y74uS24f+bMmebee+81Y8aMQW0ZIYQQQog8IL6HdHZH3LgCKIRecXE+jV7LWOIIoL2chwecP75M8LkPPvjADBo0yHz00UdGCCGEECJL1lprLXPssceaddddd4nnHOPLj87D7x1R9KSxJFXq1tChQzd1HkY6W5uw51966SXz9NNPm7ffftsIIYQQQhQDhZZ33XVXs91220Ud8o2z7elYfMabFKTOWx8+fHjbefPmjXQsQBtFHfPtt9+aZ5991owbN85MmTLFCCGEEELYQFf2HXbYweyyyy5mpZVWijt0fLNmzbp069btC5OSgor2OC6upZdaaqlTHFPTuY4IWiHu2M8//9y89tpr7vbhhx8qNkgIIYQQiyGWh+Dlrbbaymy55ZZuXcE4HB3xX+fh0ubNm1/vCJ+5pgCKqlg4ZMiQXzoP5znbyc7JW5V//uqrr8y0adPMd999527ff/+9mT179uJt7tyC3ocQQgghKpAWLVq41ZdbtmzpbnSNaN26tbvROmvVVVe1eh1H9PzkaI0bFi5ceHGPHj1mmiLIpFzz0KFDV3JO6kjnv8c4J9beCCGEEEJkwySarjv64s7u3btPNRmQea8Kxxq0s3OCvZ0T/Z3zuLwRQgghhEgBri1HQzzi/HegI3jGmozJrVFXv379Gjp06LDVggULOjk/7uG8ie2dx6WMEEIIIYQPXFrOAyKHAoWjHMHzuqMbcgsSLmmX0sGDB6/RtGnTto6/rq3zpto6u1Zz3jCRTavzs/P/1WUtEkIIIWoHZ26f6cztXziPX/7/4+fO7q8aGhq+cPTAF82bN/+ikIytYvg/AAAA//+CMZVIAAAABklEQVQDAHzkw/UUYI4oAAAAAElFTkSuQmCC" x="${x}" y="${y}" width="${w}" height="${h}"/><image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAogAAADACAYAAACH3ZKSAAAQAElEQVR4nOydB2AU5dqFT0LvSAcBpUlTFEFF0V+xeylWBBQV7L33ehH1XsEuSFEEBFQQRdpVREV6kSpIJ3QCkgChJKT/e75kN7OT3Z1vd2c3W97n3nWZyexktmTnzHlbadhD+X79+j1drVq1aypVqnRqhQoVTqnswLFctnz58hAEQRAEQRDs4+TJk0hLS8s67iAjI+PwiRMn9h49evTn0aNHf8gfI0gSECC9e/fuWLNmzdfq1KlzUYsWLWpBEARBEARBKHG2bNly8MCBAwtTU1MHTpw4cSUCwG+B2LNnz+aNGjWadPbZZ7cvU6YMBEEQBEEQhMgjKysLa9euXZaUlHTHlClTNvvzWG2B6BCGtevVqzepffv2l+mEjdPT03Hw4EF1LwiCIAiCINhHxYoV4YjiokKFCpbbMhy9atWqOTt37uwzbdq0A9BASyDefvvt11144YVTa9So4dEyPHbsGP7++2+sX78e27ZtU8LQERKHIAiCIAiCEDoqV66M2rVro3nz5mjTpg3atm2r1nnCoc+yVq9efd3o0aN/t9qvpUDs16/fcxdffPEgKlUzCxYswKxZs5QoFARBEARBEEqeZs2a4dprr0Xnzp2L/cwR2c1fuHDh4w6ROMTXPnwKxHvvvXfsZZdddmdiYqJrXV5eHhYtWgRHLBvJyckQBEEQBEEQIo/69evjpptugiMKDKOWy8nJock30sED3h5bytsP+vfv/+WVV17ZLyGhSENmZmZi8ODBmDlzpoSQBUEQBEEQIhhqtT///BNbt27F+eefj1KlCmQfxeLpp5/eoXr16k1WrVr1o6fHehSId9xxx4NXXHHFq0a1yV8ycOBAlk5DEARBEARBiA4OHDjAamacd955KFeunGt948aNz3Es71u3bl2xVjjFBOJtt912/qWXXjqlfPnyLuswJSUFAwYMwN69eyEIgiAIgiBEF4cPH8by5cuVSHRWPtMIbNCgQbdKlSr97++//95n3N5NIDri1PU7deq02litzNJoOoeSbygIgiAIghC9MBpMJ9FhBLrCzQ4HMaFatWp31KpV6zPHz1wTWBKND2zatOl39erVczU5zM/Px0cffSTOoSAIgiAIQgywe/duDBkyRGk8J/Xr1y9ft27dqcbtXA5i165dW3fp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" x="${x + w + 4}" y="${y}" width="${w2}" height="${h}"/>`;
 };
 const endCard = (bg, sloganLines, sub, dark = true) => {
   const g = uid('ec');
   const col = dark ? '#fff' : INK;
   return `<defs>${bg(g)}</defs><rect width="180" height="320" fill="url(#${g})"/>
-    <circle cx="90" cy="112" r="38" fill="#fff" opacity="${dark ? 0.1 : 0.6}"/>${logo(66, 86, 48)}
+    <g transform="translate(90 112)">${anim('halo', `<circle r="34" fill="none" stroke="#fff" stroke-width="1.4"/>`)}${anim('halo d2', `<circle r="34" fill="none" stroke="#fff" stroke-width="1"/>`)}<circle r="34" fill="#fff" opacity="${dark ? 0.1 : 0.7}"/></g>${logo(66, 88, 48)}
     ${T(90, 166, 25, 'Yakınla', {f: 'Inter, sans-serif', w: 800, c: col, ls: '-0.6'})}
-    ${sloganLines.map((l, i) => T(90, 186 + i * 12, 9.6, l, {w: 700, c: dark ? '#ffe2b0' : BLUE_D})).join('')}
-    ${T(90, 189 + sloganLines.length * 12 + 4, 6.6, sub, {w: 600, c: col, op: 0.85})}
-    ${badges(28, 222, 58)}
+    ${sloganLines.map((l, i) => T(90, 186 + i * 12, 9.6, l, {w: 700, c: dark ? '#ffe2b0' : BLUE_D, f: DISPLAY})).join('')}
+    ${T(90, 189 + sloganLines.length * 12 + 4, 6.4, sub, {w: 600, c: col, op: 0.85})}
+    ${anim('pop s3', badges(28, 222, 58))}
     ${T(90, 256, 8, 'yakinla.com', {w: 700, c: col})}
     ${T(90, 270, 5.2, 'Şu an aktif bölgemiz: Kahramanmaraş Afşin', {w: 600, c: col, op: 0.75})}`;
 };
-const caption = (y, lines, o = {}) => lines.map((l, i) => T(90, y + i * (o.lh || 13), o.s || 11, l, {w: o.w || 800, c: o.c || '#fff', f: o.f, it: o.it})).join('');
-const touch = (x, y, r = 9) => `<circle cx="${x}" cy="${y}" r="${r + 6}" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.6"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="0.7"/>`;
 
 // ---------- uygulama ekranları (ekran görüntülerindeki düzen, fiyatsız) ----------
 const bottle = (x, y, s, big = false) => `<g transform="translate(${x} ${y}) scale(${s})">${big
   ? `<rect x="-9" y="-2" width="18" height="26" rx="4" fill="#d6ecff" stroke="#9cc8f0" stroke-width="0.8"/><rect x="-4" y="-7" width="8" height="5" rx="1" fill="#e04a3a"/><rect x="-9" y="8" width="18" height="7" fill="#fff" opacity="0.8"/>`
   : `<path d="M-4 -12 H4 V-8 Q7 -6 7 -2 V18 Q7 21 4 21 H-4 Q-7 21 -7 18 V-2 Q-7 -6 -4 -8 Z" fill="#d6ecff" stroke="#9cc8f0" stroke-width="0.8"/><rect x="-3" y="-15" width="6" height="3" rx="0.8" fill="${BLUE}"/><rect x="-7" y="3" width="14" height="6" fill="#3b8bff" opacity="0.55"/>`}</g>`;
-const uiChrome = (w, h, title, cart = 0) => `<rect width="${w}" height="${h}" fill="#f4f7fc"/>
+const uiChrome = (w, h, title, cart = 0, cartCls = '') => `<rect width="${w}" height="${h}" fill="#f4f7fc"/>
   <circle cx="9" cy="11" r="5.5" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/><path d="M10 9 L8 11 L10 13" stroke="${INK}" stroke-width="1" fill="none"/>
   ${T(18, 13.5, 7, title, {a: 'start', w: 800, c: INK, f: 'Inter, sans-serif'})}
   <rect x="${w - 42}" y="5.5" width="22" height="11" rx="4" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/>${T(w - 31, 13, 4.6, 'Geçmiş', {w: 700, c: INK})}
   <rect x="${w - 17}" y="5.5" width="12" height="11" rx="4" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/><path d="M${w - 14} 9 H${w - 8} L${w - 9} 13 H${w - 13} Z" fill="none" stroke="${INK}" stroke-width="0.8"/>
-  ${cart ? `<circle cx="${w - 6}" cy="5.5" r="3.6" fill="${BLUE}"/>${T(w - 6, 7.2, 4.2, String(cart), {w: 800})}` : ''}`;
+  ${cart ? anim(cartCls || 'none', `<circle cx="${w - 6}" cy="5.5" r="3.8" fill="${BLUE}"/>${T(w - 6, 7.2, 4.2, String(cart), {w: 800})}`) : ''}`;
 const uiNav = (w, h) => `<rect x="4" y="${h - 22}" width="${w - 8}" height="18" rx="7" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/>
-  ${['Anasayfa', 'Kategoriler', '', 'Fırsatlar', 'Hesabım'].map((l, i) => l ? `<rect x="${8 + i * (w - 16) / 5 + (w - 16) / 10 - 3}" y="${h - 19}" width="6" height="5" rx="1.2" fill="none" stroke="${i === 1 ? BLUE : '#4a5568'}" stroke-width="0.7"/>${T(8 + i * (w - 16) / 5 + (w - 16) / 10, h - 8.5, 3.4, l, {w: 700, c: i === 1 ? BLUE : '#4a5568'})}` : '').join('')}
+  ${['Anasayfa', 'Kategoriler', '', 'Fırsatlar', 'Hesabım'].map((l, i) => l ? `<rect x="${8 + (i * (w - 16)) / 5 + (w - 16) / 10 - 3}" y="${h - 19}" width="6" height="5" rx="1.2" fill="none" stroke="${i === 1 ? BLUE : '#4a5568'}" stroke-width="0.7"/>${T(8 + (i * (w - 16)) / 5 + (w - 16) / 10, h - 8.5, 3.4, l, {w: 700, c: i === 1 ? BLUE : '#4a5568'})}` : '').join('')}
   <circle cx="${w / 2}" cy="${h - 17}" r="8" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/>${logo(w / 2 - 6, h - 23, 12)}`;
 const uiCategories = (w, h, o = {}) => {
   const cats = ['Su', 'Çoklu Al', 'İçecek', 'Atıştırmalık', 'Süt Ürünleri', 'Kahvaltılık', 'Fırından', 'Ev Bakım', 'Temel Gıda'];
@@ -382,9 +559,9 @@ const uiCategories = (w, h, o = {}) => {
     const added = o.added && o.added.includes(i);
     cards += `<rect x="${cx}" y="${cy}" width="${gw}" height="50" rx="5" fill="#fff" stroke="#e8edf5" stroke-width="0.6"/>${bottle(cx + gw / 2, cy + 18, 0.85, i === 3)}
       <rect x="${cx + 4}" y="${cy + 36}" width="${gw * 0.6}" height="2.6" rx="1" fill="${INK}"/><rect x="${cx + 4}" y="${cy + 41}" width="${gw * 0.35}" height="2" rx="1" fill="#9aa8bd"/>
-      <rect x="${cx + gw - 10}" y="${cy + 3}" width="7" height="7" rx="2" fill="${added ? BLUE : '#fff'}" stroke="#d5deea" stroke-width="0.5"/>${T(cx + gw - 6.5, cy + 8.6, 6, added ? '1' : '+', {w: 800, c: added ? '#fff' : BLUE})}`;
+      ${anim(added ? `pop s${i + 1}` : 'none', `<rect x="${cx + gw - 10}" y="${cy + 3}" width="7" height="7" rx="2" fill="${added ? BLUE : '#fff'}" stroke="#d5deea" stroke-width="0.5"/>${T(cx + gw - 6.5, cy + 8.6, 6, added ? '1' : '+', {w: 800, c: added ? '#fff' : BLUE})}`)}`;
   }
-  return `${uiChrome(w, h, 'Kategoriler', o.cart)}<line x1="21" y1="20" x2="21" y2="${h}" stroke="#e1e7f0" stroke-width="0.5"/>${rail}<rect x="0" y="22" width="1.6" height="13" fill="${BLUE}"/>
+  return `${uiChrome(w, h, 'Kategoriler', o.cart, o.cart ? 'pop s3' : '')}<line x1="21" y1="20" x2="21" y2="${h}" stroke="#e1e7f0" stroke-width="0.5"/>${rail}<rect x="0" y="22" width="1.6" height="13" fill="${BLUE}"/>
     ${T(gx, 29, 7.4, 'Su', {a: 'start', w: 800, c: INK, f: 'Inter, sans-serif'})}${T(gx + 10, 29, 3.8, '13 ürün', {a: 'start', w: 600, c: '#7a879b'})}
     <rect x="${gx + 28}" y="22" width="${w - gx - 46}" height="9" rx="4.5" fill="#fff" stroke="#e1e7f0" stroke-width="0.5"/>${T(gx + 38, 28.2, 3.8, 'Markette ara', {a: 'start', w: 600, c: '#9aa8bd'})}
     <rect x="${gx}" y="36" width="24" height="9" rx="4.5" fill="${BLUE}"/>${T(gx + 12, 42, 4, 'Pet Şişe', {w: 800})}
@@ -401,14 +578,15 @@ const uiCart = (w, h, o = {}) => {
       ${i < 2 ? `<rect x="29" y="${y + 17}" width="30" height="2.2" rx="1" fill="#22c55e" opacity="0.8"/>` : ''}
       <rect x="${w - 34}" y="${y + 8}" width="26" height="9" rx="4" fill="#f4f7fc"/>${T(w - 29, y + 14.6, 6, '−', {w: 800, c: BLUE})}${T(w - 21, y + 14.4, 5, String([10, 4, 2, 1][i]), {w: 800, c: INK})}${T(w - 13, y + 14.8, 6, '+', {w: 800, c: BLUE})}`;
   }
-  const sheetY = h - 74;
+  const sy = h - 74;
+  const p = o.progress ?? 0.82;
   return `${uiChrome(w, h, 'Sepetim', 18)}${T(6, 29, 6.2, '18 ürün', {a: 'start', w: 800, c: INK, f: 'Inter, sans-serif'})}${T(w - 6, 29, 4.4, 'Temizle ›', {a: 'end', w: 700, c: BLUE})}${rows}
-    <rect x="0" y="${sheetY}" width="${w}" height="74" rx="9" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/>
-    <line x1="18" y1="${sheetY + 14}" x2="${w - 18}" y2="${sheetY + 14}" stroke="#e1e7f0" stroke-width="2" stroke-linecap="round"/>
-    <line x1="18" y1="${sheetY + 14}" x2="${18 + (w - 36) * (o.progress ?? 0.82)}" y2="${sheetY + 14}" stroke="#2ecc71" stroke-width="2" stroke-linecap="round"/>
-    ${van(18 + (w - 36) * (o.progress ?? 0.82) - 12, sheetY + 3, 0.24, {shadow: 0})}
-    ${T(6, sheetY + 26, 4.6, 'Teslimat bizden', {a: 'start', w: 800, c: INK})}
-    <rect x="6" y="${sheetY + 32}" width="${w - 12}" height="15" rx="6" fill="${o.pressed ? BLUE_D : BLUE}"/>${T(w / 2, sheetY + 42, 7, o.done ? 'Sipariş alındı ✓' : 'Öde', {w: 800})}
+    <rect x="0" y="${sy}" width="${w}" height="74" rx="9" fill="#fff" stroke="#e1e7f0" stroke-width="0.6"/>
+    <line x1="18" y1="${sy + 14}" x2="${w - 18}" y2="${sy + 14}" stroke="#e1e7f0" stroke-width="2" stroke-linecap="round"/>
+    ${anim(o.move ? 'grow' : 'none', `<line x1="18" y1="${sy + 14}" x2="${18 + (w - 36) * p}" y2="${sy + 14}" stroke="#2ecc71" stroke-width="2" stroke-linecap="round"/>`)}
+    ${anim(o.move ? 'vanmove' : 'none', at(18 + (w - 36) * p - 12, sy + 3, van({shadow: 0}), 0.24))}
+    ${T(6, sy + 26, 4.6, 'Teslimat bizden', {a: 'start', w: 800, c: INK})}
+    ${anim(o.pressed ? 'press' : 'none', `<rect x="6" y="${sy + 32}" width="${w - 12}" height="15" rx="6" fill="${BLUE}"/>${T(w / 2, sy + 42, 7, 'Öde', {w: 800})}`)}
     ${uiNav(w, h)}`;
 };
 const phone = (x, y, w, h, screen, o = {}) => {
@@ -417,186 +595,191 @@ const phone = (x, y, w, h, screen, o = {}) => {
   const k = (w - bez * 2) / (o.cw || w - bez * 2);
   const isl = Math.min(24, w * 0.2);
   return `<defs><clipPath id="${c}"><rect x="${x + bez}" y="${y + bez}" width="${w - bez * 2}" height="${h - bez * 2}" rx="${o.r ? Math.max(1, o.r - 3) : 12}"/></clipPath></defs>
+    <rect x="${x - 0.6}" y="${y - 0.6}" width="${w + 1.2}" height="${h + 1.2}" rx="${(o.r || 15) + 0.6}" fill="#3a4458"/>
     <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r || 15}" fill="#0c111b"/>
     <g clip-path="url(#${c})"><g transform="translate(${x + bez} ${y + bez}) scale(${k})">${screen}</g></g>
-    <rect x="${x + w / 2 - isl / 2}" y="${y + bez + 2.5 * k * 1.2}" width="${isl}" height="${Math.max(2, 6 * k)}" rx="${Math.max(1, 3 * k)}" fill="#0c111b"/>`;
+    <rect x="${x + w / 2 - isl / 2}" y="${y + bez + 3 * k}" width="${isl}" height="${Math.max(2, 6 * k)}" rx="${Math.max(1, 3 * k)}" fill="#0c111b"/>`;
 };
-const drops = (n, seed, x0, y0, w, h) => {
+const glassDrops = (n, seed, x0, y0, w, h) => {
   let s = '';
   for (let i = 0; i < n; i++) {
-    const x = x0 + rnd(seed + i * 2.2) * w, y = y0 + rnd(seed + i * 5.9) * h, r = 1.4 + rnd(seed + i) * 3.2;
-    const trail = rnd(seed + i * 3.3) > 0.6;
-    s += `${trail ? `<path d="M${x.toFixed(1)} ${(y - r * 4).toFixed(1)} Q${(x + 0.6).toFixed(1)} ${(y - r * 2).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" stroke="#fff" stroke-width="${(r * 0.7).toFixed(1)}" opacity="0.18" fill="none"/>` : ''}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#cfe6ff" opacity="0.35" stroke="#fff" stroke-width="0.5" stroke-opacity="0.75"/><circle cx="${(x - r * 0.35).toFixed(1)}" cy="${(y - r * 0.35).toFixed(1)}" r="${(r * 0.28).toFixed(1)}" fill="#fff" opacity="0.85"/>`;
+    const x = x0 + rnd(seed + i * 2.2) * w, y = y0 + rnd(seed + i * 5.9) * h, r = 1.6 + rnd(seed + i) * 3.4;
+    const moving = rnd(seed + i * 3.3) > 0.55;
+    const d = `<path d="M${x.toFixed(1)} ${(y - r * 5).toFixed(1)} Q${(x + 0.6).toFixed(1)} ${(y - r * 2).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" stroke="#fff" stroke-width="${(r * 0.6).toFixed(1)}" opacity="${moving ? 0.22 : 0}" fill="none"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#d8ecff" opacity="0.32" stroke="#fff" stroke-width="0.5" stroke-opacity="0.8"/><circle cx="${(x - r * 0.35).toFixed(1)}" cy="${(y - r * 0.35).toFixed(1)}" r="${(r * 0.3).toFixed(1)}" fill="#fff" opacity="0.9"/>`;
+    s += moving ? `<g class="slide" style="animation-delay:${(-rnd(seed + i * 9) * 5).toFixed(2)}s;animation-duration:${(3.5 + rnd(i) * 3).toFixed(2)}s">${d}</g>` : d;
   }
   return s;
 };
+const bokeh = (n, seed, col = '#ffc26b') => [...Array(n)].map((_, i) => `<circle class="twinkle" style="animation-delay:${(-rnd(seed + i) * 2).toFixed(2)}s" cx="${(rnd(seed + i) * 180).toFixed(1)}" cy="${(30 + rnd(seed + i * 3) * 260).toFixed(1)}" r="${(10 + rnd(seed + i * 7) * 16).toFixed(1)}" fill="${col}" opacity="0.14" filter="url(#f-blur)"/>`).join('');
 
-// ---------- SENARYOLAR ----------
-const outsideRain = () => { const s = uid('sk'), g = uid('gr'); return `<defs>${lg(s, [[0, '#1d2533'], [1, '#3e4b60']])}${lg(g, [[0, '#2b3446'], [1, '#121821']])}</defs>
-  <rect width="180" height="320" fill="url(#${s})"/>${houses(200, 3, '#232c3c', 0.6)}<rect y="196" width="180" height="124" fill="url(#${g})"/>
-  ${van(38, 172, 0.62, {lights: true, wet: true})}<rect x="20" y="228" width="140" height="3" fill="#ffc26b" opacity="0.18"/><ellipse cx="90" cy="250" rx="60" ry="6" fill="#9cc4ff" opacity="0.12"/>
-  ${rain(120, 11, 0, 60, 190, 230, 16, -3, 0.5)}${courierFront(92, 166, 1.35, 'rain')}${rain(30, 91, 40, 60, 110, 210, 22, -4, 0.75, '#e6f0ff', 1.1)}`; };
-const outsideSnow = () => { const s = uid('sk'); return `<defs>${lg(s, [[0, '#14213f'], [1, '#33497a']])}</defs>
-  <rect width="180" height="320" fill="url(#${s})"/>${houses(200, 7, '#1d2a4a', 0.65, true)}<rect y="196" width="180" height="124" fill="#e9eef8"/><path d="M0 196 Q45 188 90 196 T180 194 V206 H0 Z" fill="#f7f9ff"/>
-  ${van(38, 172, 0.62, {lights: true, snow: true})}${snow(70, 21, 0, 60, 180, 220, 0.6, 2.4)}${courierFront(92, 166, 1.35, 'snow')}<ellipse cx="82" cy="176" rx="7" ry="3.4" fill="#fff" opacity="0.55"/>${snow(18, 61, 40, 70, 100, 190, 1.5, 3.2)}`; };
-const outsideMud = () => { const s = uid('sk'), m = uid('md'); return `<defs>${lg(s, [[0, '#8d98a6'], [1, '#c4cbd3']])}${lg(m, [[0, '#7a5a3a'], [1, '#4c3420']])}</defs>
-  <rect width="180" height="320" fill="url(#${s})"/><path d="M0 170 L40 140 L70 158 L110 128 L150 152 L180 138 V200 H0 Z" fill="#6f7d8c" opacity="0.6"/>${houses(200, 13, '#b9a88f', 0.15)}
-  <rect y="196" width="180" height="124" fill="url(#${m})"/><ellipse cx="60" cy="236" rx="30" ry="5" fill="#8fa3b8" opacity="0.6"/><ellipse cx="128" cy="252" rx="22" ry="4" fill="#8fa3b8" opacity="0.5"/>
-  <path d="M0 214 Q50 206 100 218 T180 210" stroke="#3a2716" stroke-width="3" fill="none" opacity="0.6"/>
-  ${van(30, 172, 0.62, {mud: true})}${courierFront(92, 166, 1.35, 'mud')}`; };
-
+// ================= SENARYO 1: KAPI ZİLİ =================
 const S1 = {
   key: 'kapi-zili', n: 1, name: 'Kapı Zili',
   logline: 'Kamera evin içinde, kapının karşısında sabit durur. Zil üç kez çalar; kapı her açıldığında dışarıda başka bir hava vardır: yağmur, kar, çamur. Kurye her seferinde poşeti aynı özenle uzatır. Sonda üç havanın izi kapının önünde yan yana durur.',
   chips: ['Sinematik 3B', '20 sn', 'POV', 'Sıcak iç / soğuk dış'],
   frames: [
-    {t: '0:00', d: '3 sn', scene: 'Akşam, evde', say: 'Hava ne olursa olsun…', sfx: 'Yağmur camda, düşük piyano', svg: () => { const w = uid('w'), lamp = uid('l'); return `<defs>${lg(w, [[0, '#4a2f1d'], [1, '#22150d']])}${rg(lamp, [[0, '#ffcf8a', 0.6], [1, '#ffcf8a', 0]], 0.75, 0.25, 0.6)}</defs>
-      <rect width="180" height="320" fill="url(#${w})"/><rect x="42" y="64" width="96" height="200" fill="#5b3622"/><rect x="38" y="60" width="104" height="6" fill="#f0e6d8"/><rect x="38" y="60" width="5" height="206" fill="#f0e6d8"/><rect x="137" y="60" width="5" height="206" fill="#f0e6d8"/>
-      <rect x="54" y="78" width="72" height="70" rx="2" fill="#4a2b1a"/><rect x="54" y="156" width="72" height="96" rx="2" fill="#4a2b1a"/><rect x="72" y="86" width="36" height="46" rx="2" fill="#26354f"/>${rain(16, 4, 72, 86, 36, 46, 7, -1, 0.7)}<circle cx="124" cy="170" r="2.4" fill="#d9a441"/>
-      <rect x="0" y="264" width="180" height="56" fill="#2e1c10"/><rect x="146" y="196" width="34" height="5" fill="#8b5a37"/><rect x="150" y="201" width="3" height="63" fill="#5d3a22"/>
-      ${phone(150, 150, 26, 48, uiCart(120, 242, {}), {r: 5, bez: 2, cw: 120})}<rect x="146" y="146" width="34" height="56" rx="8" fill="${BLUE}" opacity="0.12"/>
-      <rect x="10" y="110" width="3" height="80" fill="#3a2414"/><path d="M8 112 Q11 104 14 112" stroke="#c9b8a6" stroke-width="2" fill="none"/><path d="M6 118 L16 118 L14 168 L8 168 Z" fill="#1f5fd0" opacity="0.85"/>
-      <rect width="180" height="320" fill="url(#${lamp})"/>${caption(292, ['Hava ne olursa olsun…'], {s: 10})}`; }},
-    {t: '0:03', d: '4 sn', scene: 'Zil: yağmur', say: 'Yağmurda…', sfx: 'Zil "din-don", sağanak, su sıçraması', svg: () => doorway(outsideRain(), 'rain') + caption(300, ['Yağmurda…'], {s: 13})},
-    {t: '0:07', d: '4 sn', scene: 'Zil: kar', say: 'karda…', sfx: 'Zil, rüzgâr, karda adım', svg: () => doorway(outsideSnow(), 'snow') + caption(300, ['karda…'], {s: 13})},
-    {t: '0:11', d: '3 sn', scene: 'Zil: çamur', say: 'çamurda…', sfx: 'Zil, çamurda lastik sesi', svg: () => doorway(outsideMud(), 'mud') + caption(300, ['çamurda…'], {s: 13})},
-    {t: '0:14', d: '3 sn', scene: 'Üç havanın izi', say: 'Yakınla kapında.', sfx: 'Kapı kapanır, sıcak oda tonu', svg: () => { const w = uid('w'), lamp = uid('l'); return `<defs>${lg(w, [[0, '#4a2f1d'], [1, '#22150d']])}${rg(lamp, [[0, '#ffcf8a', 0.5], [1, '#ffcf8a', 0]], 0.5, 0.7, 0.7)}</defs>
-      <rect width="180" height="320" fill="url(#${w})"/><rect x="0" y="210" width="180" height="110" fill="#5a3520"/><rect x="0" y="206" width="180" height="6" fill="#3a2414"/>
-      ${[30, 90, 150].map((x, i) => `<g transform="translate(${x - 18} 150)"><rect width="36" height="44" rx="3" fill="${BLUE}"/><path d="M9 0 Q18 -12 27 0" stroke="${BLUE_D}" stroke-width="2.6" fill="none"/><circle cx="18" cy="20" r="10" fill="#fff"/>${logo(8, 10, 20)}${i === 0 ? rain(6, 3, 0, -8, 36, 50, 6, 0, 0.6) : i === 1 ? snow(10, 8, 0, -6, 36, 10, 0.8, 1.8) : splats(6, 5, 0, 36, 36, 8, '#6b4a2b', 1.6)}</g>`).join('')}
-      <g transform="translate(14 222)"><path d="M10 0 Q12 -24 2 -30" stroke="#1f5fd0" stroke-width="3" fill="none"/><path d="M-6 -30 Q4 -50 18 -30 Z" fill="#1f5fd0"/>${rain(5, 2, -4, 4, 20, 14, 4, 0, 0.8, '#9cc4ff')}</g>
-      <g transform="translate(78 230)"><path d="M0 0 H12 V-18 H4 V-6 H0 Z" fill="#2c3445"/><path d="M14 0 H26 V-18 H18 V-6 H14 Z" fill="#2c3445"/>${snow(8, 3, -2, -20, 30, 8, 0.8, 1.8)}<ellipse cx="13" cy="2" rx="16" ry="2.4" fill="#cfe0ff" opacity="0.4"/></g>
-      <g transform="translate(140 230)"><path d="M0 0 H12 V-18 H4 V-6 H0 Z" fill="#5a3d22"/><path d="M14 0 H26 V-18 H18 V-6 H14 Z" fill="#5a3d22"/>${splats(10, 6, -4, -6, 34, 10, '#6b4a2b', 1.8)}</g>
-      <rect width="180" height="320" fill="url(#${lamp})"/>${caption(292, ['Yakınla kapında.'], {s: 12})}`; }},
-    {t: '0:17', d: '3 sn', scene: 'Kapanış', say: 'Afşin\'deki depomuzdan, ortalama 60 dakikada.', sfx: 'Müzik çözülür, logo tınısı', svg: () => endCard((g) => lg(g, [[0, '#2a1a10'], [0.55, '#0e1a33'], [1, '#081022']]), ['Yağmurda, karda, çamurda'], "Afşin'deki depomuzdan, ortalama 60 dakikada")},
+    {t: '0:00', d: '3 sn', scene: 'Akşam, evde', say: 'Hava ne olursa olsun…', sfx: 'Yağmur camda, düşük piyano', svg: () => { const w = uid('w'), lamp = uid('l'), wood = uid('wd'), win = uid('wn'); return `<defs>${lg(w, [[0, '#4a2f1d'], [1, '#1f130b']])}${rg(lamp, [[0, '#ffcf8a', 0.55], [1, '#ffcf8a', 0]], 0.18, 0.28, 0.6)}${lg(wood, [[0, '#7a4a2e'], [1, '#4d2c19']], 0, 0, 1, 0)}<clipPath id="${win}"><rect x="72" y="86" width="36" height="46" rx="2"/></clipPath></defs>
+      <rect width="180" height="320" fill="url(#${w})"/><rect x="42" y="64" width="96" height="200" fill="url(#${wood})"/><rect x="38" y="60" width="104" height="6" fill="#efe4d4"/><rect x="38" y="60" width="5" height="206" fill="#efe4d4"/><rect x="137" y="60" width="5" height="206" fill="#efe4d4"/>
+      <rect x="54" y="78" width="72" height="70" rx="3" fill="#5a331e"/><rect x="54" y="156" width="72" height="96" rx="3" fill="#5a331e"/>
+      <rect x="72" y="86" width="36" height="46" rx="2" fill="#1d2a44"/><g clip-path="url(#${win})">${rainLoop(26, 4, 72, 86, 36, 46, {len: 8, dx: -1, op: 0.75, cls: ''})}</g><rect x="72" y="86" width="36" height="46" rx="2" fill="url(#g-shine)" opacity="0.6"/>
+      <circle cx="124" cy="170" r="2.6" fill="#e0b04d"/>
+      <rect x="0" y="264" width="180" height="56" fill="#2a190e"/><ellipse cx="90" cy="292" rx="70" ry="12" fill="#6b2f22" opacity="0.65"/>
+      <rect x="144" y="200" width="36" height="5" rx="1.5" fill="#8b5a37"/><rect x="149" y="205" width="3" height="59" fill="#5d3a22"/><rect x="174" y="205" width="3" height="59" fill="#5d3a22"/>
+      ${phone(150, 156, 24, 44, uiCart(120, 242, {}), {r: 5, bez: 2, cw: 120})}<rect x="146" y="152" width="32" height="52" rx="8" fill="${BLUE}" opacity="0.12" filter="url(#f-glow)"/>${touch(162, 192, 3.2)}
+      <g transform="translate(16 124)"><rect x="-4" y="-2" width="8" height="12" rx="3" fill="#2a1a10"/><circle cx="0" cy="16" r="9" class="twinkle" fill="#ffd9a0" opacity="0.9" filter="url(#f-glow)"/></g>
+      <rect width="180" height="320" fill="url(#${lamp})"/>${capBand()}${caption(302, ['Hava ne olursa olsun…'], {s: 11})}`; }},
+    {t: '0:03', d: '4 sn', scene: 'Zil: yağmur', say: 'Yağmurda…', sfx: 'Zil "din-don", sağanak, su sıçraması', svg: () => doorway(outsideRain(), 'rain') + capBand() + caption(304, ['Yağmurda…'], {s: 14})},
+    {t: '0:07', d: '4 sn', scene: 'Zil: kar', say: 'karda…', sfx: 'Zil, rüzgâr, karda adım', svg: () => doorway(outsideSnow(), 'snow') + capBand() + caption(304, ['karda…'], {s: 14})},
+    {t: '0:11', d: '3 sn', scene: 'Zil: çamur', say: 'çamurda…', sfx: 'Zil, çamurda lastik sesi', svg: () => doorway(outsideMud(), 'mud') + capBand() + caption(304, ['çamurda…'], {s: 14})},
+    {t: '0:14', d: '3 sn', scene: 'Üç havanın izi', say: 'Yakınla kapında.', sfx: 'Kapı kapanır, sıcak oda tonu', svg: () => { const w = uid('w'), lamp = uid('l'), fl = uid('fl'); return `<defs>${lg(w, [[0, '#3f281a'], [1, '#1c120b']])}${rg(lamp, [[0, '#ffcf8a', 0.45], [1, '#ffcf8a', 0]], 0.5, 0.62, 0.7)}${lg(fl, [[0, '#6b4126'], [1, '#2a180d']])}</defs>
+      <rect width="180" height="320" fill="url(#${w})"/><rect x="0" y="206" width="180" height="114" fill="url(#${fl})"/><rect x="0" y="203" width="180" height="4" fill="#2a190e"/>
+      ${[['i-rain', 30], ['i-snow', 90], ['i-mud', 150]].map(([id, x], i) => `${anim(`pop s${i * 2 + 1}`, `<ellipse cx="${x}" cy="214" rx="20" ry="3.4" fill="#000" opacity="0.35"/>${icon('i-bag', x - 21, 152, 42)}`)}
+        <g>${anim(`bob d${i + 1}`, `<circle cx="${x}" cy="${118}" r="22" fill="#fff" opacity="0.08"/>${icon(id, x - 19, 99, 38)}`)}</g>`).join('')}
+      ${T(90, 74, 8, 'Üç hava, üç teslimat', {w: 700, c: '#ffe2b0', f: DISPLAY, op: 0.9})}
+      <rect width="180" height="320" fill="url(#${lamp})"/>${capBand()}${caption(302, ['Yakınla kapında.'], {s: 13})}`; }},
+    {t: '0:17', d: '3 sn', scene: 'Kapanış', say: "Afşin'deki depomuzdan, ortalama 60 dakikada.", sfx: 'Müzik çözülür, logo tınısı', svg: () => endCard((g) => lg(g, [[0, '#2a1a10'], [0.55, '#0e1a33'], [1, '#081022']]), ['Yağmurda, karda, çamurda'], "Afşin'deki depomuzdan, ortalama 60 dakikada")},
   ],
   notes: {
-    'Görsel dil': 'Sinematik 3B: sıcak iç mekân ve kapı aralığından görünen soğuk dış dünya. Kamera tek noktada sabit; her açılışta yalnızca hava değişir. Bu tekrar, mesajın kendisi oluyor.',
-    'Ses': 'Zil her seferinde aynı "din-don". Arkasından gelen yağmur, rüzgâr ve çamur sesi her açılışta değişir. Sona doğru sıcak bir piyano teması. Dış ses yok, istenirse eklenebilir.',
-    'Uygulama': 'Açılışta konsolun üstündeki telefonda Sepetim ekranı ve "Öde" düğmesi görünür. Teslimat aracı uygulamadaki logolu beyaz minibüs.',
-    'Üretim': 'Önceki kar videosundaki 3B altyapı (kapı, ışık, kar) kullanılır; yağmur ve çamur eklenir. Render uzun sürer (~40 dk), ücretsizdir.',
+    'Görsel dil': 'Sinematik 3B. Sıcak iç mekânla kapı aralığından görünen soğuk dış dünya karşı karşıya. Kamera tek noktada sabit duruyor; her açılışta yalnızca hava değişiyor ve bu tekrar mesajın kendisi oluyor. Kurye yakın planda görünüyor, yüzü kadraj dışında.',
+    'Ses': 'Zil her seferinde aynı "din-don". Arkasından gelen yağmur, rüzgâr ve çamur sesi her açılışta değişiyor. Sona doğru sıcak bir piyano teması. Dış ses yok, istenirse eklenebilir.',
+    'Uygulama': 'Açılışta konsoldaki telefonda Sepetim ekranı açık ve "Öde" düğmesine dokunuluyor. Teslimat aracı uygulamadaki logolu beyaz minibüs; poşet de logolu.',
+    'Üretim': 'Önceki kar videosundaki 3B altyapı (kapı, ışık, kar) kullanılıyor; yağmur ve çamur ekleniyor. Render uzun sürüyor (~40 dk) ama ücretsiz.',
   },
 };
 
-const tvBg = (g) => lg(g, [[0, '#0c2f7a'], [1, '#061a45']]);
-const tvChrome = (day, temp, label) => { const g = uid('tv'); return `<defs>${tvBg(g)}<pattern id="${g}s" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2" fill="#fff" opacity="0.03"/></pattern></defs>
+// ================= SENARYO 2: AFŞİN HAVA DURUMU =================
+const tvBg = (g) => lg(g, [[0, '#0c2f7a'], [1, '#05163d']]);
+const MAP_PATH = 'M30 96 Q46 70 84 74 Q120 66 146 88 Q162 112 150 150 Q156 182 128 204 Q96 222 64 208 Q30 196 26 160 Q14 128 30 96 Z';
+const ticker = (label, text) => { const W = 84; const chunk = [0, 1, 2].map((i) => T(i * W, 0, 7, text, {a: 'start', w: 800}) + `<circle cx="${i * W + W - 9}" cy="-2.4" r="1.5" fill="#fff"/>`).join(''); return `<rect x="0" y="262" width="180" height="22" fill="#ff8a1f"/><g clip-path="url(#tk-clip)"><g transform="translate(60 276)">${anim('ticker', chunk, `--w:${W}px`)}</g></g><rect x="0" y="262" width="56" height="22" fill="#d9600a"/>${T(28, 276, 7, label, {w: 800, f: DISPLAY})}`; };
+const tvChrome = (day, temp, label) => { const g = uid('tv'); return `<defs>${tvBg(g)}<pattern id="${g}s" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="2" fill="#fff" opacity="0.035"/></pattern></defs>
   <rect width="180" height="320" fill="url(#${g})"/><rect width="180" height="320" fill="url(#${g}s)"/>
-  <rect x="8" y="12" width="70" height="16" rx="3" fill="#ff8a1f"/>${logo(10, 13, 14)}${T(48, 23.5, 7, 'AFŞİN HAVA', {w: 800, f: 'Bricolage Grotesque, sans-serif'})}
-  <rect x="128" y="12" width="44" height="16" rx="3" fill="#fff"/>${T(150, 23.5, 7.4, day, {w: 800, c: '#0c2f7a', f: 'Bricolage Grotesque, sans-serif'})}
-  ${temp ? T(26, 228, 26, temp, {w: 800, f: 'Bricolage Grotesque, sans-serif', a: 'start'}) : ''}
-  <rect x="0" y="262" width="180" height="22" fill="#ff8a1f"/><rect x="0" y="262" width="56" height="22" fill="#d9600a"/>${T(28, 276, 7, label, {w: 800, f: 'Bricolage Grotesque, sans-serif'})}
-  ${T(62, 276, 7, 'Yakınla: kapında', {w: 800, a: 'start'})}${check(160, 273, 0.6)}`; };
-const tvMap = (weather) => { const m = uid('mp'); return `<defs>${lg(m, [[0, '#3f8ff0'], [1, '#2257b8']])}</defs>
-  <path d="M30 96 Q46 70 84 74 Q120 66 146 88 Q162 112 150 150 Q156 182 128 204 Q96 222 64 208 Q30 196 26 160 Q14 128 30 96 Z" fill="url(#${m})" stroke="#bfe0ff" stroke-width="1.4"/>
-  <path d="M40 92 L54 74 L64 88 L78 68 L92 86 L104 70 L118 88" fill="none" stroke="#e9f3ff" stroke-width="2" stroke-linejoin="round"/>
-  ${T(90, 140, 9, 'AFŞİN', {w: 800, ls: '1.5', op: 0.85, f: 'Bricolage Grotesque, sans-serif'})}
-  <rect x="44" y="158" width="14" height="12" rx="2" fill="${BLUE_D}" stroke="#fff" stroke-width="1"/><path d="M47 166 V162 L51 159 L55 162 V166" stroke="#fff" stroke-width="1" fill="none"/>
-  <path d="M58 166 Q90 176 112 160" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3"/>
-  ${van(76, 160, 0.17, {shadow: 0})}
-  <g transform="translate(118 150)"><path d="M0 8 L8 0 L16 8 V18 H0 Z" fill="#fff"/><rect x="6" y="11" width="4" height="7" fill="${BLUE}"/></g>${check(134, 148, 0.55)}
-  ${weather}`; };
+  <rect x="8" y="12" width="72" height="16" rx="4" fill="#ff8a1f"/>${logo(10, 13, 14)}${T(49, 23.5, 7, 'AFŞİN HAVA', {w: 800, f: DISPLAY})}
+  <rect x="128" y="12" width="44" height="16" rx="4" fill="#fff"/>${T(150, 23.5, 7.6, day, {w: 800, c: '#0c2f7a', f: DISPLAY})}
+  ${T(22, 236, 28, temp, {w: 800, f: DISPLAY, a: 'start'})}${ticker(label, 'Yakınla: kapında')}${icon('i-ok', 160, 264, 18, 'pop s4')}`; };
+const tvMap = (weatherIcons, particles) => { const m = uid('mp'), c = uid('mc'); return `<defs>${lg(m, [[0, '#3f8ff0'], [1, '#1e50ad']])}<clipPath id="${c}"><path d="${MAP_PATH}"/></clipPath></defs>
+  <path d="${MAP_PATH}" fill="url(#${m})" stroke="#bfe0ff" stroke-width="1.4" filter="url(#f-soft)"/><path d="${MAP_PATH}" fill="url(#g-shine)" opacity="0.5"/>
+  <g clip-path="url(#${c})">${particles}<g fill="none" stroke="#e9f3ff" stroke-opacity="0.2" stroke-width="1"><path d="M38 118 Q90 98 142 116"/><path d="M34 132 Q90 112 148 132"/><path d="M44 190 Q90 172 136 192"/><path d="M52 204 Q90 190 124 206"/></g></g>
+  ${T(90, 142, 9, 'AFŞİN', {w: 800, ls: '1.5', op: 0.8, f: DISPLAY})}
+  ${icon('i-depot', 36, 150, 22)}${icon('i-home', 116, 146, 24)}
+  <path d="M58 162 Q90 176 116 160" fill="none" stroke="#fff" stroke-width="1.8" stroke-dasharray="4 2" class="flow"/>
+  <g transform="translate(78 160)">${anim('route', at(0, 0, van({shadow: 0}), 0.17))}</g>
+  ${icon('i-ok', 132, 140, 14, 'pop s2')}${weatherIcons}`; };
 
 const S2 = {
   key: 'hava-durumu', n: 2, name: 'Afşin Hava Durumu',
-  logline: 'Eğlenceli bir TV hava durumu bülteni parodisi. Haritada günler geçer: Pazartesi yağmur, Salı kar, Çarşamba çamur. Hava ne gösterirse göstersin, alt bantta hep aynı haber yazar: "Yakınla: kapında." Sonunda haftalık tahmin tablosunun her gününde aynı pin ve onay işareti durur.',
-  chips: ['2B TV grafiği', '20 sn', 'Mizahi', 'Turuncu bant'],
+  logline: 'Eğlenceli bir TV hava durumu bülteni parodisi. Haritada günler geçer: Pazartesi yağmur, Salı kar, Çarşamba çamur. Hava ne gösterirse göstersin, kayan alt bantta hep aynı haber yazar: "Yakınla: kapında." Sonunda haftalık tahmin tablosunun her gününde aynı onay işareti durur.',
+  chips: ['2B TV grafiği', '20 sn', 'Mizahi', 'Kayan alt bant'],
   frames: [
-    {t: '0:00', d: '3 sn', scene: 'Bülten jeneriği', say: 'AFŞİN HAVA DURUMU', sfx: 'Retro TV jeneriği', svg: () => { const g = uid('tb'); return `<defs>${tvBg(g)}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      ${[70, 54, 38].map((r, i) => `<circle cx="90" cy="130" r="${r}" fill="none" stroke="#3f8ff0" stroke-width="${1.4 - i * 0.3}" opacity="${0.5 + i * 0.2}"/>`).join('')}<path d="M90 130 L150 96 A70 70 0 0 1 160 130 Z" fill="#ff8a1f" opacity="0.35"/>
-      ${logo(62, 102, 56)}${T(90, 216, 34, 'AFŞİN', {w: 800, f: 'Bricolage Grotesque, sans-serif', ls: '1'})}<rect x="22" y="224" width="136" height="20" fill="#ff8a1f"/>${T(90, 238.5, 12, 'HAVA DURUMU', {w: 800, f: 'Bricolage Grotesque, sans-serif', ls: '1'})}
-      ${T(90, 262, 7, 'sunar: Yakınla', {w: 700, op: 0.8})}<rect x="8" y="12" width="28" height="11" rx="2" fill="#e5322d"/>${T(22, 20, 5.6, 'CANLI', {w: 800})}`; }},
-    {t: '0:03', d: '4 sn', scene: 'Pazartesi: yağmur', say: 'PZT · YAĞMUR · Yakınla: kapında', sfx: 'Yağmur jingle\'ı', svg: () => tvChrome('PZT', '8°', 'YAĞMUR') + tvMap(iconRain(70, 112, 0.75) + iconRain(116, 118, 0.6) + rain(40, 7, 30, 100, 120, 100, 8, -2, 0.5, '#bfe0ff'))},
-    {t: '0:07', d: '4 sn', scene: 'Salı: kar', say: 'SAL · KAR · Yakınla: kapında', sfx: 'Kar jingle\'ı, çan', svg: () => tvChrome('SAL', '-3°', 'KAR') + tvMap(iconSnow(68, 110, 0.7) + iconSnow(118, 116, 0.55) + snow(40, 13, 28, 92, 126, 120, 0.6, 1.8))},
-    {t: '0:11', d: '3 sn', scene: 'Çarşamba: çamur', say: 'ÇAR · ÇAMUR · Yakınla: kapında', sfx: 'Komik "vıcık" efekti', svg: () => tvChrome('ÇAR', '6°', 'ÇAMUR') + tvMap(iconMud(70, 112, 0.65) + iconMud(118, 120, 0.5) + splats(16, 23, 34, 104, 112, 96, '#7a5532', 2.2))},
-    {t: '0:14', d: '3 sn', scene: 'Haftalık tahmin', say: 'Her gün: Yakınla kapında', sfx: 'Tik tik sayan grafik sesi', svg: () => { const g = uid('tw'); const days = ['PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT', 'PAZ']; const ic = [iconRain, iconSnow, iconMud, iconCloud, iconSun, iconRain, iconSnow];
-      return `<defs>${tvBg(g)}</defs><rect width="180" height="320" fill="url(#${g})"/>${T(90, 56, 14, 'HAFTALIK', {w: 800, f: 'Bricolage Grotesque, sans-serif'})}${T(90, 72, 14, 'TAHMİN', {w: 800, c: '#ff8a1f', f: 'Bricolage Grotesque, sans-serif'})}
-      ${days.map((d, i) => { const row = Math.floor(i / 4); const x = 16 + (i % 4) * 40 + (row ? 20 : 0), y = 88 + row * 86; return `<rect x="${x}" y="${y}" width="34" height="78" rx="5" fill="#fff" opacity="0.1"/>${T(x + 17, y + 13, 7, d, {w: 800})}${ic[i](x + 17, y + 32, 0.55)}${logo(x + 9, y + 48, 16)}${check(x + 26, y + 66, 0.42)}`; }).join('')}
+    {t: '0:00', d: '3 sn', scene: 'Bülten jeneriği', say: 'AFŞİN HAVA DURUMU', sfx: 'Retro TV jeneriği', svg: () => { const g = uid('tb'), sw = uid('sw'); return `<defs>${tvBg(g)}<linearGradient id="${sw}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff8a1f" stop-opacity="0"/><stop offset="1" stop-color="#ff8a1f" stop-opacity="0.55"/></linearGradient></defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${[70, 54, 38].map((r, i) => `<circle cx="90" cy="130" r="${r}" fill="none" stroke="#3f8ff0" stroke-width="${1.4 - i * 0.3}" opacity="${0.5 + i * 0.2}"/>`).join('')}
+      <g class="spin" style="transform-origin:90px 130px"><path d="M90 130 L90 60 A70 70 0 0 1 150 94 Z" fill="url(#${sw})"/></g>
+      ${[['i-rain', 46, 86], ['i-flake', 124, 80], ['i-mud', 128, 150]].map(([id, x, y], i) => icon(id, x - 10, y - 10, 20, `bob d${i + 1}`)).join('')}
+      <g transform="translate(90 130)">${anim('halo', `<circle r="26" fill="none" stroke="#fff" stroke-width="1.4"/>`)}<circle r="24" fill="#fff" opacity="0.12"/></g>${logo(66, 106, 48)}
+      ${T(90, 218, 34, 'AFŞİN', {w: 800, f: DISPLAY, ls: '1'})}${anim('pop s2', `<rect x="22" y="226" width="136" height="20" rx="3" fill="#ff8a1f"/>${T(90, 240.5, 12, 'HAVA DURUMU', {w: 800, f: DISPLAY, ls: '1'})}`)}
+      ${T(90, 264, 7, 'sunar: Yakınla', {w: 700, op: 0.8})}<rect x="8" y="12" width="32" height="12" rx="3" fill="#e5322d"/><circle cx="14" cy="18" r="2" fill="#fff" class="twinkle"/>${T(26, 20.4, 5.8, 'CANLI', {w: 800})}`; }},
+    {t: '0:03', d: '4 sn', scene: 'Pazartesi: yağmur', say: 'PZT · YAĞMUR · Yakınla: kapında', sfx: "Yağmur jingle'ı", svg: () => tvChrome('PZT', '8°', 'YAĞMUR') + tvMap(icon('i-rain', 52, 92, 36, 'bob') + icon('i-rain', 102, 100, 28, 'bob d2'), rainLoop(50, 7, 20, 60, 140, 170, {len: 9, dx: -2, op: 0.6, col: '#d6ecff'}))},
+    {t: '0:07', d: '4 sn', scene: 'Salı: kar', say: 'SAL · KAR · Yakınla: kapında', sfx: "Kar jingle'ı, çan", svg: () => tvChrome('SAL', '-3°', 'KAR') + tvMap(icon('i-snow', 52, 92, 36, 'bob') + icon('i-flake', 108, 102, 22, 'bob d2'), snowLoop(44, 13, 20, 60, 140, 170, {rmin: 0.6, rmax: 1.9}))},
+    {t: '0:11', d: '3 sn', scene: 'Çarşamba: çamur', say: 'ÇAR · ÇAMUR · Yakınla: kapında', sfx: 'Komik "vıcık" efekti', svg: () => tvChrome('ÇAR', '6°', 'ÇAMUR') + tvMap(icon('i-mud', 50, 92, 38, 'bob') + icon('i-partly', 104, 98, 28, 'bob d2'), splats(16, 23, 34, 104, 112, 90, '#7a5532', 2.2))},
+    {t: '0:14', d: '3 sn', scene: 'Haftalık tahmin', say: 'Her gün: Yakınla kapında', sfx: 'Tik tik sayan grafik sesi', svg: () => { const g = uid('tw'); const days = ['PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT', 'PAZ']; const ic = ['i-rain', 'i-snow', 'i-mud', 'i-partly', 'i-sun', 'i-rain', 'i-snow'];
+      return `<defs>${tvBg(g)}</defs><rect width="180" height="320" fill="url(#${g})"/>${T(90, 56, 14, 'HAFTALIK', {w: 800, f: DISPLAY})}${T(90, 72, 14, 'TAHMİN', {w: 800, c: '#ff8a1f', f: DISPLAY})}
+      ${days.map((d, i) => { const row = Math.floor(i / 4); const x = 16 + (i % 4) * 40 + (row ? 20 : 0), y = 88 + row * 86; return anim(`pop s${i + 1}`, `<rect x="${x}" y="${y}" width="34" height="78" rx="7" fill="#fff" opacity="0.1"/><rect x="${x}" y="${y}" width="34" height="78" rx="7" fill="none" stroke="#fff" stroke-opacity="0.18"/>${T(x + 17, y + 13, 7, d, {w: 800, f: DISPLAY})}${icon(ic[i], x + 4, y + 18, 26)}${logo(x + 10, y + 48, 14)}${icon('i-ok', x + 20, y + 60, 12, '', false)}`); }).join('')}
       <rect x="0" y="262" width="180" height="22" fill="#ff8a1f"/>${T(90, 276, 7.6, 'Teslimat her gün · ortalama 60 dk', {w: 800})}`; }},
     {t: '0:17', d: '3 sn', scene: 'Kapanış', say: 'Hava ne olursa olsun, Yakınla kapında.', sfx: 'Bülten kapanış müziği', svg: () => endCard(tvBg, ['Hava ne olursa olsun,', 'Yakınla kapında.'], "Afşin'deki depomuzdan, ortalama 60 dakikada")},
   ],
   notes: {
-    'Görsel dil': 'Yerel TV hava durumu estetiği: lacivert stüdyo, turuncu alt bant, büyük sıcaklık rakamları, haritada animasyonlu simgeler ve kesik çizgili teslimat rotası. Tarama çizgileri ve hafif "yayın" titremesi.',
-    'Ses': 'Retro bülten müziği. Her güne kendi kısa jingle\'ı ve efekti (yağmur, çan, "vıcık"). Spiker yok; dış ses istenirse bülten tonunda eklenebilir.',
+    'Görsel dil': 'Yerel TV hava durumu estetiği: lacivert stüdyo, turuncu kayan alt bant, büyük sıcaklık rakamları. Haritada süzülen premium hava ikonları, harita içinde yağan yağmur ve kar, kesik çizgili rota üzerinde ilerleyen minibüs. Tarama çizgileri ve dönen radar.',
+    'Ses': "Retro bülten müziği. Her güne kendi kısa jingle'ı ve efekti (yağmur, çan, \"vıcık\"). Spiker yok; dış ses istenirse bülten tonunda eklenebilir.",
     'Uygulama': 'Haritadaki rota, uygulamanın teslimat çubuğundaki beyaz minibüsle çizilir. Kapanışta mağaza rozetleri büyük.',
     'Üretim': '2B hareketli grafik (Remotion), hızlı render (~5 dk). Mizahi ton paylaşılabilirliği artırır. Gerçek bir hava tahmini olmadığı açıkça bellidir.',
   },
 };
 
+// ================= SENARYO 3: UYGULAMADAN KAPIYA =================
 const S3 = {
   key: 'uygulamadan-kapiya', n: 3, name: 'Uygulamadan Kapıya',
   logline: 'Kahraman uygulamanın kendisi. Telefon ekranı ön planda: yağmur damlaları camın üstünden süzülür, kar telefonun kenarında birikir, çamur ekrana sıçrar ve bir silecek gibi silinir. Bu sırada Kategoriler\'den ürün eklenir, Sepetim\'de "Öde"ye basılır ve teslimat çubuğundaki minibüs ilerler.',
   chips: ['Uygulama + hava efekti', '20 sn', 'Ürün tanıtımı', 'Gerçek arayüz'],
   frames: [
-    {t: '0:00', d: '3 sn', scene: 'Yağmurlu cam', say: 'Yağmur mu var?', sfx: 'Cama vuran yağmur', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#55657d'], [1, '#2b3546']])}</defs><rect width="180" height="320" fill="url(#${b})"/>${[...Array(9)].map((_, i) => `<circle cx="${rnd(i) * 180}" cy="${40 + rnd(i * 3) * 240}" r="${10 + rnd(i * 7) * 16}" fill="#ffc26b" opacity="0.12"/>`).join('')}
-      ${phone(26, 34, 128, 250, uiCategories(120, 242, {}))}${drops(26, 3, 30, 40, 120, 240)}${caption(306, ['Yağmur mu var?'], {s: 11})}`; }},
-    {t: '0:03', d: '4 sn', scene: 'Ürün ekle', say: 'Uygulamadan ekle,', sfx: 'Dokunma "tık"ları, sepet sayacı', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#55657d'], [1, '#2b3546']])}</defs><rect width="180" height="320" fill="url(#${b})"/>
-      ${phone(26, 34, 128, 250, uiCategories(120, 242, {added: [0, 1], cart: 3}))}${touch(140, 152, 6)}${drops(18, 41, 30, 40, 120, 240)}${caption(306, ['Uygulamadan ekle,'], {s: 11})}`; }},
-    {t: '0:07', d: '4 sn', scene: 'Sepetim, kar yağıyor', say: 'kar mı yağıyor?', sfx: 'Rüzgâr, kar tıssı', svg: () => { const b = uid('bb'), fr = uid('fr'); return `<defs>${lg(b, [[0, '#1c2a4a'], [1, '#3b5182']])}${rg(fr, [[0.55, '#fff', 0], [1, '#eef5ff', 0.85]], 0.5, 0.5, 0.75)}</defs><rect width="180" height="320" fill="url(#${b})"/>${snow(40, 5, 0, 0, 180, 320, 0.6, 2.2)}
-      ${phone(26, 34, 128, 250, uiCart(120, 242, {progress: 0.82}))}<rect x="26" y="34" width="128" height="250" rx="15" fill="url(#${fr})"/>
-      <path d="M24 38 Q40 22 60 32 Q74 20 92 30 Q110 18 128 30 Q146 22 158 38 Q140 40 90 40 Q40 40 24 38 Z" fill="#fff"/>${snow(20, 77, 24, 20, 132, 16, 1, 2.4)}${caption(306, ['kar mı yağıyor?'], {s: 11})}`; }},
-    {t: '0:11', d: '3 sn', scene: '"Öde"', say: 'Öde, gerisi bizde.', sfx: 'Onay tınısı', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#1c2a4a'], [1, '#3b5182']])}</defs><rect width="180" height="320" fill="url(#${b})"/>${snow(24, 15, 0, 0, 180, 320, 0.6, 2)}
-      ${phone(26, 34, 128, 250, uiCart(120, 242, {progress: 0.96, pressed: true, done: true}))}${touch(90, 246, 7)}
-      <g transform="translate(90 132)"><rect x="-52" y="-16" width="104" height="32" rx="10" fill="#0b1a33" opacity="0.9"/>${check(-36, 0, 0.75)}${T(-24, 3.5, 9, 'Siparişin yolda', {a: 'start', w: 800})}</g>${caption(306, ['Öde, gerisi bizde.'], {s: 11})}`; }},
-    {t: '0:14', d: '3 sn', scene: 'Çamur ve silecek', say: 'Çamurda bile kapında.', sfx: 'Su sıçraması, silecek "vııın"', svg: () => { const s = uid('sk'), m = uid('md'); return `<defs>${lg(s, [[0, '#8d98a6'], [1, '#c4cbd3']])}${lg(m, [[0, '#7a5a3a'], [1, '#4c3420']])}</defs>
-      <rect width="180" height="320" fill="url(#${s})"/><path d="M0 150 L50 118 L90 140 L140 110 L180 130 V190 H0 Z" fill="#6f7d8c" opacity="0.55"/>${houses(190, 21, '#b9a88f', 0.1)}<rect y="186" width="180" height="134" fill="url(#${m})"/>
-      ${van(22, 168, 1.0, {mud: true})}<g fill="#6b4a2b">${[...Array(14)].map((_, i) => `<circle cx="${130 + rnd(i) * 40}" cy="${170 + rnd(i * 3) * 50}" r="${1.5 + rnd(i * 5) * 4}"/>`).join('')}</g>
-      <path d="M0 320 A170 170 0 0 1 170 150 L180 150 V320 Z" fill="#000" opacity="0.06"/><path d="M8 318 L150 160" stroke="#11161f" stroke-width="3" stroke-linecap="round"/>
-      ${splats(40, 51, 0, 20, 70, 140, '#5c3d22', 5)}<rect x="104" y="26" width="64" height="28" rx="10" fill="${AMBER}"/>${check(118, 40, 0.6, INK)}${T(128, 44, 10, 'Kapında!', {a: 'start', w: 800, c: INK})}${caption(306, ['Çamurda bile kapında.'], {s: 11})}`; }},
-    {t: '0:17', d: '3 sn', scene: 'Kapanış', say: 'Uygulamayı indir', sfx: 'Logo tınısı', svg: () => { const g = uid('lc'); return `<defs>${lg(g, [[0, '#f4f7fc'], [1, '#dfe8f6']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      ${phone(52, 20, 76, 148, uiCategories(120, 242, {cart: 18}), {r: 11, bez: 3, cw: 120})}${logo(70, 172, 22)}${T(98, 189, 16, 'Yakınla', {a: 'start', w: 800, c: INK, f: 'Inter, sans-serif'})}
-      ${T(90, 208, 9, 'Yağmurda, karda, çamurda', {w: 800, c: BLUE_D})}${T(90, 220, 6.6, 'ortalama 60 dakikada kapında', {w: 700, c: INK, op: 0.8})}
-      ${badges(28, 232, 58)}${T(90, 268, 8, 'Uygulamayı indir · yakinla.com', {w: 800, c: INK})}${T(90, 281, 5.2, 'Şu an aktif bölgemiz: Kahramanmaraş Afşin', {w: 600, c: INK, op: 0.7})}`; }},
+    {t: '0:00', d: '3 sn', scene: 'Yağmurlu cam', say: 'Yağmur mu var?', sfx: 'Cama vuran yağmur', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#55657d'], [1, '#232c3b']])}</defs><rect width="180" height="320" fill="url(#${b})"/>${bokeh(9, 1)}
+      ${phone(26, 30, 128, 250, uiCategories(120, 242, {}))}${glassDrops(26, 3, 30, 36, 120, 240)}${icon('i-rain', 140, 2, 36, 'bob')}${capBand()}${caption(304, ['Yağmur mu var?'], {s: 12})}`; }},
+    {t: '0:03', d: '4 sn', scene: 'Ürün ekle', say: 'Uygulamadan ekle,', sfx: 'Dokunma "tık"ları, sepet sayacı', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#55657d'], [1, '#232c3b']])}</defs><rect width="180" height="320" fill="url(#${b})"/>${bokeh(9, 7)}
+      ${phone(26, 30, 128, 250, uiCategories(120, 242, {added: [0, 1], cart: 3}))}${touch(141, 148, 5.5)}${glassDrops(18, 41, 30, 36, 120, 240)}${capBand()}${caption(304, ['Uygulamadan ekle,'], {s: 12})}`; }},
+    {t: '0:07', d: '4 sn', scene: 'Sepetim, kar yağıyor', say: 'kar mı yağıyor?', sfx: 'Rüzgâr, kar tıssı', svg: () => { const b = uid('bb'), fr = uid('fr'); return `<defs>${lg(b, [[0, '#14223f'], [1, '#33497a']])}${rg(fr, [[0.55, '#fff', 0], [1, '#eef5ff', 0.8]], 0.5, 0.5, 0.75)}</defs><rect width="180" height="320" fill="url(#${b})"/>${snowLoop(46, 5, 0, 0, 180, 320, {rmin: 0.6, rmax: 2.2})}
+      ${phone(26, 30, 128, 250, uiCart(120, 242, {progress: 0.82}))}<rect x="26" y="30" width="128" height="250" rx="15" fill="url(#${fr})"/>
+      <path d="M24 34 Q40 18 60 28 Q74 16 92 26 Q110 14 128 26 Q146 18 158 34 Q140 37 90 37 Q40 37 24 34 Z" fill="#fff" filter="url(#f-soft)"/>${icon('i-flake', 6, 14, 26, 'bob')}${capBand()}${caption(304, ['kar mı yağıyor?'], {s: 12})}`; }},
+    {t: '0:11', d: '3 sn', scene: '"Öde"', say: 'Öde, gerisi bizde.', sfx: 'Onay tınısı', svg: () => { const b = uid('bb'); return `<defs>${lg(b, [[0, '#14223f'], [1, '#33497a']])}</defs><rect width="180" height="320" fill="url(#${b})"/>${snowLoop(24, 15, 0, 0, 180, 320, {rmin: 0.6, rmax: 2})}
+      ${phone(26, 30, 128, 250, uiCart(120, 242, {progress: 0.96, pressed: true, move: true}))}${touch(90, 241, 6)}
+      ${anim('pop s3', `<rect x="36" y="114" width="108" height="34" rx="12" fill="#0b1a33" opacity="0.92"/>${icon('i-ok', 42, 119, 24, '', false)}${T(70, 135, 9, 'Siparişin yolda', {a: 'start', w: 800})}`)}${capBand()}${caption(304, ['Öde, gerisi bizde.'], {s: 12})}`; }},
+    {t: '0:14', d: '3 sn', scene: 'Çamur ve silecek', say: 'Çamurda bile kapında.', sfx: 'Su sıçraması, silecek "vııın"', svg: () => { const s = uid('sk'), m = uid('md'); return `<defs>${lg(s, [[0, '#8794a4'], [1, '#c6ccd4']])}${lg(m, [[0, '#7a5a3a'], [1, '#432d19']])}</defs>
+      <rect width="180" height="320" fill="url(#${s})"/><path d="M0 150 L50 118 L90 140 L140 110 L180 130 V190 H0 Z" fill="#6c7a8a" opacity="0.55"/>${houses(190, 21, '#b5a38a', 0.1)}<rect y="186" width="180" height="134" fill="url(#${m})"/>
+      ${vanAt(22, 166, 1.0, {mud: true}, 'drive')}
+      ${anim('pop s2', `<g fill="#5f3f22">${[...Array(14)].map((_, i) => `<circle cx="${(126 + rnd(i) * 44).toFixed(1)}" cy="${(168 + rnd(i * 3) * 48).toFixed(1)}" r="${(1.5 + rnd(i * 5) * 4).toFixed(1)}"/>`).join('')}</g>`)}
+      ${anim('mudglass', splats(26, 51, 0, 16, 90, 150, '#4f341c', 4))}
+      <g class="wiper" style="transform-origin:8px 318px"><path d="M8 318 L150 176" stroke="#11161f" stroke-width="3.4" stroke-linecap="round"/><path d="M60 266 L150 176" stroke="#2b3342" stroke-width="1.6" stroke-linecap="round"/></g>
+      ${anim('pop s4', `<rect x="86" y="24" width="86" height="30" rx="12" fill="${AMBER}" filter="url(#f-soft)"/>${icon('i-ok', 90, 28, 22, '', false)}${T(116, 43.5, 10, 'Kapında!', {a: 'start', w: 800, c: INK, f: DISPLAY})}`)}${capBand()}${caption(304, ['Çamurda bile kapında.'], {s: 12})}`; }},
+    {t: '0:17', d: '3 sn', scene: 'Kapanış', say: 'Uygulamayı indir', sfx: 'Logo tınısı', svg: () => { const g = uid('lc'); return `<defs>${lg(g, [[0, '#f4f7fc'], [1, '#d9e4f5']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${anim('bob', phone(52, 18, 76, 148, uiCategories(120, 242, {cart: 18}), {r: 11, bez: 3, cw: 120}))}${icon('i-rain', 14, 40, 30, 'bob d1')}${icon('i-snow', 136, 70, 30, 'bob d2')}${icon('i-mud', 16, 118, 28, 'bob d3')}
+      ${logo(43, 172, 22)}${T(71, 189, 16, 'Yakınla', {a: 'start', w: 800, c: INK, f: 'Inter, sans-serif'})}
+      ${T(90, 208, 9, 'Yağmurda, karda, çamurda', {w: 800, c: BLUE_D, f: DISPLAY})}${T(90, 220, 6.6, 'ortalama 60 dakikada kapında', {w: 700, c: INK, op: 0.8})}
+      ${anim('pop s3', badges(28, 232, 58))}${T(90, 268, 8, 'Uygulamayı indir · yakinla.com', {w: 800, c: INK})}${T(90, 281, 5.2, 'Şu an aktif bölgemiz: Kahramanmaraş Afşin', {w: 600, c: INK, op: 0.7})}`; }},
   ],
   notes: {
-    'Görsel dil': 'Uygulama arayüzü ön planda, hava camın üstünde bir katman olarak var: damlalar, kenarda biriken kar, kırağı, çamur sıçraması ve silecek. Arka plan bulanık sokak ışıkları.',
-    'Ses': 'Dokunma ve sepet sayacı sesleri, yağmur, rüzgâr, "Öde" onay tınısı, silecek. Ritmik ve modern bir müzik. Dış ses yok.',
-    'Uygulama': 'Kategoriler (Su, Pet Şişe, ürün kartları, sol menü) ve Sepetim (ürün satırları, adet, teslimat çubuğu, "Öde") ekran görüntülerindeki düzenle çizilir. Fiyat, indirim ve teslimat ücreti alanları boş bırakılır. Ürünler jenerik.',
+    'Görsel dil': 'Uygulama arayüzü ön planda, hava camın üstünde bir katman olarak var: süzülen damlalar, kenarda biriken kar, kırağı, çamur sıçraması ve silecek. Arkada bulanık sokak ışıkları. Durumlar premium ikonlarla (onay, hava) vurgulanıyor.',
+    'Ses': 'Dokunma ve sepet sayacı sesleri, yağmur, rüzgâr, "Öde" onay tınısı ve silecek. Ritmik, modern bir müzik. Dış ses yok.',
+    'Uygulama': 'Kategoriler (Su, Pet Şişe, ürün kartları, sol menü) ve Sepetim (ürün satırları, adet, teslimat çubuğu, "Öde") ekran görüntülerindeki düzenle çiziliyor. Fiyat, indirim ve teslimat ücreti alanları boş bırakılıyor; ürünler jenerik.',
     'Üretim': '2B arayüz animasyonu ve hava efektleri (Remotion), hızlı render (~5 dk). Uygulamayı en net gösteren seçenek.',
   },
 };
 
-// oyun sahneleri
-const gameHud = (lvl, name, p) => `<rect x="6" y="10" width="168" height="22" rx="8" fill="#0b1a33" opacity="0.82"/>
-  <rect x="10" y="14" width="36" height="14" rx="5" fill="${AMBER}"/>${T(28, 24, 7, lvl, {w: 800, c: INK, f: 'Bricolage Grotesque, sans-serif'})}${T(52, 24.5, 7, name, {a: 'start', w: 800, f: 'Bricolage Grotesque, sans-serif'})}
-  <rect x="100" y="18" width="50" height="6" rx="3" fill="#fff" opacity="0.2"/><rect x="100" y="18" width="${50 * p}" height="6" rx="3" fill="#2ecc71"/>
-  <rect x="155" y="14" width="15" height="14" rx="3" fill="${BLUE}"/>${logo(156, 15, 12)}`;
+// ================= SENARYO 4: TESLİMAT YOLU =================
+const gameHud = (lvl, name, p) => `<rect x="6" y="10" width="168" height="22" rx="9" fill="#0b1a33" opacity="0.85"/>
+  <rect x="10" y="14" width="36" height="14" rx="6" fill="${AMBER}"/>${T(28, 24, 7, lvl, {w: 800, c: INK, f: DISPLAY})}${T(52, 24.5, 7, name, {a: 'start', w: 800, f: DISPLAY})}
+  <rect x="98" y="18" width="52" height="6" rx="3" fill="#fff" opacity="0.18"/>${anim('grow', `<rect x="98" y="18" width="${52 * p}" height="6" rx="3" fill="#2ecc71"/>`)}
+  ${icon('i-bag', 154, 12, 15, '', false)}`;
 const gameGround = (top, col, edge) => `<rect y="${top}" width="180" height="${320 - top}" fill="${col}"/><rect y="${top}" width="180" height="5" fill="${edge}"/>`;
+const parallax = (inner, cls = 'scroll') => anim(cls, `${inner}<g transform="translate(180 0)">${inner}</g>`);
+const hills = (y, col, seed) => { let d = `M0 ${y}`; for (let x = 0; x <= 180; x += 30) d += ` Q${x + 15} ${y - 18 - rnd(seed + x) * 22} ${x + 30} ${y}`; return `<path d="${d} V320 H0 Z" fill="${col}"/>`; };
+const banner = (txt, col, tcol = INK, rot = -4, w = 112) => `<g transform="rotate(${rot})"><rect x="${-w / 2}" y="-16" width="${w}" height="30" rx="9" fill="${col}" stroke="#1b2338" stroke-width="2" filter="url(#f-soft)"/>${T(0, 5, 12, txt, {w: 800, c: tcol, f: DISPLAY})}</g>`;
+
 const S4 = {
   key: 'teslimat-yolu', n: 4, name: 'Teslimat Yolu',
   logline: 'Bir mobil oyun gibi. Yakınla minibüsü yan kaydırmalı bir parkurda üç bölümü geçer: Yağmur (su birikintileri), Kar (karlı tümsekler), Çamur (vıcık vıcık köy yolu). Her bölüm sonunda "Geçildi!" yazar. Son seviyede kapı açılır: "KAPINDA!", üç yıldız.',
   chips: ['Oyun / platform', '20 sn', 'Eğlenceli', 'Genç kitle'],
   frames: [
     {t: '0:00', d: '3 sn', scene: 'Başlık ekranı', say: 'YAKINLA: TESLİMAT YOLU', sfx: '8-bit jingle, "Başla" tıkı', svg: () => { const g = uid('gt'); return `<defs>${lg(g, [[0, '#ff9a5a'], [0.5, '#ff6f91'], [1, '#5b5bd6']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      <path d="M0 210 Q45 170 90 200 T180 190 V320 H0 Z" fill="#2e2a6b" opacity="0.6"/>${gameGround(236, '#3a2f74', '#5d4fb0')}
-      ${T(90, 70, 30, 'YAKINLA', {w: 800, f: 'Bricolage Grotesque, sans-serif', ls: '1'})}<rect x="26" y="78" width="128" height="20" rx="4" fill="${AMBER}" transform="rotate(-3 90 88)"/>${T(90, 93, 11, 'TESLİMAT YOLU', {w: 800, c: INK, f: 'Bricolage Grotesque, sans-serif'})}
-      ${van(40, 184, 1.0, {})}<g transform="translate(90 132)"><rect x="-38" y="-14" width="76" height="28" rx="12" fill="#2ecc71" stroke="#1b2338" stroke-width="2"/>${T(0, 6, 13, 'BAŞLA', {w: 800, f: 'Bricolage Grotesque, sans-serif'})}</g>${touch(110, 136, 6)}
-      ${[iconRain, iconSnow, iconMud].map((f, i) => `<circle cx="${50 + i * 40}" cy="270" r="15" fill="#1b2338" stroke="#fff" stroke-width="1.4"/>${f(50 + i * 40, i === 0 ? 266 : 270, i === 1 ? 0.48 : 0.42)}`).join('')}`; }},
-    {t: '0:03', d: '4 sn', scene: 'Bölüm 1: Yağmur', say: '1-1 YAĞMUR', sfx: 'Sıçrayan su birikintileri', svg: () => { const g = uid('g1'); return `<defs>${lg(g, [[0, '#4b5a74'], [1, '#8a9ab4']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      <path d="M0 190 Q40 160 80 182 T180 170 V240 H0 Z" fill="#3a4760"/>${houses(236, 31, '#2c3850', 0.4)}${gameGround(236, '#2c3446', '#59657d')}
-      <ellipse cx="110" cy="248" rx="26" ry="4" fill="#9cc4ff" opacity="0.6"/>${van(56, 196, 0.85, {wet: true, lights: true})}
-      <g fill="#9cc4ff">${[...Array(12)].map((_, i) => `<circle cx="${104 + rnd(i) * 30}" cy="${222 + rnd(i * 2) * 20}" r="${1 + rnd(i * 5) * 2.2}"/>`).join('')}</g>${rain(90, 17, 0, 30, 190, 280, 14, -3, 0.55)}${gameHud('1-1', 'YAĞMUR', 0.33)}`; }},
-    {t: '0:07', d: '4 sn', scene: 'Bölüm 2: Kar', say: '1-2 KAR', sfx: 'Zıplama "boing", kar çıtırtısı', svg: () => { const g = uid('g2'); return `<defs>${lg(g, [[0, '#9fc4ff'], [1, '#e6f0ff']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      <path d="M0 180 L40 130 L70 160 L110 110 L150 150 L180 130 V240 H0 Z" fill="#c7d8f2"/><path d="M40 130 L50 142 L60 136 L70 160 L40 160 Z" fill="#fff" opacity="0.7"/><path d="M110 110 L122 126 L134 120 L150 150 L110 150 Z" fill="#fff" opacity="0.7"/>
-      ${gameGround(236, '#f4f8ff', '#dfe9f8')}<path d="M70 236 Q100 206 130 236 Z" fill="#fff" stroke="#dfe9f8"/>
-      <g transform="rotate(-12 96 190)">${van(54, 160, 0.85, {snow: true})}</g>${snow(60, 33, 0, 30, 180, 280, 0.8, 2.6)}
-      <g transform="translate(120 120)"><rect x="-26" y="-12" width="52" height="22" rx="7" fill="#2ecc71" stroke="#1b2338" stroke-width="1.6"/>${T(0, 3, 9, 'ZIPLA!', {w: 800, f: 'Bricolage Grotesque, sans-serif'})}</g>${gameHud('1-2', 'KAR', 0.66)}`; }},
-    {t: '0:11', d: '3 sn', scene: 'Bölüm 3: Çamur', say: '1-3 ÇAMUR · GEÇİLDİ!', sfx: '"Vıcık" ve motor gazı', svg: () => { const g = uid('g3'); return `<defs>${lg(g, [[0, '#a7b49a'], [1, '#d8d2b8']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      <path d="M0 196 Q50 170 100 190 T180 180 V240 H0 Z" fill="#7d8f6a"/>${[20, 60, 140].map((x) => `<g transform="translate(${x} 200)"><rect x="-2" y="0" width="4" height="36" fill="#5b4632"/><circle cy="-6" r="14" fill="#6f8a55"/></g>`).join('')}
-      ${gameGround(236, '#6b4a2b', '#8a6440')}<ellipse cx="96" cy="250" rx="40" ry="6" fill="#4a321c"/>${van(52, 196, 0.85, {mud: true})}
-      <g fill="#5c3d22">${[...Array(18)].map((_, i) => `<circle cx="${60 + rnd(i) * 90}" cy="${206 + rnd(i * 3) * 36}" r="${1.2 + rnd(i * 5) * 3.4}"/>`).join('')}</g>
-      <g transform="translate(90 120) rotate(-4)"><rect x="-56" y="-16" width="112" height="30" rx="8" fill="${AMBER}" stroke="#1b2338" stroke-width="2"/>${T(0, 5, 12, 'ÇAMUR GEÇİLDİ!', {w: 800, c: INK, f: 'Bricolage Grotesque, sans-serif'})}</g>${gameHud('1-3', 'ÇAMUR', 0.95)}`; }},
-    {t: '0:14', d: '3 sn', scene: 'Hedef: kapı', say: 'KAPINDA! ★★★', sfx: 'Zafer jingle\'ı, zil', svg: () => { const g = uid('g4'); return `<defs>${lg(g, [[0, '#ffb36b'], [1, '#ffe2b5']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
-      ${gameGround(236, '#7d9a5a', '#9fbd77')}<g transform="translate(96 150)"><rect x="0" y="0" width="76" height="86" fill="#f0e2c8"/><polygon points="-6,0 38,-30 82,0" fill="#c4553c"/><rect x="10" y="40" width="22" height="46" fill="#ffcf8a"/><polygon points="10,40 2,36 2,90 10,86" fill="#6a4029"/><rect x="46" y="18" width="18" height="16" fill="#ffc26b"/></g>
-      ${courierFront(84, 196, 0.62, 'mud')}${van(4, 204, 0.6, {mud: true})}
-      <g transform="translate(90 92)"><rect x="-60" y="-20" width="120" height="36" rx="10" fill="${BLUE}" stroke="#1b2338" stroke-width="2"/>${T(0, 6, 17, 'KAPINDA!', {w: 800, f: 'Bricolage Grotesque, sans-serif'})}</g>
-      ${[-26, 0, 26].map((dx, i) => `<path transform="translate(${90 + dx} ${126 - (i === 1 ? 6 : 0)}) scale(0.9)" d="M0 -10 L3 -3 L10 -3 L4.5 1.5 L6.5 9 L0 4.5 L-6.5 9 L-4.5 1.5 L-10 -3 L-3 -3 Z" fill="#ffd23f" stroke="#1b2338" stroke-width="1.2"/>`).join('')}
-      <rect x="40" y="276" width="100" height="16" rx="8" fill="#0b1a33" opacity="0.85"/>${T(90, 287, 7, 'Süre: ortalama 60 dk', {w: 800})}`; }},
+      ${parallax(hills(214, '#3e3891', 3), 'scroll')}${gameGround(236, '#2f2a6e', '#5d4fb0')}
+      ${T(90, 70, 30, 'YAKINLA', {w: 800, f: DISPLAY, ls: '1'})}${anim('pop s1', `<rect x="26" y="78" width="128" height="20" rx="5" fill="${AMBER}" transform="rotate(-3 90 88)"/>${T(90, 93, 11, 'TESLİMAT YOLU', {w: 800, c: INK, f: DISPLAY})}`)}
+      ${at(40, 184, anim('bounce', van({lights: true})), 1)}
+      ${at(90, 132, anim('press', `<rect x="-38" y="-14" width="76" height="28" rx="13" fill="#2ecc71" stroke="#1b2338" stroke-width="2" filter="url(#f-soft)"/>${T(0, 6, 13, 'BAŞLA', {w: 800, f: DISPLAY})}`))}${touch(122, 142, 4)}
+      ${['i-rain', 'i-snow', 'i-mud'].map((id, i) => `<circle cx="${50 + i * 40}" cy="272" r="16" fill="#1b2338" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>${icon(id, 50 + i * 40 - 13, 259, 26, `bob d${i + 1}`)}`).join('')}`; }},
+    {t: '0:03', d: '4 sn', scene: 'Bölüm 1: Yağmur', say: '1-1 YAĞMUR', sfx: 'Sıçrayan su birikintileri', svg: () => { const g = uid('g1'); return `<defs>${lg(g, [[0, '#3b4963'], [1, '#7f90ad']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${parallax(hills(196, '#33405a', 9), 'scroll')}${parallax(houses(236, 31, '#27324a', 0.45, false, 180), 'scroll fast')}${gameGround(236, '#283042', '#56627b')}
+      <ellipse cx="112" cy="248" rx="28" ry="4" fill="#9cc4ff" opacity="0.55"/>${at(56, 194, anim('bounce', van({wet: true, lights: true})), 0.85)}
+      ${anim('pop', `<g fill="#bfe0ff">${[...Array(12)].map((_, i) => `<circle cx="${(104 + rnd(i) * 32).toFixed(1)}" cy="${(220 + rnd(i * 2) * 20).toFixed(1)}" r="${(1 + rnd(i * 5) * 2.2).toFixed(1)}"/>`).join('')}</g>`)}
+      ${rainLoop(90, 17, 0, 30, 180, 290, {len: 14, op: 0.55})}${gameHud('1-1', 'YAĞMUR', 0.33)}`; }},
+    {t: '0:07', d: '4 sn', scene: 'Bölüm 2: Kar', say: '1-2 KAR', sfx: 'Zıplama "boing", kar çıtırtısı', svg: () => { const g = uid('g2'); return `<defs>${lg(g, [[0, '#8fb8f5'], [1, '#e6f0ff']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${parallax(`<path d="M0 180 L40 130 L70 160 L110 110 L150 150 L180 130 V240 H0 Z" fill="#c4d6f1"/><path d="M40 130 L50 142 L60 136 L70 160 L40 160 Z" fill="#fff" opacity="0.75"/><path d="M110 110 L122 126 L134 120 L150 150 L110 150 Z" fill="#fff" opacity="0.75"/>`)}
+      ${gameGround(236, '#f4f8ff', '#d9e5f6')}<path d="M70 236 Q100 204 130 236 Z" fill="#fff" stroke="#d9e5f6"/>
+      ${at(96, 186, anim('jump', at(-50, -26, van({snow: true}), 1)), 0.85)}${snowLoop(60, 33, 0, 30, 180, 290, {rmin: 0.8, rmax: 2.6})}
+      ${at(124, 118, anim('pop s2', banner('ZIPLA!', '#2ecc71', '#fff', -6, 60)))}${gameHud('1-2', 'KAR', 0.66)}`; }},
+    {t: '0:11', d: '3 sn', scene: 'Bölüm 3: Çamur', say: '1-3 ÇAMUR · GEÇİLDİ!', sfx: '"Vıcık" ve motor gazı', svg: () => { const g = uid('g3'); return `<defs>${lg(g, [[0, '#a3b195'], [1, '#d8d2b8']])}</defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${parallax(hills(200, '#7b8d67', 21) + [20, 70, 140].map((x) => `<g transform="translate(${x} 202)"><rect x="-2" y="0" width="4" height="34" fill="#5b4632"/><circle cy="-8" r="14" fill="#6a8551"/><circle cx="-5" cy="-12" r="6" fill="#86a56a"/></g>`).join(''))}
+      ${gameGround(236, '#6b4a2b', '#8a6440')}<ellipse cx="96" cy="250" rx="42" ry="6" fill="#4a321c"/>${at(52, 194, anim('bounce', van({mud: true})), 0.85)}
+      ${anim('pop s1', `<g fill="#5f3f22">${[...Array(18)].map((_, i) => `<circle cx="${(60 + rnd(i) * 90).toFixed(1)}" cy="${(204 + rnd(i * 3) * 36).toFixed(1)}" r="${(1.2 + rnd(i * 5) * 3.4).toFixed(1)}"/>`).join('')}</g>`)}
+      ${at(90, 120, anim('pop s3', banner('ÇAMUR GEÇİLDİ!', AMBER)))}${gameHud('1-3', 'ÇAMUR', 0.95)}`; }},
+    {t: '0:14', d: '3 sn', scene: 'Hedef: kapı', say: 'KAPINDA! Üç yıldız', sfx: "Zafer jingle'ı, zil", svg: () => { const g = uid('g4'), warm = uid('wm'); return `<defs>${lg(g, [[0, '#ffb36b'], [1, '#ffe2b5']])}${rg(warm, [[0, '#ffd08a', 0.8], [1, '#ffd08a', 0]])}</defs><rect width="180" height="320" fill="url(#${g})"/>
+      ${gameGround(236, '#7d9a5a', '#9fbd77')}<g transform="translate(96 150)"><rect x="0" y="0" width="76" height="86" fill="#f2e4ca"/><polygon points="-6,0 38,-30 82,0" fill="#c4553c"/><rect x="10" y="40" width="22" height="46" fill="#ffd28f"/><circle cx="21" cy="64" r="30" fill="url(#${warm})"/><polygon points="10,40 2,36 2,90 10,86" fill="#6a4029"/><rect x="46" y="18" width="18" height="16" rx="2" fill="#ffc26b"/></g>
+      ${at(4, 202, van({mud: true}), 0.6)}${anim('pop s2', icon('i-bag', 82, 202, 30))}
+      ${at(90, 92, anim('pop s1', `<rect x="-62" y="-20" width="124" height="36" rx="12" fill="${BLUE}" stroke="#1b2338" stroke-width="2" filter="url(#f-soft)"/>${T(0, 6, 17, 'KAPINDA!', {w: 800, f: DISPLAY})}`))}
+      ${[-28, 0, 28].map((dx, i) => icon('i-star', 90 + dx - (i === 1 ? 13 : 11), (i === 1 ? 112 : 118), i === 1 ? 26 : 22, `pop s${i + 3}`)).join('')}
+      <rect x="40" y="274" width="100" height="18" rx="9" fill="#0b1a33" opacity="0.88"/>${T(90, 286, 7, 'Süre: ortalama 60 dk', {w: 800})}`; }},
     {t: '0:17', d: '3 sn', scene: 'Kapanış', say: 'Oyun değil, gerçek: Yakınla kapında.', sfx: 'Bölüm sonu müziği', svg: () => endCard((g) => lg(g, [[0, '#ff6f91'], [0.5, '#5b5bd6'], [1, '#1f2a6b']]), ['Oyun değil, gerçek:', 'Yakınla kapında.'], 'Yağmurda, karda, çamurda · ortalama 60 dakikada')},
   ],
   notes: {
-    'Görsel dil': 'Renkli, kalın konturlu oyun çizimi; yan kaydırmalı parallax katmanlar, üstte oyun göstergesi (bölüm, ilerleme, poşet sayacı), "Geçildi!" ve yıldız animasyonları. Diğer üç senaryodan en farklı ve en genç dili bu.',
-    'Ses': '8-bit esintili chiptune müzik, zıplama, sıçrama, "vıcık" ve zafer efektleri. Dış ses yok.',
-    'Uygulama': 'Oyuncu karakter, uygulamadaki logolu beyaz minibüs. Göstergedeki ilerleme çubuğu uygulamanın yeşil teslimat çubuğunu andırır.',
-    'Üretim': '2B parallax çizim (Remotion), hızlı render (~6 dk). Esprili ama hızlı okunur; Reels\'te dikkat çekici bir kanca.',
+    'Görsel dil': 'Renkli, kalın konturlu oyun çizimi. Yan kaydırmalı parallax katmanlar, üstte oyun göstergesi (bölüm, dolan ilerleme çubuğu, poşet), "Geçildi!" ve yıldız animasyonları. Dört senaryo içinde en farklı ve en genç dil bu.',
+    'Ses': '8-bit esintili chiptune müzik; zıplama, sıçrama, "vıcık" ve zafer efektleri. Dış ses yok.',
+    'Uygulama': 'Oyuncu karakter, uygulamadaki logolu beyaz minibüs. Göstergedeki ilerleme çubuğu, uygulamanın yeşil teslimat çubuğunu andırıyor.',
+    'Üretim': "2B parallax çizim (Remotion), hızlı render (~6 dk). Esprili ama hızlı okunuyor; Reels'te dikkat çekici bir kanca.",
   },
 };
 
@@ -609,7 +792,7 @@ tabs.innerHTML = SCENARIOS.map((s) => `<a href="#${s.key}" data-key="${s.key}"><
 boards.innerHTML = SCENARIOS.map((s) => `<section class="board" id="b-${s.key}" aria-labelledby="h-${s.key}" hidden>
   <div class="board-head"><div class="board-num">${s.n}</div><div class="board-title"><h2 id="h-${s.key}">${s.name}</h2><p>${s.logline}</p></div>
   <div class="chips">${s.chips.map((c, i) => `<span class="chip${i === 0 ? ' style' : ''}">${c}</span>`).join('')}</div></div>
-  <div class="strip-scroll"><div class="strip">${s.frames.map((f, i) => `<figure class="frame">${frameSvg(f.svg(), `${s.name}, sahne ${i + 1}: ${f.scene}`)}
+  <div class="strip-scroll"><div class="strip">${s.frames.map((f, i) => `<figure class="frame">${frameSvg(`<defs><linearGradient id="cap-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient><clipPath id="tk-clip"><rect x="56" y="262" width="124" height="22"/></clipPath></defs>${f.svg()}`, `${s.name}, sahne ${i + 1}: ${f.scene}`)}
     <div class="tc"><b>${f.t}</b><span>${f.d}</span></div>
     <figcaption><span class="scene">${i + 1}. ${f.scene}</span><span class="say">${f.say}</span><span class="sfx">${f.sfx}</span></figcaption></figure>`).join('')}</div></div>
   <div class="notes">${Object.entries(s.notes).map(([k, v]) => `<div><h3>${k}</h3><p>${v}</p></div>`).join('')}</div>
@@ -623,4 +806,11 @@ const show = () => {
 };
 window.addEventListener('hashchange', show);
 show();
+
+const motionBtn = document.getElementById('motion');
+motionBtn.addEventListener('click', () => {
+  const still = document.body.classList.toggle('still');
+  motionBtn.setAttribute('aria-pressed', String(still));
+  document.getElementById('motion-label').textContent = still ? 'Animasyonu oynat' : 'Animasyonu durdur';
+});
 </script>

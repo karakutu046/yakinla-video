@@ -3,6 +3,8 @@ import base64, pathlib, re
 
 here = pathlib.Path(__file__).parent
 src = (here / 'pano.src.html').read_text(encoding='utf-8')
+js = (here / 'pano.js').read_text(encoding='utf-8')
+src = src.replace('<script src="pano.js.inline"></script>', '<script>\n' + js + '</script>')
 svg = (here / 'kaynak' / 'yakinla-logo-mark.svg').read_text(encoding='utf-8')
 inner = re.search(r'<svg[^>]*>(.*)</svg>', svg, re.S).group(1)
 inner = re.sub(r'<!--.*?-->', '', inner, flags=re.S)
