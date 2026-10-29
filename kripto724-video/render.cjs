@@ -5,7 +5,8 @@
 //   ONLY=0,120,300   only these frames
 //   STILLS=1         one sample per frame (no motion blur)
 //   AT=1.5,12.2      single stills at these times → build/stills/t_<time>.png
-//   BOARD=1          key frames of all scenes on one sheet → out/onizleme_sahneler.jpg (via build/board.png)
+//   BOARD=1          key frames of all scenes on one sheet → build/board.png
+//   PNG=1            frames as PNG (default: JPEG q97, ~15× faster to capture than PNG)
 const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
@@ -16,6 +17,7 @@ const OUT = path.resolve(process.argv[2] || path.join(HERE, 'build', 'frames'));
 const WORKERS = +(process.env.WORKERS || 4);
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',').map(Number) : null;
 const STILLS = !!process.env.STILLS;
+const EXT = process.env.PNG ? 'png' : 'jpg';
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.otf': 'font/otf', '.png': 'image/png' };
 
 const server = http.createServer((req, res) => {
@@ -38,7 +40,7 @@ server.listen(0, '127.0.0.1', async () => {
     return page;
   };
   const first = await open();
-  const shot = (page, p) => page.screenshot({ path: p, clip: { x: 0, y: 0, width: 1920, height: 1080 } });
+  const shot = (page, p) => page.screenshot({ path: p, clip: { x: 0, y: 0, width: 1920, height: 1080 }, ...(p.endsWith('.jpg') ? { type: 'jpeg', quality: 97 } : {}) });
   fs.mkdirSync(path.join(HERE, 'build'), { recursive: true });
   const info = await first.evaluate(() => ({ frames: window.FRAMES, fps: window.FPS, dur: window.DUR, w: window.W, h: window.H, tl: window.TL, cues: window.CUES }));
   fs.writeFileSync(path.join(HERE, 'build', 'cues.json'), JSON.stringify(info, null, 1));
@@ -66,7 +68,7 @@ server.listen(0, '127.0.0.1', async () => {
         const f = frames[i];
         if (STILLS) await page.evaluate(f => window.renderAt(f / window.FPS), f);
         else await page.evaluate(f => window.renderFrame(f), f);
-        await shot(page, path.join(OUT, `f_${String(f).padStart(4, '0')}.png`));
+        await shot(page, path.join(OUT, `f_${String(f).padStart(4, '0')}.${EXT}`));
         if (++done % 30 === 0) process.stdout.write(`\r${done}/${frames.length} frames · ${((Date.now() - t0) / done).toFixed(0)} ms/frame`);
       }
     }));

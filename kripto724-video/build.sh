@@ -9,7 +9,7 @@ OUT=${2:-out/kripto724_tanitim.mp4}
 mkdir -p build/frames "$(dirname "$OUT")"
 
 [ -f "$VO" ] && python3 tools/fit_timeline.py "$VO"
-[ -n "${SKIP_RENDER:-}" ] || { rm -f build/frames/f_*.png; NODE_PATH="${NODE_PATH:-$(npm root -g)}" node render.cjs build/frames; }
+[ -n "${SKIP_RENDER:-}" ] || { rm -f build/frames/f_*; NODE_PATH="${NODE_PATH:-$(npm root -g)}" node render.cjs build/frames; }
 python3 audio.py build/cues.json build/audio.wav
 DUR=$(python3 -c "import json; print(json.load(open('build/cues.json'))['dur'])")
 LAST=$(python3 -c "import json; print(json.load(open('build/cues.json'))['frames'] - 1)")
@@ -21,7 +21,7 @@ LN="loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=$(get input_i):measured_TP=$(get in
 
 # Video: BT.709, x264 tuned for flat graphics with fine detail
 ffmpeg -y -hide_banner -loglevel warning \
-  -framerate 30 -i build/frames/f_%04d.png -i build/audio.wav \
+  -framerate 30 -i build/frames/f_%04d.jpg -i build/audio.wav \
   -vf "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p" \
   -af "$LN,aresample=48000" \
   -c:v libx264 -preset slow -crf 17 -tune animation -x264-params aq-mode=3 -profile:v high -level 4.2 -pix_fmt yuv420p \
@@ -29,6 +29,6 @@ ffmpeg -y -hide_banner -loglevel warning \
   -c:a aac -b:a 256k -ar 48000 -movflags +faststart -t "$DUR" "$OUT"
 
 # Cover image: the call to action
-ffmpeg -y -hide_banner -loglevel warning -i "build/frames/f_$(printf %04d $((LAST - 45))).png" -frames:v 1 -update 1 -q:v 2 "$(dirname "$OUT")/kapak.jpg"
+ffmpeg -y -hide_banner -loglevel warning -i "build/frames/f_$(printf %04d $((LAST - 45))).jpg" -frames:v 1 -update 1 -q:v 2 "$(dirname "$OUT")/kapak.jpg"
 
 ffprobe -v error -show_entries format=duration,size -show_entries stream=codec_name,width,height,r_frame_rate -of compact "$OUT"
