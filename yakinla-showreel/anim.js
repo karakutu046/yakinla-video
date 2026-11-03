@@ -9,9 +9,9 @@
  * Akış (120 BPM, 1 vuruş = 0.5 sn, 1 ölçü = 2 sn):
  *   0–4   Kanca     21:47, atıştırmalıklar bitti, "Eksik bir şey mi var?"
  *   4–8   Sipariş   soru işaretinin noktası telefona dönüşür, sepet dolar
- *   8–12  Teslimat  3B gece haritası: depodan eve canlı kurye rotası, AFŞİN
+ *   8–12  Teslimat  3B gece haritası: depodan eve canlı kurye rotası, AFŞİN ve köyleri
  *   12–16 Vaat      ortalama 60 dakikada kapında + 3 özellik kartı
- *   16–20 Kapanış   logo inşası, Yakınla, slogan, mağazalar
+ *   16–20 Kapanış   logo inşası, "Ne Lazımsa, Yakınla!" (heceler jingle'a oturur), mağazalar
  */
 
 const W = 1080, H = 1920, FPS = 30, DUR = 20;
@@ -283,6 +283,13 @@ function micon(g, name, col, lw = 7) {
       g.beginPath(); g.moveTo(-24, 2); g.lineTo(-7, 19); g.lineTo(25, -15); st(); break;
     case 'plus':
       g.beginPath(); g.moveTo(-18, 0); g.lineTo(18, 0); g.moveTo(0, -18); g.lineTo(0, 18); st(); break;
+    case 'mappin':
+      g.beginPath(); g.moveTo(0, 42); g.bezierCurveTo(-10, 26, -32, 8, -32, -10); g.arc(0, -10, 32, Math.PI, 0); g.bezierCurveTo(32, 8, 10, 26, 0, 42); g.closePath(); st();
+      g.beginPath(); g.arc(0, -10, 11, 0, TAU); st(); break;
+    case 'download':
+      g.beginPath(); g.moveTo(0, -36); g.lineTo(0, 12); st();
+      g.beginPath(); g.moveTo(-18, -6); g.lineTo(0, 12); g.lineTo(18, -6); st();
+      g.beginPath(); g.moveTo(-34, 18); g.lineTo(-34, 34); g.lineTo(34, 34); g.lineTo(34, 18); st(); break;
     case 'bag':
       g.beginPath(); g.roundRect(-32, -16, 64, 52, 8); st();
       g.beginPath(); g.moveTo(-14, -16); g.lineTo(-14, -24); g.quadraticCurveTo(-14, -38, 0, -38); g.quadraticCurveTo(14, -38, 14, -24); g.lineTo(14, -16); st(); break;
@@ -955,18 +962,65 @@ const COL = {
   top: hex2rgb('#2B5296'), n: hex2rgb('#183A72'), e: hex2rgb('#12305F'), s: hex2rgb('#0E2853'), w: hex2rgb('#153567'),
   win: hex2rgb('#FFC56B'), depo: hex2rgb('#1F73F0'), homeTop: hex2rgb('#FFB547'),
 };
+const MTN = [[180, 0.0042, 1100, '#163C7C', 17], [120, 0.0068, 1700, '#0F2D62', 29]]; // [genlik, frekans, paralaks, renk, tohum]: 0 arka, 1 ön
+function ridge(L, x, yaw) {
+  const [amp, fr, par, , seed] = MTN[L], u = x * fr + yaw * par * fr + seed;
+  return amp * (0.55 + 0.3 * Math.sin(u) + 0.18 * Math.sin(u * 2.7 + 1.3) + 0.08 * Math.sin(u * 6.1 + 2));
+}
 function mountains(g, c, hy, a) {
   if (a <= 0) return;
   g.save(); g.globalAlpha = a;
-  const layers = [[180, 0.0042, 1100, '#163C7C', 17], [120, 0.0068, 1700, '#0F2D62', 29]];
-  for (const [amp, fr, par, col, seed] of layers) {
+  MTN.forEach(([, , , col], L) => {
     g.fillStyle = col; g.beginPath(); g.moveTo(-50, hy + 60);
-    for (let x = -50; x <= W + 50; x += 12) {
-      const u = x * fr + c.yaw * par * fr * 1.0 + seed;
-      const h = amp * (0.55 + 0.3 * Math.sin(u) + 0.18 * Math.sin(u * 2.7 + 1.3) + 0.08 * Math.sin(u * 6.1 + 2));
-      g.lineTo(x, hy - h);
-    }
+    for (let x = -50; x <= W + 50; x += 12) g.lineTo(x, hy - ridge(L, x, c.yaw));
     g.lineTo(W + 50, hy + 60); g.closePath(); g.fill();
+  });
+  g.restore();
+}
+// Afşin'in köyleri: dağ yamaçlarında ışık kümeleri, sırayla yanar, üstlerinde teslimat pini belirir.
+// x: yaw = 0.8'deki (kamera oturduktan sonraki) ekran konumu; k: sırt yüksekliğinin ne kadarında durduğu
+const VILLAGES = [
+  { x: 64, L: 0, k: 0.74, t: 10.62 }, { x: 212, L: 1, k: 0.7, t: 10.76 },
+  { x: 892, L: 1, k: 0.7, t: 10.9 }, { x: 1028, L: 1, k: 0.66, t: 11.04 },
+].map((v, i) => {
+  const r = mulberry32(300 + i), dots = [];
+  for (let j = 0; j < 9; j++) dots.push([(r() - 0.5) * 74, (r() - 0.5) * 18, 1.6 + r() * 2.2, 0.55 + r() * 0.45, r() * TAU]);
+  return { ...v, dots };
+});
+const SPECKS = (() => { // uzak, küçük köy ışıkları
+  const r = mulberry32(41), a = [];
+  for (let i = 0; i < 26; i++) a.push({ x: r() * W, L: r() < 0.5 ? 0 : 1, k: 0.25 + r() * 0.45, s: 1 + r() * 1.6, t: 10.5 + r() * 0.8, ph: r() * TAU });
+  return a;
+})();
+function mtnPoint(c, hy, v) {
+  const x = v.x + (0.8 - c.yaw) * MTN[v.L][2];
+  let y = hy - ridge(v.L, x, c.yaw) * v.k;
+  if (v.L === 0) y = Math.min(y, hy - ridge(1, x, c.yaw) - 8); // arka dağdaysa ön sırtın üstünde kalsın
+  return [x, y];
+}
+function villages(g, c, hy, t, a) {
+  if (a <= 0 || t < 10.4) return;
+  g.save(); g.globalAlpha = a;
+  for (const v of SPECKS) {
+    const p = prog(t, v.t, v.t + 0.4); if (p <= 0) continue;
+    const [x, y] = mtnPoint(c, hy, v); if (y > hy - 34) continue;
+    g.globalAlpha = a * p * (0.55 + 0.35 * Math.sin(t * 5 + v.ph));
+    g.fillStyle = '#FFC56B'; g.beginPath(); g.arc(x, y, v.s, 0, TAU); g.fill();
+  }
+  g.globalAlpha = a;
+  for (const v of VILLAGES) {
+    const p = prog(t, v.t, v.t + 0.35); if (p <= 0) continue;
+    const [x, y] = mtnPoint(c, hy, v);
+    glow(g, SPR.amber, x, y, 90 * E.outCubic(p) + 40 * kick(t - v.t, 6), 0.55);
+    g.fillStyle = '#FFD58A';
+    v.dots.forEach(([dx, dy, r, al, ph], j) => {
+      const q = E.outBack(prog(t, v.t + j * 0.025, v.t + 0.2 + j * 0.025)); if (q <= 0) return;
+      g.globalAlpha = a * al * (0.8 + 0.2 * Math.sin(t * 6 + ph));
+      g.beginPath(); g.arc(x + dx, y + dy, r * q, 0, TAU); g.fill();
+    });
+    g.globalAlpha = a;
+    const pp = E.outBack(prog(t, v.t + 0.08, v.t + 0.42));
+    if (pp > 0) mapPin(g, x, y - 16 - Math.sin((t - v.t) * 3) * 4, 92 * pp, 'house', C.amberD);
   }
   g.restore();
 }
@@ -980,15 +1034,16 @@ function drawMap(g, t) {
     sg.addColorStop(0, '#030B22'); sg.addColorStop(0.7, '#0D2A5E'); sg.addColorStop(1, '#1D4A92');
     g.fillStyle = sg; g.fillRect(-200, -200, W + 400, hy + 200);
     stars(g, t, hy - 60, clamp((hy + 100) / 400), 2);
-    // AFŞİN, dağların arkasından yükselir
-    const ap = E.outExpo(prog(t, 10.3, 11.0));
+    // AFŞİN ve köyleri, dağların arkasından yükselir
+    const ap = E.outExpo(prog(t, 10.3, 11.0)), kp = E.outExpo(prog(t, 10.55, 11.15));
     if (ap > 0) {
       g.save(); g.beginPath(); g.rect(0, -200, W, hy - 40 + 200); g.clip();
-      const o = { w: 900, s: 168, ls: 34, c: 'rgba(255,255,255,0.92)' };
-      text(g, 'AFŞİN', 540 + 17, hy - 140 + (1 - ap) * 260, o);
+      text(g, 'AFŞİN', 540 + 17, hy - 212 + (1 - ap) * 340, { w: 900, s: 168, ls: 34, c: 'rgba(255,255,255,0.92)' });
+      if (kp > 0) text(g, 'VE KÖYLERİ', 540 + 9, hy - 118 + (1 - kp) * 200, { w: 800, s: 60, ls: 18, c: C.amber });
       g.restore();
     }
     mountains(g, c, hy, clamp((hy + 50) / 300));
+    villages(g, c, hy, t, clamp((hy + 50) / 300));
   }
   // bloklar, parklar, yollar
   const E2 = MAP.EXT + 600;
@@ -1193,7 +1248,7 @@ function scene3(g, t) {
 
 /* ───────────────────────── 4. VAAT (12–16 sn) ───────────────────────── */
 const RING = { x: 540, y: 930, r: 330 };
-const LOGO_Y = 760;
+const LOGO_Y = 700;
 function scene4(g, t) {
   bgBlue(g, t, { gy: RING.y, gr: 1000, ga: 0.28 });
   // yavaş dönen ışık huzmeleri
@@ -1253,8 +1308,8 @@ function scene4(g, t) {
   // B) özellik kartları (14.0 – 16.0)
   const cards = [
     { t: 14.0, y: 700, ic: 'clock', a: '09:00 – 23:00', b: 'arası açığız' },
-    { t: 14.5, y: 960, ic: 'shield', a: '3D Secure', b: 'ile güvenli ödeme' },
-    { t: 15.0, y: 1220, ic: 'bag', a: 'Atıştırmalıktan', b: 'temizliğe kadar' },
+    { t: 14.5, y: 960, ic: 'mappin', a: 'Afşin ve köylerine', b: 'sanal market hizmeti' },
+    { t: 15.0, y: 1220, ic: 'shield', a: '3D Secure', b: 'ile güvenli ödeme' },
   ];
   const col = E.inBack(prog(t, 15.55, 15.92));
   if (t > 13.95) {
@@ -1277,7 +1332,7 @@ function scene4(g, t) {
     g.fillStyle = C.blue; g.beginPath(); g.arc(0, 0, 66, 0, TAU); g.fill();
     miconAt(g, cd.ic, 0, 0, 70, '#fff', 9);
     g.restore();
-    text(g, cd.a, -450 + 210, -4, { w: 800, s: 64, a: 'left', c: C.ink });
+    text(g, cd.a, -450 + 210, -4, fit(g, cd.a, { w: 800, s: 64, a: 'left', c: C.ink }, 650));
     text(g, cd.b, -450 + 212, 52, { f: 'Txt', w: 500, s: 38, a: 'left', c: C.inkSoft });
     g.restore();
   });
@@ -1311,7 +1366,7 @@ function scene5(g, t) {
     g.beginPath(); g.arc(540, LOGO_Y, r, 0, TAU); g.stroke();
   }
   // arkadaki bulanık ürünler
-  const fl = [['chips', 150, 380, 0.85], ['detergent', 940, 330, 0.75], ['bread', 120, 1560, 1.2], ['tea', 960, 1590, 1.1], ['egg', 930, 1040, 0.7], ['milk', 140, 1020, 0.8]];
+  const fl = [['chips', 150, 330, 0.85], ['detergent', 940, 300, 0.75], ['bread', 120, 1690, 1.2], ['tea', 965, 1700, 1.1], ['egg', 945, 880, 0.7], ['milk', 135, 860, 0.8]];
   fl.forEach(([n, x, y, s], i) => {
     const p = E.outBack(prog(t, 16.6 + i * 0.05, 17.1 + i * 0.05)); if (p <= 0) return;
     sprite(g, SPR[n + 'b2'], x + Math.sin(t * 0.8 + i) * 10, y + Math.cos(t * 0.9 + i) * 12 - (t - 16) * 8, s * p, Math.sin(t * 0.5 + i) * 0.2, 0.45);
@@ -1334,9 +1389,9 @@ function scene5(g, t) {
   const glint = lerp(-0.3, 1.3, prog(t, 17.05, 17.5));
   drawLogo(g, 540, LOGO_Y + 12, 360, { grow, ring, face, hands, am, ah, glint: t > 17.05 ? glint : null });
   g.restore();
-  // konfeti
-  if (t > 17.0) {
-    const a = t - 17.0;
+  // konfeti: "Yakınla!" oturduğunda
+  if (t > SLOGAN.land) {
+    const a = t - SLOGAN.land;
     for (const c of CONFETTI) {
       const x = 540 + c.vx * a * Math.exp(-a * 1.6), y = LOGO_Y + c.vy * a * Math.exp(-a * 1.6) + 420 * a * a;
       const al = clamp(1 - a / 1.6); if (al <= 0) continue;
@@ -1345,27 +1400,67 @@ function scene5(g, t) {
       g.restore();
     }
   }
-  // Yakınla
-  slotText(g, 'Yakınla', 540, 1185, { w: 900, s: 184, ls: -3 }, prog(t, 17.0, 17.6), 0, 0.06);
-  // slogan
-  const so = fit(g, "Afşin'in marketi, cebinde.", { w: 700, s: 64 }, 980);
-  slotText(g, "Afşin'in marketi, cebinde.", 540, 1300, so, prog(t, 17.55, 18.15), 0, 0.012);
+  // slogan: her hece jingle'ın notasıyla gelir. "Ne La-zım-sa," zıplar, "Ya-kın-la!" çakılır
+  sylText(g, SLOGAN.a, 540, 1082, { w: 800, s: 104 }, (k, ts) => {
+    const p = prog(t, ts - 0.03, ts + 0.24); if (p <= 0) return null;
+    return { sc: lerp(0.35, 1, E.outBack(p)), dy: (1 - E.outExpo(p)) * 70, al: clamp(p * 4) };
+  });
+  sylText(g, SLOGAN.b, 540, 1268, { w: 900, s: 200, ls: -3 }, (k, ts) => { // komşu heceyi örtmesin diye kancadakinden küçük çakma
+    if (t < ts - 0.09) return null;
+    if (t <= ts) { const p = prog(t, ts - 0.09, ts); return { sc: lerp(1.8, 1, E.inCubic(p)), al: clamp(p * 2.5) }; }
+    const dt = t - ts; return { sc: 1 + 0.08 * Math.exp(-dt * 11) * Math.cos(dt * 36) };
+  });
+  // Afşin ve köylerine sanal market
+  const dp = E.outExpo(prog(t, 18.1, 18.5));
+  if (dp > 0) {
+    const o = fit(g, 'Afşin ve köylerine sanal market', { f: 'Txt', w: 600, s: 42 }, 900);
+    g.save(); g.globalAlpha = dp;
+    text(g, 'Afşin ve köylerine sanal market', 540, 1352 + (1 - dp) * 24, { ...o, c: 'rgba(255,255,255,0.9)' });
+    g.restore();
+  }
   // mağaza hapları
   const pills = [['App Store', 345], ['Google Play', 735]];
   pills.forEach(([s, x], i) => {
-    const p = E.outBack(prog(t, 18.05 + i * 0.1, 18.4 + i * 0.1)); if (p <= 0) return;
-    g.save(); g.translate(x, 1425); g.scale(p, p);
+    const p = E.outBack(prog(t, 18.2 + i * 0.1, 18.55 + i * 0.1)); if (p <= 0) return;
+    g.save(); g.translate(x, 1458); g.scale(p, p);
     g.fillStyle = '#fff'; g.beginPath(); g.roundRect(-175, -46, 350, 92, 46); g.fill();
-    miconAt(g, 'bag', -112, -2, 44, C.blue, 9);
-    text(g, s, 18, 13, { f: 'Txt', w: 700, s: 36, c: C.blue });
+    const tw = measure(g, s, { f: 'Txt', w: 700, s: 36 }), x0 = -(tw + 52) / 2;
+    miconAt(g, 'download', x0 + 18, -1, 40, C.blue, 10);
+    text(g, s, x0 + 52, 13, { f: 'Txt', w: 700, s: 36, a: 'left', c: C.blue });
     g.restore();
   });
-  const up = E.outExpo(prog(t, 18.35, 18.9));
-  if (up > 0) { g.save(); g.globalAlpha = up; text(g, 'yakinla.com', 540, 1538 + (1 - up) * 20, { f: 'Txt', w: 600, s: 40, c: 'rgba(255,255,255,0.88)', ls: 1 }); g.restore(); }
+  const up = E.outExpo(prog(t, 18.45, 19.0));
+  if (up > 0) { g.save(); g.globalAlpha = up; text(g, 'www.yakinla.com', 540, 1574 + (1 - up) * 20, { f: 'Txt', w: 600, s: 40, c: 'rgba(255,255,255,0.88)', ls: 1 }); g.restore(); }
+}
+// Kapanış sloganı, hece hece (zamanlar audio.py'deki jingle notalarıyla aynı)
+const SLOGAN = {
+  a: [['Ne ', 16.5], ['La', 16.75], ['zım', 17.0], ['sa,', 17.25]],
+  b: [['Ya', 17.5], ['kın', 17.75], ['la', 18.0], ['!', 18.0, C.amber]],
+  land: 18.0,
+};
+// Heceleri tek satır olarak dizer; her hece kendi merkezinde fn(k, ts) → {sc, dy, al} ile canlanır
+function sylText(g, segs, x, y, o, fn) {
+  const full = segs.map(q => q[0]).join('');
+  setFont(g, o); g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+  const x0 = x - g.measureText(full).width / 2;
+  let pre = '';
+  segs.forEach(([str, ts, col], k) => {
+    setFont(g, o);
+    const off = g.measureText(pre).width, sw = g.measureText(str.trimEnd()).width;
+    pre += str;
+    const r = fn(k, ts); if (!r) return;
+    const al = r.al == null ? 1 : r.al; if (al <= 0.002) return;
+    const cx = x0 + off + sw / 2, cy = y - o.s * 0.36;
+    g.save(); g.globalAlpha *= al;
+    g.translate(cx, cy + (r.dy || 0)); g.scale(r.sc, r.sc); g.translate(-cx, -cy);
+    g.fillStyle = col || o.c || '#fff'; g.fillText(str.trimEnd(), x0 + off, y);
+    g.restore();
+  });
+  g.letterSpacing = '0px';
 }
 
 /* ───────────────────────── kamera sarsıntısı ve ana çizim ───────────────────────── */
-const IMPACTS = [[1.0, 12], [2.5, 20], [2.75, 20], [3.0, 26], [4.0, 30], [8.0, 14], [12.0, 16], [12.8, 22], [14.0, 10], [14.5, 10], [15.0, 10], [16.0, 26], [17.0, 12]];
+const IMPACTS = [[1.0, 12], [2.5, 20], [2.75, 20], [3.0, 26], [4.0, 30], [8.0, 14], [12.0, 16], [12.8, 22], [14.0, 10], [14.5, 10], [15.0, 10], [16.0, 26], [17.0, 8], [17.5, 10], [17.75, 12], [18.0, 20]];
 function shake(t) {
   let x = 0, y = 0, z = 0;
   IMPACTS.forEach(([ti, a], i) => {
@@ -1434,6 +1529,7 @@ function buildCues() {
   cue(COURIER.t0 - 0.2, 'motor', { gain: 0.3, track: pans });
   cue(9.0, 'whoosh', { dur: 0.3, f0: 700, f1: 3000, gain: 0.3 });
   cue(10.5, 'shimmer', { dur: 0.9, gain: 0.35 });
+  VILLAGES.forEach((v, i) => cue(v.t + 0.08, 'coin', { pitch: 1.5 + i * 0.122, gain: 0.3, pan: (v.x - 540) / 540 * 0.8 }));
   cue(11.4, 'doorbell', { gain: 0.65 });
   cue(11.66, 'whoosh', { dur: 0.36, f0: 300, f1: 8000, gain: 0.6 });
   cue(12.0, 'impact', { gain: 0.85 });
@@ -1452,11 +1548,14 @@ function buildCues() {
   cue(16.0, 'impact', { gain: 1.0, big: true });
   cue(16.12, 'shimmer', { dur: 0.6, gain: 0.35 });
   cue(16.3, 'sweep', { dur: 0.35, gain: 0.25 });
-  cue(17.0, 'click', { gain: 0.6 });
-  cue(17.0, 'sparkle', { dur: 1.2, gain: 0.45 });
+  cue(17.0, 'click', { gain: 0.5 });
   cue(17.05, 'shine', { dur: 0.45, gain: 0.3 });
-  cue(17.55, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.2 });
-  cue(18.05, 'pop', { pitch: 1.3, gain: 0.35, pan: -0.35 }); cue(18.15, 'pop', { pitch: 1.5, gain: 0.35, pan: 0.35 });
+  SLOGAN.a.forEach(([, ts], i) => cue(ts, 'pop', { pitch: 1.0 + i * 0.1, gain: 0.3 }));
+  [[17.5, 0.5], [17.75, 0.6]].forEach(([ts, gn]) => cue(ts, 'slam', { gain: gn }));
+  cue(SLOGAN.land, 'slam', { gain: 0.85 });
+  cue(SLOGAN.land, 'sparkle', { dur: 1.2, gain: 0.45 });
+  cue(18.1, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.2 });
+  cue(18.2, 'pop', { pitch: 1.3, gain: 0.35, pan: -0.35 }); cue(18.3, 'pop', { pitch: 1.5, gain: 0.35, pan: 0.35 });
   return q.sort((a, b) => a.t - b.t);
 }
 

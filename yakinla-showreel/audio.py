@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Yakınla showreel'inin müziği ve ses efektleri: tamamı sentez (numpy + scipy), dış örnek yok.
 
-Kullanım:  python3 audio.py build/cues.json build/audio.wav
+Kullanım:  python3 audio.py build/cues.json build/audio.wav [vo/dis_ses.wav]
 
 - Müzik 120 BPM, 4/4. Sahne geçişleri ölçü başlarına (0, 4, 8, 12, 16 sn) oturur.
   Akorlar: Em (giriş) → Em C G D (sipariş + teslimat) → C D (vaat, gerilim) → G (logo, çözülme).
-- Ses logosu: logonun ibreleri otururken çalan üç nota, G5 – B5 – D6 ("Ya-kın-la").
+- Jingle: kapanış sloganı hece hece çalınır. "Ne La-zım-sa," B4 – D5 – E5 – D5,
+  "Ya-kın-la!" G5 – B5 – D6 (ses logosu). Notalar anim.js'teki SLOGAN zamanlarıyla aynıdır.
 - Efektler, anim.js'in ürettiği cues.json'dan gelir; böylece her pop, tık ve whoosh
   ekrandaki hareketle aynı karede ve aynı yönde (pan) duyulur.
+- Dış ses (isteğe bağlı, vo.py üretir) ortaya yerleşir, müziğin ~9 dB üstünde durur. Konuştuğu
+  sürece müzik ve efektler ~6 dB alçalır (jingle sırasında daha az: zil notaları sloganla birlikte söyler).
 """
 import json
 import sys
@@ -484,29 +487,66 @@ def compose():
     riser = sine(300 + 900 * tr ** 2, n) * tr ** 2 * 0.18 + sweep_bp(noise(n), 400, 9000, 1.6, 0.8) * tr ** 2 * 0.5
     send(sfx, riser, 15.0, 0.6)
 
-    # Kapanış (16–20): G majör, ses logosu, son vuruş
+    # Kapanış (16–20): G majör. Jingle "Ne La-zım-sa, Ya-kın-la!" hece hece, 18.0'da çözülür
     K(16.0, 1.1)
     send(music, pad(f(*CH['G']) + [NOTE['D5']], 3.6, cut=3200, att=0.02, rel=1.2), 16.0, 1.15)
     send(bass_bus, bass_note(NOTE['G2'], 0.9, 500), 16.0, 0.6)
-    for t, nm in ((16.5, 'G5'), (16.75, 'B5'), (17.0, 'D6')):
-        send(music, bell(NOTE[nm], 2.8, 3.5, 2.2, 1.4), t, 0.36, 0, rev=0.5)
-        send(music, pluck(NOTE[nm] / 2, 0.5, 1.2), t, 0.16, 0, rev=0.3)
-    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), 17.0, 0.12, 0.3, rev=0.6)
+    jingle = [(16.5, 'B4', 0.26), (16.75, 'D5', 0.3), (17.0, 'E5', 0.3), (17.25, 'D5', 0.26),
+              (17.5, 'G5', 0.34), (17.75, 'B5', 0.36), (18.0, 'D6', 0.4)]
+    for t, nm, v in jingle:
+        last = t == 18.0
+        send(music, bell(NOTE[nm], 3.0 if last else 1.6, 3.5, 2.2, 1.2 if last else 2.2), t, v, 0, rev=0.5)
+        send(music, pluck(NOTE[nm] / 2, 0.8 if last else 0.4, 1.2), t, 0.16, 0, rev=0.3)
+    send(music, pad(f('G4', 'B4', 'D5'), 1.0, cut=2400, att=0.2, rel=0.4), 17.0, 0.35)
     K(17.0, 0.7)
-    send(bass_bus, bass_note(NOTE['G2'], 0.6, 500), 17.0, 0.4)
-    for i in range(16):
+    send(bass_bus, bass_note(NOTE['E2'], 0.45, 500), 17.0, 0.35)
+    send(bass_bus, bass_note(NOTE['D2'], 0.45, 500), 17.5, 0.4)
+    for i in range(8):
         t = 17.0 + i * 0.125
         send(drums, hat(), t, 0.08 if i % 2 else 0.05, 0.3 if i % 2 else -0.3)
-    K(18.0, 0.8)
+    K(18.0, 0.9)
+    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), 18.0, 0.12, 0.3, rev=0.6)
     for nm in ('G4', 'B4', 'D5', 'G5'):
-        send(music, pluck(NOTE[nm], 1.2, 1.0), 18.0, 0.18, 0, rev=0.5)
-    send(music, bell(NOTE['G5'], 2.4, 3.5, 1.6, 1.6), 18.0, 0.16, 0, rev=0.5)
-    send(bass_bus, bass_note(NOTE['G2'], 1.0, 400), 18.0, 0.5)
+        send(music, pluck(NOTE[nm], 1.4, 1.0), 18.0, 0.18, 0, rev=0.5)
+    send(music, pad(f(*CH['G']) + [NOTE['G4'], NOTE['D5']], 2.0, cut=3600, att=0.01, rel=0.8), 18.0, 0.9)
+    send(bass_bus, bass_note(NOTE['G2'], 1.2, 400), 18.0, 0.55)
+    for i in range(8):
+        t = 18.0 + i * 0.125
+        send(drums, hat(), t, 0.07 if i % 2 else 0.045, 0.3 if i % 2 else -0.3)
     return kicks
+
+
+def add_vo(L, R, path, irL, irR):
+    """Dış sesi ortaya koyar; konuştuğu yerde altındaki her şeyi alçaltır (ducking)."""
+    import wave
+    with wave.open(path) as w:
+        assert w.getframerate() == SR and w.getnchannels() == 1
+        v = np.frombuffer(w.readframes(w.getnframes()), np.int16) / 32768
+    vo = np.zeros(N); vo[:min(N, len(v))] = v[:N]
+    # zarf: 15 ms atak, 280 ms bırakma, 60 ms önden (alçalma konuşmadan hemen önce başlar)
+    a = np.abs(vo); env = np.empty(N); e = 0.0
+    ka, kr = np.exp(-1 / (0.015 * SR)), np.exp(-1 / (0.28 * SR))
+    for i in range(0, N, 32):  # 32 örneklik bloklar: yeterince hassas, hızlı
+        x = a[i:i + 32].max()
+        k = ka if x > e else kr
+        e = k * e + (1 - k) * x; env[i:i + 32] = e
+    env = np.roll(env, -ns(0.06)); env[-ns(0.06):] = 0
+    act = np.clip(env / (0.2 * env.max()), 0, 1)
+    t = tt(N)
+    depth = np.where((t > 16.4) & (t < 18.35), 0.28, 0.5)
+    bed_gain = 1 - depth * act
+    L, R = L * bed_gain, R * bed_gain
+    on = act > 0.5
+    bed = np.sqrt(np.mean(((L + R) / 2)[on] ** 2))
+    speech = np.sqrt(np.mean(vo[np.abs(vo) > 0.02 * np.abs(vo).max()] ** 2))
+    vo = vo * bed / speech * 10 ** (9 / 20)
+    room = 0.07 * signal.fftconvolve(vo, irL)[:N], 0.07 * signal.fftconvolve(vo, irR)[:N]
+    return L + vo + room[0], R + vo + room[1]
 
 
 def main():
     cues_path, out = sys.argv[1], sys.argv[2]
+    vo_path = sys.argv[3] if len(sys.argv) > 3 else None
     info = json.load(open(cues_path, encoding='utf-8'))
     cues = info['cues'] if isinstance(info, dict) else info
     kicks = compose()
@@ -539,6 +579,8 @@ def main():
 
     L = drums.L * 0.9 + (bass_bus.L * 0.85 + music.L) * duck + sfx.L * 0.9 + vL
     R = drums.R * 0.9 + (bass_bus.R * 0.85 + music.R) * duck + sfx.R * 0.9 + vR
+    if vo_path:
+        L, R = add_vo(L, R, vo_path, irL, irR)
     # alçak frekans temizliği + yumuşak limit
     L, R = hp(L, 28), hp(R, 28)
     peak = max(np.max(np.abs(L)), np.max(np.abs(R)))
