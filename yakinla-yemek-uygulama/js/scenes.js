@@ -11,14 +11,25 @@
  * Zamanlar dış ses üretilince cümlelere göre son hâlini alır.
  */
 const T = {
-  phoneIn: 0.1, q1: 0.35, q2: 0.75, splash: 0.55,
-  s2: 2.4, tapYemek: 4.55, openYemek: 4.72,
-  st2: 5.3, scroll: 5.9, tapRest: 7.55, openRest: 7.72,
-  st3: 8.4, adds: [9.2, 9.7, 10.2], goCart: 11.0, done: 11.2,
-  s5: 12.4, doorCut: 14.3, bell: 14.65, open: 15.0, hand: 15.35,
-  s4: 16.5, word: 17.0, slogan: 17.45, tag: 17.7, stores: 18.3, url: 18.7,
+  phoneIn: 0.1, q1: 0.3, q2: 0.82, splash: 0.5, appOpen: 1.62,
+  s2: 2.5, tapYemek: 3.95, openYemek: 4.1,
+  st2: 4.65, scroll: 4.95, tapRest: 6.05, openRest: 6.22,
+  st3: 6.8, adds: [7.5, 8.0, 8.5], goCart: 9.25, done: 9.45,
+  s5: 10.5, doorCut: 12.75, bell: 13.15, open: 13.55, hand: 13.95,
+  s4: 16.0, word: 16.55, tag: 16.95, slogan: 17.5, stores: 18.3, url: 18.7,
 };
-const VO = []; // dış ses onaydan sonra üretilip buraya yerleştirilir
+// Dış ses (ElevenLabs, Dilara, 11,5 sn): kaynak kayıttaki cümle aralıkları [src0, src1] → videodaki başlangıç.
+// Sınırlar build/vo/dis_ses.wav'ın enerji eğrisindeki sessizliklerden ölçüldü.
+const VO = [
+  { at: 0.30, src: [0.10, 1.07] },   // Acıktın mı Afşin?            ("Afşin" → "Afşin?" yazısı 0,82'de çakılır)
+  { at: 1.62, src: [1.40, 2.33] },   // Yakınla'yı aç,               (açılış ekranı canlanır)
+  { at: 3.30, src: [2.42, 3.33] },   // Yemek'e dokun!               ("dokun" → Yemek kartına dokunuş 3,95)
+  { at: 4.70, src: [3.70, 5.13] },   // Bölgendeki restoranı seç,    ("seç" → restorana dokunuş 6,05)
+  { at: 6.85, src: [5.32, 6.20] },   // sepetini oluştur!            (ürünler 7,5 · 8 · 8,5'te sepete)
+  { at: 10.85, src: [6.71, 8.86] },  // Kurye siparişini kapına kadar getirsin!  ("getirsin" → kapı sahnesi 12,75)
+  { at: 16.55, src: [9.35, 10.07] }, // Yakınla Yemek,               (logo yazısı açılır, YEMEK etiketi)
+  { at: 17.55, src: [10.35, 11.02] }, // afiyet olsun!               ("Afiyet olsun!" yazısı)
+];
 
 /* ───────────── arka planlar ───────────── */
 function bgNight(g, t) {
@@ -53,8 +64,12 @@ function phoneXf(t) {
 // Açılış ekranı: beyaz zemin, logo
 function screenSplash(g, t) {
   g.fillStyle = lg(g, 0, 0, 0, SH, [[0, '#FFFFFF'], [1, '#EEF4FF']]); g.fillRect(0, 0, SW, SH);
-  const p = spring(t - T.splash, 1.6, 6);
-  drawLogo(g, SW / 2, SH / 2 - 60, 260 * clamp(p, 0, 1.2), { glint: lerp(-0.3, 1.3, prog(t, T.splash + 0.5, T.splash + 1.0)) });
+  const p = spring(t - T.splash, 1.6, 6), bump = t > T.appOpen ? 0.12 * kick(t - T.appOpen, 6) * Math.cos((t - T.appOpen) * 20) : 0;
+  for (let i = 0; i < 2; i++) { // açılış halkaları
+    const ph = prog(t, T.appOpen + i * 0.18, T.appOpen + 0.9 + i * 0.18);
+    if (ph > 0 && ph < 1) { g.strokeStyle = `rgba(31,115,240,${0.45 * (1 - ph)})`; g.lineWidth = 6; g.beginPath(); g.arc(SW / 2, SH / 2 - 70, 130 + ph * 260, 0, TAU); g.stroke(); }
+  }
+  drawLogo(g, SW / 2, SH / 2 - 60, 260 * clamp(p, 0, 1.2) * (1 + bump), { glint: lerp(-0.3, 1.3, prog(t, T.appOpen, T.appOpen + 0.5)) });
   const wp = E.outCubic(prog(t, T.splash + 0.3, T.splash + 0.8));
   if (wp > 0) { g.save(); g.globalAlpha *= wp; const w = SPR.wmS.width * 0.62, h = SPR.wmS.height * 0.62; g.drawImage(SPR.wmS, SW / 2 - w / 2, SH / 2 + 110 + (1 - wp) * 20, w, h); g.restore(); }
 }
@@ -130,7 +145,8 @@ const RESTS = [
   { n: 'Kebapçı', tag: 'Kebap · Lahmacun · Pide', bg: ['#FFB29A', '#E2382A'], ic: ['kebap', 'durum', 'drink'], logo: 'K', lc: '#C62828', badge: 'Yeni', km: '1,8 km' },
 ];
 const RC = { y0: 448, h: 290, gap: 22, ban: 182 };
-const restY = (i, t) => RC.y0 + i * (RC.h + RC.gap) - E.inOutCubic(prog(t, T.scroll, T.scroll + 0.9)) * 120;
+const RSCROLL = 70, SCROLL_D = 0.6;
+const restY = (i, t) => RC.y0 + i * (RC.h + RC.gap) - E.inOutCubic(prog(t, T.scroll, T.scroll + SCROLL_D)) * RSCROLL;
 function restCard(g, R, x, y, w, t, press = 0, hl = 0) {
   g.save(); g.translate(x + w / 2, y + RC.h / 2); g.scale(1 - press * 0.03, 1 - press * 0.03); g.translate(-(x + w / 2), -(y + RC.h / 2));
   shadowCard(g, x, y, w, RC.h, 26, 0.1);
@@ -404,7 +420,7 @@ function headlines(g, t) {
 function fingerAt(t) {
   const keys = [
     [SW + 80, SH - 40, T.tapYemek - 0.9], [SW / 2 + 60, HOME.yemek + 210, T.tapYemek],
-    [SW / 2 + 90, 980, T.scroll - 0.1], [SW / 2 + 90, 820, T.scroll + 0.9], [SW / 2 + 80, RC.y0 + 120 - 120, T.tapRest],
+    [SW / 2 + 90, 980, T.scroll - 0.1], [SW / 2 + 90, 980 - RSCROLL, T.scroll + SCROLL_D], [SW / 2 - 40, RC.y0 - RSCROLL + RC.ban + 40, T.tapRest],
     [...plusXY(0), T.adds[0]], [...plusXY(1), T.adds[1]], [...plusXY(2), T.adds[2]],
     [...goBtn(), T.goCart], [SW + 100, SH + 120, T.goCart + 0.5],
   ];
@@ -421,7 +437,7 @@ function fingerAt(t) {
   }
   let press = 0;
   for (const tp of [T.tapYemek, T.tapRest, ...T.adds, T.goCart]) press = Math.max(press, t > tp ? kick(t - tp, 12) : prog(t, tp - 0.06, tp));
-  if (t > T.scroll - 0.1 && t < T.scroll + 0.9) press = 0.6;
+  if (t > T.scroll - 0.1 && t < T.scroll + SCROLL_D) press = 0.6;
   const hide = (t > T.tapYemek + 0.25 && t < T.scroll - 0.5) || (t > T.tapRest + 0.25 && t < T.adds[0] - 0.55);
   const a = prog(t, keys[0][2], keys[0][2] + 0.2) * (1 - prog(t, T.goCart + 0.3, T.goCart + 0.5)) * (hide ? 0 : 1);
   return [x, y, press, a];
@@ -553,12 +569,17 @@ function street(g, t, off) {
   }
 }
 // Kurye: yandan, sağa bakar. Kask yüzü kapatır (yapay yüz yok). Birim: 1 = 1 px × s
-function courierBody(g, t, riding, armPose = 0, pack = true) {
+function courierBody(g, t, riding, armPose = 0, pack = true, walk = 0) {
   const blue = lg(g, -40, -150, 40, 0, [[0, '#4C97FF'], [0.5, '#1F73F0'], [1, '#0B47B5']]);
   const pants = '#1D2740', shoe = '#121826';
   if (!riding) { // ayakta: bacaklar
-    g.fillStyle = pants; g.beginPath(); g.roundRect(-20, -6, 20, 128, 9); g.roundRect(4, -6, 20, 128, 9); g.fill();
-    g.fillStyle = shoe; g.beginPath(); g.roundRect(-24, 114, 34, 16, 7); g.roundRect(0, 114, 36, 16, 7); g.fill();
+    const sw = Math.sin(walk) * 0.32 * (walk ? 1 : 0);
+    for (const [lx, a] of [[-10, -sw], [14, sw]]) {
+      g.save(); g.translate(lx, -6); g.rotate(a);
+      g.fillStyle = pants; g.beginPath(); g.roundRect(-10, 0, 20, 128, 9); g.fill();
+      g.fillStyle = shoe; g.beginPath(); g.roundRect(-14, 120, 36, 16, 7); g.fill();
+      g.restore();
+    }
   }
   // gövde (mont) + yansıtıcı şerit
   g.fillStyle = blue; g.beginPath(); g.roundRect(-30, -128, 62, 132, 24); g.fill();
@@ -667,8 +688,9 @@ function scene5(g, t) {
     // kurye ayakta, poşeti uzatır
     const arm = E.inOutCubic(prog(t, T.hand - 0.2, T.hand + 0.3));
     const walk = E.outCubic(prog(t, T.doorCut, T.doorCut + 0.5));
-    g.save(); g.translate(lerp(-120, 330, walk), 1556); g.scale(2.3, 2.3);
-    const hnd = courierBody(g, t, false, arm);
+    const wph = walk < 1 ? (t - T.doorCut) * 13 : 0;
+    g.save(); g.translate(lerp(-120, 330, walk), 1556 - Math.abs(Math.sin(wph)) * 8); g.scale(2.3, 2.3);
+    const hnd = courierBody(g, t, false, arm, true, wph);
     const bx = hnd[0] + 4, by = hnd[1] + 32;
     g.restore();
     // kapıdan uzanan el (müşteri) poşeti alır

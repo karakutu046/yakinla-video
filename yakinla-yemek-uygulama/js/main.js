@@ -39,15 +39,48 @@ function draw(g, t) {
 function buildCues() {
   const q = [];
   const cue = (t, type, o = {}) => q.push({ t: +t.toFixed(4), type, ...o });
-  cue(T.phoneIn, 'whoosh', { dur: 0.4, f0: 400, f1: 5000, gain: 0.4 });
-  cue(T.q2, 'slam', { gain: 0.9 });
-  cue(T.s2, 'impact', { gain: 0.6 });
-  cue(T.tapYemek, 'tap', { gain: 0.7 }); cue(T.openYemek, 'whoosh', { dur: 0.36, f0: 500, f1: 5000, gain: 0.4 });
-  cue(T.tapRest, 'tap', { gain: 0.7 }); cue(T.openRest, 'whoosh', { dur: 0.36, f0: 500, f1: 5000, gain: 0.4 });
-  T.adds.forEach((a, k) => { cue(a, 'tap', { gain: 0.65 }); cue(a + 0.42, 'coin', { pitch: 1 + k * 0.122, gain: 0.5 }); });
-  cue(T.goCart, 'tap', { gain: 0.8 }); cue(T.done + 0.05, 'success', { gain: 0.5 });
-  cue(T.bell, 'doorbell', { gain: 0.6 });
-  cue(T.s4, 'impact', { gain: 0.6 }); cue(T.tag, 'sparkle', { dur: 1.0, gain: 0.35 });
+  // 1) kanca
+  cue(Math.max(0, T.phoneIn - 0.05), 'whoosh', { dur: 0.45, f0: 300, f1: 5000, gain: 0.45 });
+  cue(T.splash, 'pop', { pitch: 1.1, gain: 0.35 });
+  cue(T.appOpen, 'shine', { dur: 0.45, gain: 0.3 }); cue(T.appOpen, 'blip', { pitch: 1.3, gain: 0.25 });
+  cue(T.q1, 'whoosh', { dur: 0.3, f0: 1200, f1: 4000, gain: 0.2 });
+  cue(T.q2 - 0.1, 'whoosh', { dur: 0.12, f0: 3000, f1: 400, gain: 0.3 });
+  cue(T.q2, 'slam', { gain: 0.85 });
+  ORBIT.forEach(([, a0], i) => cue(0.35 + i * 0.06, 'pop', { pitch: 0.9 + i * 0.1, gain: 0.3, pan: Math.cos(a0) * 0.6 }));
+  // 2) adımlar
+  cue(T.s2 - 0.2, 'whoosh', { dur: 0.4, f0: 400, f1: 7000, gain: 0.45 });
+  cue(T.s2, 'impact', { gain: 0.6 }); cue(T.s2 + 0.03, 'shimmer', { dur: 0.5, gain: 0.3 });
+  cue(T.tapYemek, 'tap', { gain: 0.75 }); cue(T.openYemek, 'whoosh', { dur: 0.36, f0: 500, f1: 5000, gain: 0.4 });
+  for (let i = 0; i < 3; i++) cue(T.openYemek + 0.25 + i * 0.08, 'blip', { pitch: 1 + i * 0.1, gain: 0.2, pan: i % 2 ? 0.2 : -0.2 });
+  cue(T.st2, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.22 });
+  cue(T.scroll, 'sweep', { dur: 0.6, gain: 0.12 });
+  cue(T.tapRest, 'tap', { gain: 0.75 }); cue(T.openRest, 'whoosh', { dur: 0.36, f0: 500, f1: 5000, gain: 0.4 });
+  cue(T.st3, 'whoosh', { dur: 0.3, f0: 900, f1: 3500, gain: 0.22 });
+  T.adds.forEach((a, k) => {
+    cue(a, 'tap', { gain: 0.65, pan: 0.15 });
+    cue(a + 0.03, 'whoosh', { dur: 0.36, f0: 1500, f1: 5000, gain: 0.16, pan: -0.15 });
+    cue(a + 0.42, 'coin', { pitch: 1 + k * 0.122, gain: 0.45, pan: -0.2 });
+  });
+  cue(T.goCart, 'tap', { gain: 0.8 }); cue(T.done + 0.05, 'success', { gain: 0.5 }); cue(T.done + 0.08, 'pop', { pitch: 1.2, gain: 0.35 });
+  // 3) kurye: motor sesi ekrandaki konumuna göre sağ-sol kayar
+  cue(T.s5 - 0.3, 'whoosh', { dur: 0.4, f0: 300, f1: 8000, gain: 0.5 });
+  const pans = [];
+  for (let t = T.s5; t <= T.doorCut + 0.1; t += 0.05) {
+    const ent = E.outCubic(prog(t, T.s5, T.s5 + 0.5)), ex = E.inCubic(prog(t, T.doorCut - 0.3, T.doorCut));
+    const cx = lerp(-300, 520, ent) + ex * 900;
+    pans.push([+t.toFixed(3), clamp((cx - 540) / 540, -1, 1), 0.9 + 0.3 * ex]);
+  }
+  cue(T.s5, 'motor', { gain: 0.3, track: pans });
+  cue(T.doorCut - 0.25, 'whoosh', { dur: 0.45, f0: 5000, f1: 400, gain: 0.45 });
+  cue(T.bell, 'doorbell', { gain: 0.65 });
+  cue(T.open, 'click', { gain: 0.45 }); cue(T.open + 0.05, 'shimmer', { dur: 0.6, gain: 0.25 });
+  cue(T.hand + 0.4, 'crinkle', { dur: 0.35, gain: 0.3 }); cue(T.hand + 0.45, 'shine', { gain: 0.25 });
+  // 4) kapanış
+  cue(T.s4 - 0.4, 'whoosh', { dur: 0.4, f0: 300, f1: 8000, gain: 0.45 });
+  cue(T.s4, 'impact', { gain: 0.65 }); cue(T.s4 + 0.1, 'shimmer', { dur: 0.6, gain: 0.3 });
+  cue(T.word, 'whoosh', { dur: 0.4, f0: 600, f1: 4000, gain: 0.3 });
+  cue(T.tag, 'pop', { pitch: 1.3, gain: 0.45 }); cue(T.tag, 'sparkle', { dur: 0.9, gain: 0.3 }); cue(T.tag + 0.02, 'confetti', { dur: 1.2, gain: 0.22 });
+  cue(T.stores, 'pop', { pitch: 1.3, gain: 0.32, pan: -0.35 }); cue(T.stores + 0.1, 'pop', { pitch: 1.5, gain: 0.32, pan: 0.35 });
   for (const v of VO) cue(v.at, 'vo', { src0: v.src[0], src1: v.src[1] });
   return q.sort((a, b) => a.t - b.t);
 }

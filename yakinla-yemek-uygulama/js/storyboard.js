@@ -4,25 +4,25 @@
  */
 const SB = { W: 2480, H: 3420, fw: 540, fh: 960, gx: 50, x0: 85, y0: 330, cap: 470 };
 const PANELS = [
-  { t: 1.45, no: '1', ad: 'KANCA', zaman: '0–2,4 sn',
+  { t: 1.45, no: '1', ad: 'KANCA', zaman: '0–2,5 sn',
     gor: 'Akşam, lacivert zemin. Telefon aşağıdan süzülür, Yakınla açılış ekranı yanar; etrafında burger, pizza, dürüm ve içecek döner.',
-    vo: 'Acıktın mı Afşin?', ekran: 'Acıktın mı, Afşin?' },
-  { t: 4.45, no: '2', ad: "YEMEK'E DOKUN", zaman: '2,4–5,3 sn',
+    vo: "Acıktın mı Afşin? Yakınla'yı aç,", ekran: 'Acıktın mı, Afşin?' },
+  { t: 3.9, no: '2', ad: "YEMEK'E DOKUN", zaman: '2,5–4,7 sn',
     gor: 'Uygulamanın ana ekranı: Konumun Afşin, harita, Market ve Yemek kartları. Parmak Yemek kartına dokunur, kart büyüyerek açılır.',
-    vo: "Yakınla'yı aç, Yemek'e dokun!", ekran: "1 · Yemek'e dokun" },
-  { t: 7.5, no: '3', ad: 'RESTORANINI SEÇ', zaman: '5,3–8,4 sn',
+    vo: "Yemek'e dokun!", ekran: "1 · Yemek'e dokun" },
+  { t: 6.0, no: '3', ad: 'RESTORANINI SEÇ', zaman: '4,7–6,8 sn',
     gor: 'Yakınla Yemek ekranı: Restoranlar listesi, Önerilen / En Yakın / Puan / En Hızlı sekmeleri. Liste kayar, parmak bir restorana dokunur.',
     vo: 'Bölgendeki restoranı seç,', ekran: '2 · Restoranını seç' },
-  { t: 10.75, no: '4', ad: 'SEPETİNİ OLUŞTUR', zaman: '8,4–12,4 sn',
+  { t: 9.05, no: '4', ad: 'SEPETİNİ OLUŞTUR', zaman: '6,8–10,5 sn',
     gor: 'Restoran menüsü: burger, patates ve içecek "+" ile sepete uçar, mavi sepet çubuğu 1-2-3 sayar. "Sepete Git" → "Siparişin alındı!"',
     vo: 'sepetini oluştur!', ekran: '3 · Sepetini oluştur' },
-  { t: 13.25, no: '5', ad: 'KURYE YOLDA', zaman: '12,4–14,3 sn',
+  { t: 11.4, no: '5', ad: 'KURYE YOLDA', zaman: '10,5–12,8 sn',
     gor: 'Telefondan sokağa geçiş. Mavi montlu, kasklı kurye motoruyla akşam ışığında Afşin sokağından geçer: alçak binalar, çatılarda güneş panelleri, arkada dağlar.',
     vo: 'Kurye siparişini kapına kadar getirsin!', ekran: '4 · Kurye kapına getirsin!' },
-  { t: 15.95, no: '6', ad: 'KAPIDA TESLİM', zaman: '14,3–16,5 sn',
+  { t: 14.45, no: '6', ad: 'KAPIDA TESLİM', zaman: '12,8–16 sn',
     gor: 'Zil çalar, kapı açılır, içeriden sıcak ışık. Kurye Yakınla poşetini uzatır, içeriden uzanan el alır. Yüz gösterilmez (vizörlü kask).',
     vo: '(müzik + kapı zili)', ekran: '4 · Kurye kapına getirsin!' },
-  { t: 19.2, no: '7', ad: 'KAPANIŞ', zaman: '16,5–20 sn',
+  { t: 19.2, no: '7', ad: 'KAPANIŞ', zaman: '16–20 sn',
     gor: 'Pin kurulur, orijinal Yakınla yazısı açılır, turuncu YEMEK etiketi ve konfeti. App Store · Google Play · yakinla.com',
     vo: 'Yakınla Yemek, afiyet olsun!', ekran: 'Afiyet olsun!' },
 ];
@@ -58,8 +58,8 @@ async function makeStoryboard() {
   text(g, 'Yakınla Yemek · Reklam Senaryosu', SB.x0 + 165, 140, { w: 800, s: 74, a: 'left', c: C.ink });
   text(g, "Uygulamayı aç → Yemek'e dokun → restoranını seç → sepetini oluştur → kurye kapına getirsin", SB.x0 + 168, 200, { f: 'Txt', w: 500, s: 32, a: 'left', c: C.inkSoft });
   let cx = SB.x0 + 168;
-  for (const s of ['20 sn', 'Dikey 9:16 · 1080×1920', 'Dış ses: ElevenLabs · Dilara', 'Müzik + efekt: sentez', 'Onay bekliyor']) {
-    const w = measure(g, s, { f: 'Txt', w: 700, s: 22 }) + 40, last = s === 'Onay bekliyor';
+  for (const s of ['20 sn', 'Dikey 9:16 · 1080×1920', 'Dış ses: ElevenLabs · Dilara', 'Müzik + efekt: sentez', 'Onaylandı']) {
+    const w = measure(g, s, { f: 'Txt', w: 700, s: 22 }) + 40, last = s === 'Onaylandı';
     g.fillStyle = last ? '#FFF1DE' : '#E3ECFB'; g.beginPath(); g.roundRect(cx, 236, w, 46, 23); g.fill();
     text(g, s, cx + w / 2, 267, { f: 'Txt', w: 700, s: 22, c: last ? '#B86A00' : C.blue });
     cx += w + 14;
@@ -95,7 +95,7 @@ async function makeStoryboard() {
   g.save(); g.shadowColor = 'rgba(11,27,51,0.08)'; g.shadowBlur = 24; g.shadowOffsetY = 8;
   g.fillStyle = '#fff'; g.beginPath(); g.roundRect(nx, ny, SB.fw, nh, 28); g.fill(); g.restore();
   g.fillStyle = lg(g, 0, ny, 0, ny + 330, [[0, '#2F80F5'], [1, '#0E5FE0']]); g.beginPath(); g.roundRect(nx, ny, SB.fw, 400, [28, 28, 0, 0]); g.fill();
-  label(g, 'DIŞ SES METNİ (TASLAK · 21 KELİME)', nx + 28, ny + 50, 'rgba(255,255,255,0.8)');
+  label(g, 'DIŞ SES METNİ (ELEVENLABS · DİLARA · 11,5 SN)', nx + 28, ny + 50, 'rgba(255,255,255,0.8)');
   wrap(g, VO_TEXT, nx + 28, ny + 92, SB.fw - 56, 36, { f: 'Txt', w: 600, s: 25, c: '#fff' });
   label(g, 'ONAYINIZA SUNULANLAR', nx + 28, ny + 452, '#8A93A6');
   let yy = ny + 494;

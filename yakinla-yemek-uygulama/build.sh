@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Yakınla Yemek reklamını sıfırdan üretir: kareler (Chromium) → ses (sentez + dış ses) → MP4 (ffmpeg).
+# Yakınla Yemek (uygulama akışı) reklamını sıfırdan üretir: kareler (Chromium) → ses (sentez + dış ses) → MP4 (ffmpeg).
 # Gerekenler: Node + Playwright (Chromium), Python 3 + numpy + scipy, ffmpeg.
 # Dış ses: build/vo/dis_ses.mp3 (ElevenLabs, Dilara). build/ git'e girmez; ses yalnızca MP4'ün içinde depoya girer.
 set -euo pipefail
 cd "$(dirname "$0")"
-OUT=${1:-out/yakinla_yemek_20sn.mp4}
+OUT=${1:-out/yakinla_yemek_uygulama_20sn.mp4}
 mkdir -p build/frames "$(dirname "$OUT")"
 [ -f build/vo/dis_ses.mp3 ] || { echo "build/vo/dis_ses.mp3 yok: önce dış sesi ElevenLabs'ten indirin (README)."; exit 1; }
 

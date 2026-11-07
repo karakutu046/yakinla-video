@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Yakınla Yemek reklamının sesi: sentez müzik + efektler + ElevenLabs dış sesi.
+"""Yakınla Yemek (uygulama akışı) reklamının sesi: sentez müzik + efektler + ElevenLabs dış sesi.
 
 Kullanım:  python3 audio.py build/cues.json build/vo/dis_ses.wav build/audio.wav
 
-- Müzik 120 BPM, 4/4, G majör; neşeli, yemek reklamına uygun bir groove. Sahne geçişleri
-  ölçü başlarına (4, 12, 16 sn) oturur. Akorlar: G (kanca) → G D Em C (adımlar) → C D (lansman) → G (logo).
+- Müzik 120 BPM, 4/4, G majör; neşeli, yemek reklamına uygun bir groove. Bölümler zaman çizelgesinden (T)
+  gelir: kanca (gerilim) → adımlar (G D Em C) → kurye (C D, motor) → kapı (nefes, zil) → logo (G).
 - Ses logosu: logonun ibreleri otururken çalan üç nota, G5 – B5 – D6 ("Ya-kın-la").
 - Efektler ve dış ses cümleleri js/main.js'in ürettiği cues.json'dan gelir: her pop, tık ve whoosh
   ekrandaki hareketle aynı karede ve aynı yönde (pan) duyulur; dış ses cümleleri ekrandaki yazılara oturur.
@@ -418,6 +418,7 @@ FX = {
     'sizzle': lambda c: fx_sizzle(c.get('dur', 1.4)),
     'switch': lambda c: fx_switch(),
     'confetti': lambda c: fx_confetti(c.get('dur', 1.4)),
+    'crinkle': lambda c: fx_crinkle(c.get('dur', 0.4)),
 }
 REV = {'slam': 0.25, 'impact': 0.35, 'doorbell': 0.35, 'success': 0.3, 'shimmer': 0.4, 'sparkle': 0.4,
        'shine': 0.4, 'coin': 0.15, 'pop': 0.12, 'whoosh': 0.1, 'thump': 0.15, 'clink': 0.3, 'switch': 0.15}
@@ -438,31 +439,30 @@ f = lambda *names: [NOTE[x] for x in names]
 
 
 def compose(T):
+    """Akış: kanca (gerilim) → adımlar (G D Em C groove) → kurye (C D, motor) → kapı (nefes) → logo (G çözülme)."""
     kicks = []
 
     def K(t, v=1.0):
         kicks.append(t)
         send(drums, kick(), t, 0.95 * v)
 
-    def groove_bar(bar, ch, kick_on=True, clap_on=True, hats=True, arp=0.0, stabs=True, skip=()):
-        """2 sn'lik bir ölçü: dört vuruş kick, 2 ve 4'te clap, ara sekizliklerde hat, senkoplu bas."""
+    def groove_bar(bar, ch, arp=0.0, skip=(), stabs=True, clap_on=True):
+        """2 sn'lik ölçü: dört vuruş kick, 2 ve 4'te clap, ara sekizliklerde hat, senkoplu bas, ofbit akorlar."""
         send(music, pad(f(*CH[ch]), 2.0, cut=2400, att=0.03, rel=0.35), bar, 0.75)
         root = NOTE[ROOT[ch]]
         for k in range(4):
             t = bar + k * 0.5
             if any(a <= t < b for a, b in skip):
                 continue
-            if kick_on:
-                K(t)
+            K(t)
             if clap_on and k % 2 == 1:
                 send(drums, clap(), t, 0.5, 0, rev=0.25)
             send(bass_bus, bass_note(root, 0.2), t + 0.25, 0.7)
             if k in (0, 2):
                 send(bass_bus, bass_note(root * (2 if k == 2 else 1), 0.16), t, 0.42)
-            if hats:
-                send(drums, hat(), t + 0.25, 0.3, 0.3)
-                send(drums, hat(), t, 0.1, -0.3)
-            if stabs and k % 2 == 0:  # ofbit akor vuruşları: yemek reklamına neşeli bir 'skank'
+            send(drums, hat(), t + 0.25, 0.3, 0.3)
+            send(drums, hat(), t, 0.1, -0.3)
+            if stabs and k % 2 == 0:
                 for nm in ARP[ch][:3]:
                     send(music, pluck(NOTE[nm], 0.22, 1.25), t + 0.25, 0.1, 0, rev=0.2)
         if arp > 0:
@@ -473,63 +473,62 @@ def compose(T):
                 nm = ARP[ch][[0, 1, 2, 3, 2, 1, 2, 3][i % 8]]
                 send(music, pluck(NOTE[nm] * 2, 0.22, 1.1), t, arp, -0.4 if i % 2 else 0.4, rev=0.3)
 
-    # 0–1.5: giriş — kısık pad, tıkırtılı hat, kapak açılmadan önce yükselen gerilim
-    send(music, pad(f(*CH['Gsus']), 1.6, cut=700, att=0.6, rel=0.4), 0.0, 0.85)
-    for i in range(6):
-        send(drums, hat(), 0.25 + i * 0.25, 0.08 + i * 0.02, 0.25 if i % 2 else -0.25)
-    n = ns(0.9); tr = tt(n) / 0.9
-    riser = sine(400 + 1100 * tr ** 2, n) * tr ** 2 * 0.12 + sweep_bp(noise(n), 500, 8000, 1.5, 0.8) * tr ** 2 * 0.45
-    send(sfx, riser, T['burst'] - 0.9, 0.5)
-    # 1.5: kapak açılır → büyük vuruş, groove 2.0'da başlar
-    K(T['burst'], 1.1)
-    send(drums, crash(2.2), T['burst'], 0.55)
-    send(bass_bus, bass_note(NOTE['G2'], 0.45, 600), T['burst'], 0.7)
+    s2, s5, door, s4 = T['s2'], T['s5'], T['doorCut'], T['s4']
+    # kanca: kısık pad + tıkırtılı hat, "Afşin?" vuruşu, adımlara yükselen gerilim
+    send(music, pad(f(*CH['Gsus']), s2 + 0.3, cut=750, att=0.5, rel=0.4), 0.0, 0.85)
+    for i in range(int(s2 / 0.25)):
+        send(drums, hat(), 0.25 + i * 0.25, 0.06 + 0.1 * i / (s2 / 0.25), 0.25 if i % 2 else -0.25)
+    K(T['q2'], 0.9); send(bass_bus, bass_note(NOTE['G2'], 0.5, 600), T['q2'], 0.6)
     for nm in ('G4', 'B4', 'D5'):
-        send(music, pluck(NOTE[nm], 0.6, 1.3), T['burst'], 0.16, 0, rev=0.4)
-    groove_bar(2.0, 'G', skip=((3.5, 4.0),), arp=0.0)
-    # 3.5–4.0: telefon için nefes + ters crash
-    send(sfx, fx_reverse(0.45), 3.55, 0.35)
-    # 4–12: adımlar (G D Em C)
-    for bar, ch in ((4, 'G'), (6, 'D'), (8, 'Em'), (10, 'C')):
-        groove_bar(bar, ch, arp=0.06 if bar >= 8 else 0.0, skip=((11.5, 12.0),))
-    send(drums, crash(1.8), 4.0, 0.35)
-    # 12–13: lansman gerilimi — kicksiz, kısık pad, trampet rulosu
-    send(music, pad(f(*CH['C']), 1.0, cut=900, att=0.05, rel=0.2), 12.0, 0.9)
-    send(bass_bus, bass_note(NOTE['C2'], 0.4, 500), 12.0, 0.6)
-    roll = [12.0 + i * 0.25 for i in range(2)] + [12.5 + i * 0.125 for i in range(2)] + [12.75 + i * 0.0625 for i in range(4)]
+        send(music, pluck(NOTE[nm], 0.6, 1.3), T['q2'], 0.14, 0, rev=0.4)
+    n = ns(0.9); tr = tt(n) / 0.9
+    send(sfx, sine(400 + 1100 * tr ** 2, n) * tr ** 2 * 0.1 + sweep_bp(noise(n), 500, 8000, 1.5, 0.8) * tr ** 2 * 0.4, s2 - 0.9, 0.45)
+    # adımlar: s2'den kurye sahnesine kadar G D Em C
+    chords = ['G', 'D', 'Em', 'C']
+    bar, k = s2, 0
+    send(drums, crash(2.0), s2, 0.4)
+    while bar < s5 - 0.01:
+        groove_bar(bar, chords[k % 4], arp=0.05 if k >= 2 else 0.0, skip=((s5 - 0.5, s5),))
+        bar += 2.0; k += 1
+    send(sfx, fx_reverse(0.45), s5 - 0.45, 0.35)
+    # kurye: C → D, arpejli ve hızlı hat'li sürüş müziği; kapıda nefes (zil duyulsun)
+    K(s5, 1.05); send(drums, crash(2.2), s5, 0.4)
+    b = s5
+    for ch in ('C', 'D'):
+        if b >= door - 0.01:
+            break
+        groove_bar(b, ch, arp=0.07, skip=((door - 0.25, 99),))
+        b += 2.0
+    for i in range(int((door - s5) / 0.125)):
+        t = s5 + i * 0.125
+        send(drums, hat(i % 4 == 2), t, 0.1 if i % 2 else 0.06, 0.25 if i % 2 else -0.25)
+    send(music, pad(f(*CH['C']) + [NOTE['E5']], s4 - door, cut=1600, att=0.15, rel=0.5), door, 0.8)
+    send(bass_bus, bass_note(NOTE['C2'], 0.8, 500), door, 0.5)
+    for t, nm in ((T['open'], 'E5'), (T['open'] + 0.25, 'G5'), (T['hand'] + 0.3, 'C5')):
+        send(music, pluck(NOTE[nm], 0.6, 1.0), t, 0.16, 0, rev=0.45)
+    roll = [s4 - 0.5 + i * 0.0625 for i in range(8)]
     for j, t in enumerate(roll):
-        send(drums, snare(0.3 + 0.7 * j / len(roll)), t, 0.3, 0, rev=0.2)
-    n = ns(0.75); tr = tt(n) / 0.75
-    send(sfx, sine(300 + 1200 * tr ** 2, n) * tr ** 2 * 0.1 + sweep_bp(noise(n), 400, 9000, 1.6, 0.8) * tr ** 2 * 0.4, 12.25, 0.55)
-    # 13.0: anahtar açılır → düşüş (drop)
-    K(13.0, 1.1); send(drums, crash(2.4), 13.0, 0.42)
-    groove_bar(13.0, 'C', arp=0.07)
-    groove_bar(15.0, 'D', arp=0.07, skip=((15.5, 16.0),))
-    for i in range(int(2.0 / 0.125)):  # 13–15 arası 16'lık hat enerjisi
-        t = 13.0 + i * 0.125
-        send(drums, hat(i % 4 == 2), t, 0.12 if i % 2 else 0.07, 0.25 if i % 2 else -0.25)
-    for j, t in enumerate([15.5 + i * 0.0625 for i in range(8)]):
-        send(drums, snare(0.3 + 0.7 * j / 8), t, 0.35, 0, rev=0.2)
-    # 16–20: kapanış, G majör çözülme + ses logosu (G5 B5 D6), dış sesin "Afiyet olsun!"una yer bırakır
-    K(16.0, 1.0)
-    send(music, pad(f(*CH['G']) + [NOTE['D5']], 3.6, cut=3000, att=0.02, rel=1.2), 16.0, 1.0)
-    send(bass_bus, bass_note(NOTE['G2'], 0.9, 500), 16.0, 0.6)
-    for t, nm in ((16.35, 'G5'), (16.55, 'B5'), (16.75, 'D6')):
+        send(drums, snare(0.3 + 0.7 * j / 8), t, 0.3, 0, rev=0.2)
+    # kapanış: G majör, ses logosu (G5 B5 D6), son vuruş
+    K(s4, 1.0)
+    send(music, pad(f(*CH['G']) + [NOTE['D5']], DUR - s4, cut=3000, att=0.02, rel=1.2), s4, 1.0)
+    send(bass_bus, bass_note(NOTE['G2'], 0.9, 500), s4, 0.6)
+    for t, nm in ((s4 + 0.35, 'G5'), (s4 + 0.55, 'B5'), (s4 + 0.75, 'D6')):
         send(music, bell(NOTE[nm], 2.8, 3.5, 2.2, 1.4), t, 0.34, 0, rev=0.5)
         send(music, pluck(NOTE[nm] / 2, 0.5, 1.2), t, 0.15, 0, rev=0.3)
-    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), 16.75, 0.1, 0.3, rev=0.6)
-    for b in range(4):
-        t = 17.0 + b * 0.5
+    send(music, bell(NOTE['G6'], 2.0, 3.5, 1.4, 2.0), s4 + 0.75, 0.1, 0.3, rev=0.6)
+    t = s4 + 1.0
+    while t < DUR - 1.0:
         K(t, 0.7)
-        if b % 2 == 1:
+        if round((t - s4) / 0.5) % 2 == 1:
             send(drums, clap(), t, 0.35, 0, rev=0.25)
         send(drums, hat(), t + 0.25, 0.14, 0.3)
         send(bass_bus, bass_note(NOTE['G2'], 0.2), t + 0.25, 0.45)
-    K(19.0, 0.8)
+        t += 0.5
+    K(DUR - 1.0, 0.8)
     for nm in ('G4', 'B4', 'D5', 'G5'):
-        send(music, pluck(NOTE[nm], 1.2, 1.0), 19.0, 0.18, 0, rev=0.5)
-    send(music, bell(NOTE['G5'], 2.4, 3.5, 1.6, 1.6), 19.0, 0.14, 0, rev=0.5)
-    send(bass_bus, bass_note(NOTE['G2'], 1.0, 400), 19.0, 0.5)
+        send(music, pluck(NOTE[nm], 1.2, 1.0), DUR - 1.0, 0.18, 0, rev=0.5)
+    send(bass_bus, bass_note(NOTE['G2'], 1.0, 400), DUR - 1.0, 0.5)
     return kicks
 
 
