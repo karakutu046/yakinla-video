@@ -14,9 +14,11 @@
 - Üretim akışı:
   1. `creative_generate_speech` → dönen `flow_id` ve `session_ids` saklanır.
   2. `creative_get_flow_run_status` ile `all_completed` olana kadar beklenir.
-  3. `creative_get_generations` → `full_res_url` (storage.googleapis.com) `curl` ile projenin
-     `build/vo/` klasörüne indirilir. `build/` git'e girmez; ses yalnızca montajlanmış MP4'ün
-     içinde depoya girer.
+  3. `creative_get_generations` → `full_res_url` `curl` ile projenin `build/vo/` klasörüne indirilir.
+     `build/` git'e girmez; ses yalnızca montajlanmış MP4'ün içinde depoya girer. Bağlantı
+     `elevenlabsusercontent.com` (eskiden storage.googleapis.com) üzerindendir ve imzası birkaç saatte
+     dolar (403). Süresi dolarsa `creative_get_generations` yeniden çağrılır: kredi harcamaz, yeni bağlantı verir.
+     Bu host'a izin veren bulut ortamı **yakinla-video**'dur (Default ortam bu host'u engeller).
 - Her üretim ElevenLabs kredisi harcar. Metin kesinleşmeden ses üretilmez. Üretim çağrısı hata verirse
   aynı çağrı tekrarlanmaz (ikinci kez ücretlendirir): `creative_get_flow` ile düğüm `not_run` ise
   `creative_run_flow_nodes` ile aynı düğüm yeniden çalıştırılır.
