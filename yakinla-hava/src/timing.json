@@ -1,0 +1,14 @@
+{
+  "fps": 30,
+  "total": 690,
+  "intro": {"title": 12, "band": 18},
+  "days": [
+    {"start": 58, "kapinda": 160},
+    {"start": 176, "kapinda": 272},
+    {"start": 290, "camur": 330, "kapinda": 400}
+  ],
+  "weekly": {"start": 418},
+  "promise": {"start": 478, "hava": 486, "depo": 520, "sixty": 548, "kapinda": 572},
+  "end": {"start": 590, "logo": 596},
+  "vo": {"file": "build/dis-ses.wav", "at": 0.0}
+}

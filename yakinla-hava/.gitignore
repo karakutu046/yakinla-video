@@ -1,0 +1,5 @@
+node_modules/
+build/
+out/*.png
+out/frames/
+out/onizleme-*.mp4
