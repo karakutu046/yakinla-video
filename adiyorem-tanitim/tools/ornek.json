@@ -1,0 +1,29 @@
+{
+  "_not": "Yalnızca altyapı denemesi: tools/ornek.sh'in ürettiği sentetik medyayı kullanır. Gerçek film sahneler.json'dan üretilir.",
+  "cikti": "build/ornek_test.mp4",
+  "renk": { "ana": "#D32F2F", "koyu": "#6E0D0D", "krem": "#FFF3E0" },
+  "logo": { "dosya": "build/ornek/logo.png", "kose": true },
+  "dis_ses": { "dosya": "build/ornek/dis_ses.wav", "bas": 0.25 },
+  "sube": {
+    "ust": "ADIYÖREM ÇİĞ KÖFTE",
+    "ad": "ÖRNEK ŞUBESİ",
+    "adres": ["Örnek Mah. Örnek Cad. No: 1", "İlçe / İl"],
+    "saat": "Her gün 10:00 – 23:00",
+    "telefon": "0 (5xx) xxx xx xx",
+    "siparis": ["Yemeksepeti", "Getir Yemek", "Trendyol Yemek"],
+    "slogan": "Hemen gel, afiyetle ye!"
+  },
+  "sahneler": [
+    { "medya": "build/ornek/dikey.mp4", "bas": 0.5, "sure": 4.0, "zoom": [1.0, 1.14], "ses": 0.6,
+      "yazi": { "satirlar": ["CANIN", "ÇİĞ KÖFTE", "Mİ ÇEKTİ?"], "vurgu": [1], "t": 0.3, "ara": 0.32 } },
+    { "medya": "build/ornek/yatay.mp4", "bas": 1.0, "sure": 2.5, "yerlesim": "bulanik", "zoom": [1.0, 1.06], "gecis": "kay",
+      "yazi": { "satirlar": ["USTA ELİNDE", "YOĞRULUR"], "vurgu": [1], "konum": "ust", "t": 0.2 } },
+    { "medya": "build/ornek/foto_dikey.jpg", "sure": 3.0, "zoom": [1.02, 1.18], "kay": [0, -0.1], "gecis": "zoom",
+      "yazi": { "satirlar": ["BOL YEŞİLLİK", "NAR EKŞİSİ"], "vurgu2": [1], "t": 0.25 } },
+    { "medya": "build/ornek/foto_yatay.jpg", "sure": 2.5, "odak": [0.3, 0.5], "zoom": [1.1, 1.0], "kay": [0.15, 0], "gecis": "flas",
+      "yazi": { "satirlar": ["DÜRÜM MÜ?"], "vurgu": [0], "konum": "orta", "t": 0.15 } },
+    { "medya": "build/ornek/foto_dikey.jpg", "sure": 3.0, "odak": [0.6, 0.4], "zoom": [1.2, 1.05], "gecis": "kay", "yon": -1,
+      "yazi": { "satirlar": ["PORSİYON MU?", "SEN SEÇ!"], "vurgu": [1], "t": 0.2, "ara": 0.6 } },
+    { "tip": "kapanis", "sure": 5.0, "gecis": "daire", "arka": "build/ornek/foto_dikey.jpg" }
+  ]
+}
