@@ -647,12 +647,12 @@ function scene2(g, t) {
   const ak = E.outBack(prog(t, T.aktif + 0.08, T.aktif + 0.45));
   if (ak > 0) {
     g.save(); g.translate(540, 1440); g.scale(ak, ak);
-    g.fillStyle = 'rgba(4,22,64,0.25)'; g.beginPath(); g.roundRect(-170, -48 + 8, 340, 96, 48); g.fill();
-    g.fillStyle = C.green; g.beginPath(); g.roundRect(-170, -48, 340, 96, 48); g.fill();
+    g.fillStyle = 'rgba(4,22,64,0.25)'; g.beginPath(); g.roundRect(-196, -48 + 8, 392, 96, 48); g.fill();
+    g.fillStyle = C.green; g.beginPath(); g.roundRect(-196, -48, 392, 96, 48); g.fill();
     const pd = (t - T.aktif) % 1.0;
-    g.strokeStyle = `rgba(255,255,255,${(1 - pd) * 0.8})`; g.lineWidth = 4; g.beginPath(); g.arc(-108, 0, 14 + pd * 26, 0, TAU); g.stroke();
-    g.fillStyle = '#fff'; g.beginPath(); g.arc(-108, 0, 14, 0, TAU); g.fill();
-    text(g, 'AKTİF', 28, 22, { s: 62, ls: 6 });
+    g.strokeStyle = `rgba(255,255,255,${(1 - pd) * 0.8})`; g.lineWidth = 4; g.beginPath(); g.arc(-138, 0, 14 + pd * 22, 0, TAU); g.stroke();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(-138, 0, 14, 0, TAU); g.fill();
+    text(g, 'AKTİF', 30, 22, { s: 62, ls: 6 });
     g.restore();
   }
   drawParts(g, PARTS.toggle, TOG.on, TOG.y, t - T.aktif);
@@ -1300,7 +1300,7 @@ function scene7(g, t) {
     const spots = [[120, 250, 150, 0], [960, 300, 140, 3], [95, 1120, 150, 1], [985, 1020, 150, 2], [150, 1680, 160, 5], [930, 1720, 150, 4]];
     for (const [x, y, s, i] of spots) {
       const spr = SPR.ghost[FOODS[i]], k = s / FOODPX;
-      g.save(); g.globalAlpha = 0.075 * fa; g.translate(x + Math.sin(t * 0.6 + i) * 10, y + Math.cos(t * 0.5 + i) * 12); g.rotate(Math.sin(t * 0.4 + i) * 0.15); g.scale(k, k);
+      g.save(); g.globalAlpha = 0.045 * fa; g.translate(x + Math.sin(t * 0.6 + i) * 10, y + Math.cos(t * 0.5 + i) * 12); g.rotate(Math.sin(t * 0.4 + i) * 0.15); g.scale(k, k);
       g.drawImage(spr, -spr.width / 2, -spr.height / 2); g.restore();
     }
   }
